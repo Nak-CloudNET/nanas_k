@@ -665,13 +665,12 @@
 												</a>
 											</li>
 										<?php } ?>
-										
-										<!--<li id="sales_gift_cards">
+                                        <li id="sales_gift_cards">
                                             <a class="submenu" href="<?= site_url('sales/gift_cards'); ?>">
                                                 <i class="fa fa-credit-card"></i>
                                                 <span class="text"> <?= lang('list_gift_cards'); ?></span>
                                             </a>
-                                        </li>-->
+                                        </li>
 
                                         <li id="sales_return_sales">
                                             <a class="submenu" href="<?= site_url('sales/return_sales'); ?>">
