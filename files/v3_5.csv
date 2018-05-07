@@ -1,0 +1,11 @@
+﻿Code,Name,Name KH,Category Code,Unit ID,Cost,Price,Alert Quantity, Tax Rate Name,Tax Method,Subcategory Code,Product Variants Separated by |,Supplier1(No),Supplier2(No),Supplier3(No),Supplier4(No),Supplier5(No),Custom Field 1,Custom Field 2,Custom Field 3,Custom Field 4,Custom Field 5,Custom Field 6,Image,Type(standard or service)
+AZ001,Amazone 1,អាម៉ាហ្សូន​ 1,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ002,Amazone 2,អាម៉ាហ្សូន​ 2,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ003,Amazone 3,អាម៉ាហ្សូន​ 3,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ004,Amazone 4,អាម៉ាហ្សូន​ 4,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ005,Amazone 5,អាម៉ាហ្សូន​ 5,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ006,Amazone 6,អាម៉ាហ្សូន​ 6,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ007,Amazone 7,អាម៉ាហ្សូន​ 7,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ008,Amazone 8,អាម៉ាហ្សូន​ 8,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ009,Amazone 9,អាម៉ាហ្សូន​ 9,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
+AZ010,Amazone 10,អាម៉ាហ្សូន​ 10,Drink,6,0,1,, No Tax, exclusive,,Unit=1_1|Box=12_11|Case=24_20,,,,,,,,,,,,no_image.png,standard
