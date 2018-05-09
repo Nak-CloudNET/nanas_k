@@ -128,16 +128,16 @@
                     <div class="form-group">
                         <?= lang("address3", "address3"); ?>
                         <?php echo form_input('address3', $customer->address3, 'class="form-control" id="address3"'); ?>
-                    </div>
+                    </div>-->
 					<div class="form-group">
 						<?= lang('award_points', 'award_points'); ?>
 						<?= form_input('award_points', set_value('award_points', $customer->award_points), 'class="form-control tip" id="award_points"'); ?>
 					</div>
-					<div class="form-group">
-						<?= lang('credit_limit', 'credit_limit'); ?>
-						<?= form_input('credit_limit', set_value('credit_limit', $customer->credit_limit), 'class="form-control tip" id="credit_limit"'); ?>
-					</div>
-					-->
+                    <!--<div class="form-group">
+						<? /*= lang('credit_limit', 'credit_limit'); */ ?>
+						<? /*= form_input('credit_limit', set_value('credit_limit', $customer->credit_limit), 'class="form-control tip" id="credit_limit"'); */ ?>
+					</div>-->
+
 					<div class="form-group"> <?php
 						echo lang("public_charge", "public_charge");
 						//$pub_c[""] = "Select Public Charge";
