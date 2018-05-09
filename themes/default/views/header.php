@@ -1944,6 +1944,7 @@
                                                 </a>
                                             </li>
                                         <?php }
+
 										if ($GP['sales-return_sales']) { ?>
 											<!--
 											<li id="sales_add_return">
