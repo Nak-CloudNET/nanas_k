@@ -1199,6 +1199,27 @@ $ps = array('0' => lang("disable"), '1' => lang("enable"));
 								</div>
 							</div>
 						</fieldset>
+
+                        <fieldset class="scheduler-border">
+                            <legend class="scheduler-border"><?= lang('member_ship_card') ?></legend>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-6">
+                                            <?= lang('limit_point'); ?><br>
+                                            <?= form_input('limit_point', $this->erp->formatDecimal($Settings->limit_points), 'class="form-control"'); ?>
+                                        </div>
+                                        <div class="col-sm-1 col-xs-1 text-center"><i class="fa fa-arrow-right"></i>
+                                        </div>
+                                        <div class="col-sm-4 col-xs-5">
+                                            <?=   lang('increament'); ?><br>
+                                            <?= form_dropdown('increament', $wm, $Settings->increament, 'id="increament" class="form-control tip" required="required" style="width:100%;"');?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
 					</div>
 				</div>
 				<div style="clear: both; height: 10px;"></div>
