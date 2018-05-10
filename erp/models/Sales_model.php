@@ -1902,6 +1902,7 @@ class Sales_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(),$deliver_id_muti=NULL)
     {
+		
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
         }
@@ -2168,7 +2169,6 @@ class Sales_model extends CI_Model
 			$limit_points = floatval($this->Settings->limit_points);
 			
 			if($data['grand_total'] > $limit_points){
-				
 				if($this->Settings->increament == 1){
 					$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
 					return $sale_id;
@@ -2431,10 +2431,11 @@ class Sales_model extends CI_Model
 		if ($data['sale_status'] == 'completed') {
 			$this->site->costing($items);
 		}
+		
 		$deposit_customer_id = $data['deposit_customer_id'];
 		unset($data['deposit_customer_id']);
         $this->resetSaleActions($id);
-
+		
         foreach($items as $g){
 			$totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity']);
 			$product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
@@ -2444,7 +2445,7 @@ class Sales_model extends CI_Model
 				$data['total_cost'] += $totalCostProducts->total_cost;
 			}
 		}
-
+		
         if ($this->db->update('sales', $data, array('id' => $id))) {
 			foreach($sale_data as $sa){
 				$this->db->delete("inventory_valuation_details",array("field_id"=>$sa['slaeid'], "type"=>"SALE"));
@@ -2529,9 +2530,19 @@ class Sales_model extends CI_Model
 				$this->site->syncSalePayments($id);
             }
             $this->site->syncQuantity($id);
-            $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], null, $data['saleman_by']);
-            return true;
+            $limit_points = floatval($this->Settings->limit_points);
+            if($data['grand_total'] > $limit_points){
+                if($this->Settings->increament == 1){
+                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+                    return true;
+                }else{
+                    $data['grand_total'] = $data['grand_total'] - $limit_points;
+                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+                    return true;
+                }
+            }
         }
+		
         return false;
     }
 	

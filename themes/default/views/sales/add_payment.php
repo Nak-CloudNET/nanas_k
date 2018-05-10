@@ -332,11 +332,13 @@
 
                         } else {
                             var due = <?=$inv->grand_total-$inv->paid?>;
-                            if (due > data.balance) {
+                            var gift_card_balance = ((data.balance==null)? 0:data.balance);
+							if (due > data.balance) {
                                 $('#amount_1').val(formatDecimal(data.balance));
                             }
                             $('#gc_details').html('<small>Card No: <span style="max-width:60%;float:right;">' + data.card_no + '</span><br>Value: <span style="max-width:60%;float:right;">' + currencyFormat(data.value) + '</span><br>Balance: <span style="max-width:60%;float:right;">' + currencyFormat(data.balance) + '</span></small>');
-                            $('#gift_card_no').parent('.form-group').removeClass('has-error');
+                             $('#amount_1').attr('gift_card_balance', gift_card_balance);
+							$('#gift_card_no').parent('.form-group').removeClass('has-error');
                         }
                     }
                 });
@@ -381,9 +383,11 @@
 			var us_paid = parseFloat($('#amount_1').val()-0);
             var disc = parseFloat($('#discount').val() - 0);
 			var amount = parseFloat($('#amount_1').attr('amount')-0);
+			
 			amount -= disc;
 			var p_val = $('#paid_by_1').val();
 			var new_deposit_balance = 0;
+			
 			if(p_val == 'deposit') {
 				var deposit_balance = parseFloat($('#amount_1').attr('deposit_balance')-0);
 				new_deposit_balance = deposit_balance - us_paid;
@@ -392,6 +396,7 @@
 					$(".deposit_total_balance").text(deposit_balance);
 					$('#amount_1').select();
 				}else if(new_deposit_balance < 0) {
+					
 					if(deposit_balance > amount) {
 						$('#amount_1').val(amount);
 						$(".deposit_total_balance").text(formatDecimal(new_deposit_balance));
@@ -408,8 +413,31 @@
 					$(".deposit_total_balance").text(formatDecimal(new_deposit_balance));
 				}
 
-            }else {
-                if (!us_paid) {
+            }else if(p_val == 'gift_card'){
+                var gift_card_balance = parseFloat($('#amount_1').attr('gift_card_balance')-0);
+				new_gift_card_balance = gift_card_balance - us_paid;
+				if(!us_paid) {
+					$('#amount_1').val(0);
+					$(".deposit_total_balance").text(gift_card_balance);
+					$('#amount_1').select();
+				}else if(new_gift_card_balance < 0) {
+					if(gift_card_balance > amount) {
+						$('#amount_1').val(amount);
+						$(".deposit_total_balance").text(formatDecimal(new_gift_card_balance));
+					}else {
+						$('#amount_1').val(gift_card_balance);
+						$(".deposit_total_balance").text(0);
+					}
+					$('#amount_1').select();
+				}else if(us_paid > amount){
+					$('#amount_1').val(amount);
+					$(".deposit_total_balance").text(formatDecimal(new_gift_card_balance));
+					$('#amount_1').select();
+				}else {
+					$(".deposit_total_balance").text(formatDecimal(new_gift_card_balance));
+				}
+			}else{
+				if (!us_paid) {
 					$('#amount_1').val(0);
 					$('#amount_1').select();
 				}else if(us_paid > amount) {

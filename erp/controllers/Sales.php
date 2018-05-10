@@ -5760,6 +5760,7 @@ class Sales extends MY_Controller
 
     function edit($id = NULL)
     {
+		
         $this->erp->checkPermissions('edit',null,'sales');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
