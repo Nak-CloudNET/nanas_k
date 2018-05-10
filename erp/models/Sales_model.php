@@ -2164,8 +2164,21 @@ class Sales_model extends CI_Model
                     $this->site->syncQuantity(NULL, NULL, $sale_items);
                 }
             }
-            $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-            return $sale_id;
+            
+			$limit_points = floatval($this->Settings->limit_points);
+			
+			if($data['grand_total'] > $limit_points){
+				
+				if($this->Settings->increament == 1){
+					$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+					return $sale_id;
+				}else{
+					$data['grand_total'] = $data['grand_total'] - $limit_points;
+					$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+					return $sale_id;
+				}
+			}
+			
         }
         return false;
     }
@@ -3776,12 +3789,14 @@ class Sales_model extends CI_Model
 
     public function addPayment($data = array())
     {
+		//$this->erp->print_arrays($data);
 		if($data['old_payment_id'])
 		{
 			$this->db->delete('payments', array('id'=>$data['old_payment_id'],'sale_id' => $data['sale_id'], 'is_down_payment' => 1));
 			$this->db->delete('gl_trans',array('payment_id'=>$data['old_payment_id'],'reference_no'=>$data['reference_no']));
 			$this->site->syncSalePayments($data['sale_id']);
 		}
+		
 		$deposit_customer_id = $data['deposit_customer_id'];
 		unset($data['old_payment_id']);
 		unset($data['deposit_customer_id']);
@@ -4058,12 +4073,19 @@ class Sales_model extends CI_Model
 
     public function addGiftCard($data = array(), $ca_data = array(), $sa_data = array())
     {
+        $customer_group_name = $data['customer_group_name'];
+
+        unset($data['customer_group_name']);
         if ($this->db->insert('gift_cards', $data)) {
             if (!empty($ca_data)) {
                 $this->db->update('companies', array('award_points' => $ca_data['points']), array('id' => $ca_data['customer']));
             } elseif (!empty($sa_data)) {
                 $this->db->update('users', array('award_points' => $sa_data['points']), array('id' => $sa_data['user']));
             }
+
+            $this->db->where(array('id'=>$data['customer_id']));
+            $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
+
             return true;
         }
         return false;
@@ -4079,8 +4101,13 @@ class Sales_model extends CI_Model
 
     public function updateGiftCard($id, $data = array())
     {
+        $customer_group_name = $data['customer_group_name'];
+        unset($data['customer_group_name']);
+
         $this->db->where('id', $id);
         if ($this->db->update('gift_cards', $data)) {
+            $this->db->where(array('id'=>$data['customer_id']));
+            $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
             return true;
         }
         return false;
@@ -6922,4 +6949,30 @@ public function getRielCurrency(){
 		}
 		return false;
 	}
+
+	public function getCustomerGroup(){
+	    $this->db->select('*');
+	    $this->db->from('erp_customer_groups');
+	    $q = $this->db->get();
+	    $data = [];
+	    if($q->num_rows()>0){
+	        foreach($q->result() as $row){
+	            $data[] = $row;
+            }
+            return $data;
+        }
+        return false;
+
+    }
+
+    public function getCustomerGroupByID($id){
+	    $this->db->select('name');
+	    $this->db->from('erp_customer_groups');
+	    $this->db->where('id',$id);
+	    $q = $this->db->get();
+	    if($q->num_rows()>0){
+	        return $q->row();
+        }
+        return false;
+    }
 }
