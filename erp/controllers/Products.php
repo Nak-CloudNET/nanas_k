@@ -702,7 +702,7 @@ class Products extends MY_Controller
                 $quantity = $_POST['quantity'][$m];
                 $product = $this->products_model->getProductWithCategory($pid);
 
-                if ($variants = $this->products_model->getProductOptionsByProId($pid)) {
+                if ($variants = $this->products_model->getVariantNameByArrayId($this->input->post('vars'))) {
                     foreach ($variants as $option) {
                         //if ($this->input->post('vt_'.$product->id.'_'.$option->id)) {
                             $barcodes[] = array(

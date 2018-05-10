@@ -812,7 +812,7 @@
                 tr_html += '<td><input class="form-control quantity text-center" name="quantity[]" type="text" value="' + formatDecimal(item.qty) + '" data-id="' + row_no + '" data-item="' + item_id + '" id="quantity_' + row_no + '" onClick="this.select();"></td>';
                 if(item.variants) {
                     $.each(item.variants, function () {
-                        vd += '<input name="vt_' + item_id + '_' + this.id + '" type="checkbox" class="checkbox" id="' + this.id + '" data-item-id="' + item_id + '" value="' + this.id + '" ' + (item.selected_variants[this.id] == 1 ? 'checked="checked"' : '') + ' style="display:inline-block;" /><input type="hidden" class="roption" value="' + this.id + '"><label for="' + this.id + '" class="padding05">' + this.name + '</label>';
+                        vd += '<input name="vars[]" type="checkbox" class="checkbox" id="' + this.id + '" data-item-id="' + item_id + '" value="' + this.id + '" ' + (item.selected_variants[this.id] == 1 ? 'checked="checked"' : '') + ' style="display:inline-block;" /><input type="hidden" class="roption" value="' + this.id + '"><label for="' + this.id + '" class="padding05">' + this.name + '</label>';
                     });
                 }
                 tr_html += '<td>'+vd+'</td>';
