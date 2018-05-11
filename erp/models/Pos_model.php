@@ -452,6 +452,7 @@ class Pos_model extends CI_Model
         if ($data['sale_status'] == 'ordered') {
             $data['payment_status'] = 'due';
         }
+		
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
             if ($this->site->getReference('pos',$data['biller_id']) == $data['reference_no']) {
@@ -516,14 +517,11 @@ class Pos_model extends CI_Model
             $msg = array();
             if ($data['sale_status'] == 'completed') {
                 if (!empty($payments)) {
-
                     $paid = 0;
 
                     foreach ($payments as $payment) {
                         if (!empty($payment) && isset($payment['amount']) && $payment['amount'] > 0) {
-
                             $payment['sale_id'] = $sale_id;
-
                             if ($payment['paid_by'] == 'ppp') {
                                 $card_info = array("number" => $payment['cc_no'], "exp_month" => $payment['cc_month'], "exp_year" => $payment['cc_year'], "cvc" => $payment['cc_cvv2'], 'type' => $payment['cc_type']);
                                 $result = $this->paypal($payment['amount'], $card_info);
@@ -564,10 +562,13 @@ class Pos_model extends CI_Model
                                     $msg[] = '<p class="text-danger">' . $result['code'] . ': ' . $result['message'] . '</p>';
                                 }
                             } else {
-
+								
                                 if ($payment['paid_by'] == 'gift_card') {
-                                    $this->db->update('gift_cards', array('balance' => $payment['pos_balance']), array('card_no' => $payment['cc_no']));
+									$customer = $this->sales_model->getCustomerGifCard($data['customer_id']);
+									$balance = $customer->balance - $payment['amount'];
+                                    $this->db->update('gift_cards', array('balance' => $balance), array('card_no' => $payment['cc_no']));
                                 }
+								
                                 unset($payment['cc_cvv2']);
                                 $this->db->insert('payments', $payment);
                                 $this->site->updateReference('sp', $payment['biller_id']);
@@ -610,7 +611,19 @@ class Pos_model extends CI_Model
             }
 
             if ($data['sale_status'] != 'order') {
-                $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+                $limit_points = floatval($this->Settings->limit_points);
+				if($data['grand_total'] > $limit_points){
+					if($this->Settings->increament == 1){
+						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+						return $sale_id;
+					}else{
+						
+						$data['grand_total'] = $data['grand_total'] - $limit_points;
+						
+						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+						return $sale_id;
+					}
+				}
             }
             return array('sale_id' => $sale_id, 'message' => $msg);
         }

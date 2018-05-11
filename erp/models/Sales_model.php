@@ -2167,13 +2167,14 @@ class Sales_model extends CI_Model
             }
             
 			$limit_points = floatval($this->Settings->limit_points);
-			
 			if($data['grand_total'] > $limit_points){
 				if($this->Settings->increament == 1){
 					$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
 					return $sale_id;
 				}else{
+					
 					$data['grand_total'] = $data['grand_total'] - $limit_points;
+					
 					$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
 					return $sale_id;
 				}
@@ -2531,20 +2532,35 @@ class Sales_model extends CI_Model
             }
             $this->site->syncQuantity($id);
             $limit_points = floatval($this->Settings->limit_points);
-            if($data['grand_total'] > $limit_points){
-                if($this->Settings->increament == 1){
-                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                    return true;
-                }else{
-                    $data['grand_total'] = $data['grand_total'] - $limit_points;
-                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                    return true;
-                }
-            }
+            
+			if($data['grand_total'] > $limit_points){
+				if($this->restoreAwardPoint($data['customer_id'])){
+					if($this->Settings->increament == 1){
+						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+						return true;
+					}else{
+						$data['grand_total'] = $data['grand_total'] - $limit_points;
+						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
+						return true;
+					}
+				}
+            }else{
+				$this->restoreAwardPoint($data['customer_id']);
+			}
         }
 		
         return false;
     }
+	
+	public function restoreAwardPoint($customer_id){
+		$customer = $this->getCustomerByID($customer_id);
+		if($customer){
+			$old_award_point = $customer->award_points - $customer->last_updated_points;
+			$this->db->update('companies', array('award_points' => $old_award_point,'last_updated_points'=>0), array('id' => $customer_id));
+			return true;
+		}
+		return false;
+	}
 	
 	public function updateSaleOrder($id, $data, $items = array())
     {
@@ -2626,8 +2642,6 @@ class Sales_model extends CI_Model
             }
 
         }
-        $this->erp->update_award_points($sale->grand_total, $sale->customer_id, $sale->created_by, TRUE);
-        return $items;
     }
 
     public function deleteReturn($id)
@@ -6986,4 +7000,15 @@ public function getRielCurrency(){
         }
         return false;
     }
+	
+	public function getCustomerGifCard($customer_id){
+		$this->db->select('*');
+		$this->db->from('erp_gift_cards');
+		$this->db->where('customer_id',$customer_id);
+		$q = $this->db->get(); 
+		if($q->num_rows()>0){
+			return $q->row();
+		}
+		return false;
+	}
 }

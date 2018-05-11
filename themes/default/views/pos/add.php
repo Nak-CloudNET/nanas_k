@@ -3520,10 +3520,11 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                             $('#gift_card_no_' + id).parent('.form-group').addClass('has-error');
                             bootbox.alert('<?=lang('gift_card_not_for_customer')?>');
                         } else {
-                            $('#gc_details_' + id).html('<small>Card No: ' + data.card_no + '<br>Value: ' + data.value + ' - Balance: ' + data.balance + '</small>');
-                            $('#gift_card_no_' + id).parent('.form-group').removeClass('has-error');
+                            $('#gc_details_' + id).html('<small>Card No: ' + data.card_no + '<br>Value: ' + data.value + ' - Balance: ' + data.balance + '</small><input type="hidden" id="gift_card_balance" value="'+data.balance+'"/>');
+                            
+							$('#gift_card_no_' + id).parent('.form-group').removeClass('has-error');
                             //calculateTotals();
-                            $('#amount_' + id).val(data.balance).focus();
+                            //$('#amount_' + id).val(data.balance).focus();
                         }
                     }
                 });
@@ -4807,6 +4808,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		});
 
 		$(document).on('keyup','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){
+			var paid_by = $('#paid_by_1').val();
+			
 			//var total_amount = $('#quick-payable').text()-0;
 			var total_amount = $('#payable_amount').val()-0;
 			var us_paid = $('#amount_1').val()-0;
@@ -4815,8 +4818,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var us_paid4 = $('#amount_4').val()? $('#amount_4').val()-0 : 0;
 			var us_paid5 = $('#amount_5').val()? $('#amount_5').val()-0 : 0;
 			var other_paid = other_curr_paid_2_us();
-
             var balance = total_amount - (us_paid + us_paid2 + us_paid3 + us_paid4 + us_paid5 + other_paid);
+			
 			var ch = (balance).toFixed(3);
 			var str = ch.split('.');
 			if(balance > 0){
@@ -4846,7 +4849,13 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var deposit_amount = parseFloat($(".deposit_total_amount").text());
 			var deposit_balance = parseFloat($(".deposit_total_balance").text());
 			deposit_balance = (deposit_amount - Math.abs(us_paid));
-			$(".deposit_total_balance").text(deposit_balance);
+			$(".deposit_total_balance").text(deposit_amount);
+			if(paid_by=='gift_card'){
+				var gift_card_balance = $('#gift_card_balance').val();
+				if($(this).val() > parseFloat(gift_card_balance)){
+					$(this).val(parseFloat(gift_card_balance));
+				}
+			}
 
 		});
 
