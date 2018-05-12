@@ -82,6 +82,7 @@ class Sales extends MY_Controller
     
 	function index($warehouse_id = NULL)
     {
+		
         $this->erp->checkPermissions('index',null, 'sales');
         $this->load->model('reports_model');
          
@@ -11502,8 +11503,7 @@ class Sales extends MY_Controller
 				}
 			
                 if ($opt->price != 0) {
-
-                    if($customer_group->makeup_cost == 1){
+					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
 						{
 							if(isset($percent->percent)) {
@@ -11518,25 +11518,26 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-
-                } else {
-
-                    if($customer_group->makeup_cost == 1){
-						if($setting->attributes==1)
-						{
-							if(isset($percent->percent)) {
-								$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-							}else {
+				} else {
+					if($row->type!='service'){
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
 								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
 							}
 						}
-					}else{
-						if($setting->attributes==1)
-						{
-							$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
-						}
 					}
-                }
+					
+				}
 
 
                 if($group_prices)
@@ -11601,7 +11602,6 @@ class Sales extends MY_Controller
 
     function suggestionsSale()
     {
-
         $term = $this->input->get('term', TRUE);
         $warehouse_id = $this->input->get('warehouse_id', TRUE);
         $customer_id = $this->input->get('customer_id', TRUE);
@@ -11734,22 +11734,25 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-				} else { 
-					if($customer_group->makeup_cost == 1 && $percent!=""){
-						if($setting->attributes==1)
-						{
-							if(isset($percent->percent)) {
-								$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-							}else {
+				} else {
+					if($row->type!='service'){
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
 								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
 							}
 						}
-					}else{
-						if($setting->attributes==1)
-						{
-							$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
-						}
 					}
+					
 				}
 				
 				if($group_prices)
@@ -11837,7 +11840,7 @@ class Sales extends MY_Controller
             $option = '';
         }
         $customer = $this->site->getCompanyByID($customer_id);
-        $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
+		$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting = $this->site->getUserSetting($this->session->userdata('user_id'));
         $rows = $this->sales_model->getProductNumber($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category, $category_id);
 		
@@ -11904,6 +11907,8 @@ class Sales extends MY_Controller
 				}else{
 					$row->expdate = NULL;
 				}
+				$setting = $this->sales_model->getSettings();
+				
 				if($row->subcategory_id)
 				{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,1);
@@ -11911,21 +11916,46 @@ class Sales extends MY_Controller
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
 				
-                if ($opt->price != 0) {
-					if($customer_group->makeup_cost == 1){
-						//$row->price = $row->cost + (($row->cost * $customer_group->percent) / 100);
-						$row->price = $row->cost + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+				if ($opt->price != 0) {
+					if($customer_group->makeup_cost == 1 && $percent!=""){
+						if($setting->attributes==1)
+						{
+							if(isset($percent->percent)) {
+								$row->price = ($row->cost*$opt->qty_unit)  + ((($row->cost*$opt->qty_unit)  * (isset($percent->percent)?$percent->percent:0)) / 100);
+							}else {
+								$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+							}
+						}
 					}else{
-						$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+						if($setting->attributes==1)
+						{
+							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+						}
 					}
-                } else {
-					if($customer_group->makeup_cost == 1){
-						//$row->price = $row->cost + (($row->cost * $customer_group->percent) / 100);
-						$row->price = $row->cost + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-					}else{
-						$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+				} else {
+					if($row->type!='service'){
+						
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
+								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+							}
+						}
 					}
-                }
+					
+					
+				}
+				
+				
 				
 				if($group_prices)
 				{
@@ -13017,8 +13047,9 @@ class Sales extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('gift_cards') . ".id as id, card_no, value, balance, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by, customer, expiry", FALSE)
+            ->select($this->db->dbprefix('gift_cards') . ".id as id, card_no, value, balance, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by, companies.name, expiry", FALSE)
             ->join('users', 'users.id=gift_cards.created_by', 'left')
+            ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
             ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
 		
