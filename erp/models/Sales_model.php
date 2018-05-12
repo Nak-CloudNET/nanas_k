@@ -3830,7 +3830,6 @@ class Sales_model extends CI_Model
 			if ($this->site->getReference('sp',$data['biller_id']) == $data['reference_no']) {
 				$this->site->updateReference('sp',$data['biller_id']);
 			}
-            
             $this->site->syncSalePayments($data['sale_id']);
             if ($data['paid_by'] == 'gift_card') {
                 $gc = $this->site->getGiftCardbyNO($data['cc_no']);
@@ -4021,7 +4020,13 @@ class Sales_model extends CI_Model
 		
 		if ($this->db->update('payments', $data, array('id' => $id))) {
             $this->site->syncSalePayments($data['sale_id']);
-            return $id;
+            
+			if ($data['paid_by'] == 'gift_card') {
+                $gc = $this->site->getGiftCardbyNO($data['cc_no']);
+                $this->db->update('gift_cards', array('balance' => ($gc->balance - $data['amount'])), array('card_no' => $data['cc_no']));
+            }
+			
+			return $id;
         }
         return false;
     }
