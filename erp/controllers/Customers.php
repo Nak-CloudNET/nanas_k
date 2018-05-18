@@ -77,7 +77,7 @@ class Customers extends MY_Controller
         $this->erp->checkPermissions('add', null, 'customers');
 
         $this->form_validation->set_rules('email', lang("email_address"), 'is_unique[companies.email]');
-        $this->form_validation->set_rules('code', lang("code"), 'required|is_unique[companies.code]');
+        $this->form_validation->set_rules('code', lang("plate_number"), 'required|is_unique[companies.code]');
 
         if ($this->form_validation->run('companies/add') == true) {
             $cg = $this->site->getCustomerGroupByID($this->input->post('customer_group'));
@@ -224,7 +224,11 @@ class Customers extends MY_Controller
                 'company' => $this->input->post('company'),             
                 'address' => $this->input->post('address'),
                 'phone' => $this->input->post('phone'),
-                'public_charge_id' => ''
+                'public_charge_id' => '',
+                'address_1' => $this->input->post('address1'),
+                'address_2' => $this->input->post('address2'),
+                'address_3' => $this->input->post('address3'),
+                'address_4' => $this->input->post('address4')
             );
             
             if ($_FILES['userfile']['size'] > 0) {

@@ -33,7 +33,7 @@
                 <div class="col-md-6">
 					<?php if($setting->show_company_code == 1) { ?>
 					<div class="form-group">
-                        <?= lang("code", "code"); ?>
+                        <?= lang("plate_number", "plate_number"); ?>
                         <?php
                             if (!empty($Settings->customer_code_prefix)) {
                                 $reference = $reference;
@@ -41,23 +41,23 @@
                                 $reference = substr($reference, 5);
                             }
                         ?>
-                        <?php echo form_input('code', $reference ? $reference : "",'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
+                        <?php echo form_input('code', "", 'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
                     </div>
 					<?php } ?>
                     <div class="form-group person">
                         <?= lang("name", "name"); ?>
                         <?php echo form_input('name', '', 'class="form-control tip" id="name" data-bv-notempty="true"'); ?>
-                    </div>			
-                    <div class="form-group company">
-                        <?= lang("company", "company"); ?>
-                        <?php echo form_input('company', '', 'class="form-control tip" id="company" '); ?>
+                    </div>
+                    <div class="form-group">
+                        <?= lang("series", "series"); ?>
+                        <?php echo form_input('address1', '', 'class="form-control" id="address1" '); ?>
+                    </div>
+                    <div class="form-group">
+                        <?= lang("price", "price"); ?>
+                        <?php echo form_input('address3', '', 'class="form-control" id="address3" '); ?>
                     </div>
                 </div>
-                <div class="col-md-6">                    
-                    <div class="form-group">
-                        <?= lang("email_address", "email_address"); ?>
-                        <input type="email" name="email" class="form-control" id="email_address"/>
-                    </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <?= lang("phone", "phone"); ?>
 						<?php echo form_input('phone', '', 'class="form-control" id="phone" type="tel"'); ?>
@@ -65,6 +65,14 @@
                     <div class="form-group">
                         <?= lang("address", "address"); ?> 
                         <?php echo form_input('address', '', 'class="form-control" id="address"'); ?>
+                    </div>
+                    <div class="form-group">
+                        <?= lang("brand", "brand"); ?>
+                        <?php echo form_input('address2', '', 'class="form-control" id="address2" '); ?>
+                    </div>
+                    <div class="form-group">
+                        <?= lang("color", "color"); ?>
+                        <?php echo form_input('address4', '', 'class="form-control" id="address4" '); ?>
                     </div>
                 </div>
             </div>
@@ -79,7 +87,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-    $('#name').focus();
+    $('#code').focus();
 
     // Ctrl + S = Save in add customer
     $(window).keypress(function(event) {

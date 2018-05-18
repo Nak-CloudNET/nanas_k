@@ -18,7 +18,7 @@
 
 
 $lang['add_customer']                   	= "Add Customer";
-$lang['edit_customer']                  	= "Edit Customer";
+$lang['update_customer'] = "Update Customer";
 $lang['delete_customer']                	= "Delete Customer";
 $lang['delete_customers']               	= "Delete Customers";
 $lang['customer_added']                 	= "Customer successfully added";
@@ -77,3 +77,9 @@ $lang['gps_coordinate']						= "GPS coordinate";
 $lang['facebook']							= "Facebook Account";
 $lang['line_telegram']						= "Line/Telegram";
 $lang['more_attachment']					= "Add More Attachment";
+$lang['plate_number'] = "Plate Number";
+$lang['series'] = "Series";
+$lang['brand'] = "Brand";
+$lang['price'] = "Price";
+$lang['color'] = "Color";
+$lang['edit_customer'] = "Edit Customer";

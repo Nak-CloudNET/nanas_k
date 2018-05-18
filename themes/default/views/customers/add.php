@@ -62,7 +62,7 @@
                 <div class="col-md-6">
 					<?php if($setting->show_company_code == 1) { ?>
 					<div class="form-group">
-                        <?= lang("code", "code"); ?>
+                        <?= lang("plate_number", "plate_number"); ?>
                         <?php
                             if (!empty($Settings->customer_code_prefix)) {
                                 $reference = $reference;
@@ -70,7 +70,7 @@
                                 $reference = substr($reference, 5);
                             }
                         ?>
-                        <?php echo form_input('code', $reference ? $reference : "",'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
+                        <?php echo form_input('code', "", 'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
                     </div>
 					<?php } ?>
                     <div class="form-group person">
@@ -99,64 +99,20 @@
 						<?php echo form_input('phone', '', 'class="form-control" id="phone" type="tel" data-bv-notempty="true" '); ?>
                     </div>
                     <div class="form-group">
-                        <?= lang("address", "address"); ?> <span style="float:right;"><button class="btn btn-sm btn-primary add_more">Add More</button></span>
+                        <?= lang("address", "address"); ?>
+                        <!--<span style="float:right;"><button class="btn btn-sm btn-primary add_more">Add More</button></span>-->
                         <?php echo form_input('address', '', 'class="form-control" id="address" data-bv-notempty="true"'); ?>
                     </div>
-					<div id="address_show" style="display:none;">
+                    <div id="address_show">
 						<div class="form-group">
-							<?= lang("address1", "address1"); ?> 
+                            <?= lang("series", "series"); ?>
 							<?php echo form_input('address1', '', 'class="form-control" id="address1" '); ?>
 						</div>
-						<div class="form-group">
-							<?= lang("address2", "address2"); ?> 
-							<?php echo form_input('address2', '', 'class="form-control" id="address2" '); ?>
-						</div>
-						<div class="form-group">
-							<?= lang("address3", "address3"); ?> 
-							<?php echo form_input('address3', '', 'class="form-control" id="address3" '); ?>
-						</div>
-						<div class="form-group">
-							<?= lang("address4", "address4"); ?> 
-							<?php echo form_input('address4', '', 'class="form-control" id="address4" '); ?>
-						</div>
-						<div class="form-group">
-							<?= lang("address5", "address5"); ?> 
-							<?php echo form_input('address5', '', 'class="form-control" id="address5" '); ?>
-						</div>
-					</div>
-					<div class="form-group">
-                        <?= lang("village", "village"); ?>
-                        <?php echo form_input('village', '', 'class="form-control" id="village"'); ?>
+                        <div class="form-group">
+                            <?= lang("price", "price"); ?>
+                            <?php echo form_input('address3', '', 'class="form-control" id="address3" '); ?>
+                        </div>
                     </div>
-					<div class="form-group">
-                        <?= lang("district", "district"); ?>
-                        <?php echo form_input('district', '', 'class="form-control" id="district"'); ?>
-                    </div>
-					<div class="form-group">
-                        <?= lang("state", "state"); ?>
-                        <?php echo form_input('state', '', 'class="form-control" id="state"'); ?>
-                    </div>
-                    <div class="form-group">
-                        <?= lang("country", "country"); ?>
-                        <?php echo form_input('country', '', 'class="form-control" id="country"'); ?>
-                    </div>
-					<?php if($setting->credit_limit == 1) {?>
-					 <div class="form-group">
-                        <?= lang("credit_limit", "credit_limit"); ?>
-                        <?php echo form_input('credit_limit', '', 'class="form-control" id="credit_limit"'); ?>
-                    </div>
-					<?php } ?>
-					
-					<div class="form-group"> <?php
-						echo lang("public_charge", "public_charge");
-						//$pub_c[""] = "Select Public Charge";
-						foreach ($public_charge as $pub_ch) {
-							$pub_c[$pub_ch->id] = $pub_ch->description;
-						}
-						echo form_dropdown('public_charge', $pub_c, '', 'class="form-control tip select" id="public_charge" multiple="multiple" style="width:100%;" placeholder="' . lang("select") . ' ' . lang("public_charge") . '" ');
-						?>
-					</div>
-				
                 </div>
                 <div class="col-md-6">
                     <!-- <div class="form-group">
@@ -195,8 +151,10 @@
                         <?= lang("identify_date", "identify_date"); ?>
                         <?php echo form_input('identify_date', isset($customer->identify_date)?$customer->identify_date:'', 'class="form-control date" id="identify_date"'); ?>
                     </div>
-                    <div class="form-group">
-                        <?= lang("attachment", "cf4"); ?><input class="file" id="attachment" type="file" name="userfile[]" multiple data-show-upload="true" data-show-upload="true" data-show-preview="true"
+                    <div class="form-group" style="margin-bottom: 24px">
+                        <?= lang("attachment", "cf4"); ?>
+                        <input class="file" id="attachment" type="file" name="userfile[]" multiple
+                               data-show-upload="true" data-show-upload="true" data-show-preview="true"
                        class="file">
 
                     </div>
@@ -205,36 +163,20 @@
                         <?php echo form_input('date_of_birth', isset($customer->date_of_birth)?date('d-m-Y', strtotime($customer->date_of_birth)):'', 'class="form-control date" id="datepicker date_of_birth"'); ?>
 
                     </div>
-                    <!--
-					<div class="form-group">
-                        <?= lang("start_date", "cf5"); ?> <?= lang("Ex: YYYY-MM-DD"); ?>
-                        <?php echo form_input('start_date', isset($customer->start_date)?date('d-m-Y', strtotime($customer->start_date)):'', 'class="form-control date" id="datepicker start_date"'); ?>
+                    <div class="form-group">
+                        <?= lang("brand", "brand"); ?>
+                        <?php echo form_input('address2', '', 'class="form-control" id="address2" '); ?>
                     </div>
                     <div class="form-group">
-                        <?= lang("end_date", "cf5"); ?> <?= lang("Ex: YYYY-MM-DD"); ?>
-                        <?php echo form_input('end_date', isset($customer->end_date)?date('d-m-Y', strtotime($customer->end_date)):'', 'class="form-control date" id="datepicker end_date"'); ?>
+                        <?= lang("color", "color"); ?>
+                        <?php echo form_input('address4', '', 'class="form-control" id="address4" '); ?>
                     </div>
-					-->
-					<div class="form-group">
-                        <?= lang("street_no", "street_no"); ?>
-                        <?php echo form_input('street', '', 'class="form-control" id="street"'); ?>
-                    </div>
-					<div class="form-group">
-                        <?= lang("sangkat", "sangkat"); ?>
-                        <?php echo form_input('sangkat', '', 'class="form-control" id="sangkat"'); ?>
-                    </div>
-                    <div class="form-group">
-                        <?= lang("city", "city"); ?>
-                        <?php echo form_input('city', '', 'class="form-control" id="city"'); ?>
-                    </div>
-                    <div class="form-group">
-                        <?= lang("postal_code", "postal_code"); ?>
-                        <?php echo form_input('postal_code', isset($customer->postal_code)?$customer->postal_code:'', 'class="form-control" id="postal_code"'); ?>
-					</div>
-					<div class="form-group">
-                        <?= lang("note", "note"); ?>
-                        <?php echo form_textarea('note', '', 'class="form-control skip" id="note" style="height:115px;"'); ?>
-                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 form-group">
+                    <?= lang("note", "note"); ?>
+                    <?php echo form_textarea('note', '', 'class="form-control skip" id="note" style="height:115px;"'); ?>
                 </div>
             </div>
 
@@ -249,10 +191,10 @@
 <?= $modal_js ?>
 <script type="text/javascript">
 $(document).ready(function(){
-
+    $('#code').focus();
 	$('body').on('click', '.add_more', function(e) {
 		  e.preventDefault();
-		$("#address_show").toggle();
+        //$("#address_show").toggle();
 	});
 
     $('#customer_group').on('change', function(e) {
