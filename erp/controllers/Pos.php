@@ -995,7 +995,8 @@ class Pos extends MY_Controller
 					if($pos->auto_delivery == 1){
 						$this->sales_model->addDelivery($dlDetails);
 					}
-                    redirect("pos/view/" . $sale['sale_id']);
+                    //$this->erp->print_arrays($sale);
+                    redirect("pos/view/" . $sale);
                     //redirect("pos/maman_invoice/" . $sale['sale_id']);
 					//redirect("sales/invoice_st_a5/" . $sale['sale_id']);
 					//redirect("pos/view_teatry/" . $sale['sale_id']);
@@ -2425,7 +2426,7 @@ class Pos extends MY_Controller
         if ($this->input->get('id')) {
             $sale_id = $this->input->get('id');
         }
-		
+
         $this->load->helper('text');
         $this->data['error'] 				= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $this->data['message'] 				= $this->session->flashdata('message');
