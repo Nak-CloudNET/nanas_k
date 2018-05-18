@@ -995,14 +995,8 @@ class Pos extends MY_Controller
 					if($pos->auto_delivery == 1){
 						$this->sales_model->addDelivery($dlDetails);
 					}
-                    //$this->erp->print_arrays($sale);
-                    redirect("pos/view/" . $sale);
-                    //redirect("pos/maman_invoice/" . $sale['sale_id']);
-					//redirect("sales/invoice_st_a5/" . $sale['sale_id']);
-					//redirect("pos/view_teatry/" . $sale['sale_id']);
-					//redirect("sales/sales_invoice_a5/" . $sale['sale_id']);
-					  
-					
+                    $s = $sale['sale_id'] ? $sale['sale_id'] : $sale;
+                    redirect("pos/view/" . $s);
                 }
                
             }
