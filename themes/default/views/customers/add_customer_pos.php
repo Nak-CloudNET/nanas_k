@@ -33,7 +33,7 @@
                 <div class="col-md-6">
 					<?php if($setting->show_company_code == 1) { ?>
 					<div class="form-group">
-                        <?= lang("plate_number", "plate_number"); ?>
+                        <?= lang("plate_number", "plate_number"); ?> <b>*</b>
                         <?php
                             if (!empty($Settings->customer_code_prefix)) {
                                 $reference = $reference;
@@ -46,7 +46,7 @@
 					<?php } ?>
                     <div class="form-group person">
                         <?= lang("name", "name"); ?>
-                        <?php echo form_input('name', '', 'class="form-control tip" id="name" data-bv-notempty="true"'); ?>
+                        <?php echo form_input('name', '', 'class="form-control tip" id="name"'); ?>
                     </div>
                     <div class="form-group">
                         <?= lang("series", "series"); ?>

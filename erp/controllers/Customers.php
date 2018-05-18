@@ -209,7 +209,7 @@ class Customers extends MY_Controller
        $this->erp->checkPermissions('add', null, 'customers');
 
         $this->form_validation->set_rules('email', lang("email_address"), 'is_unique[companies.email]');
-        $this->form_validation->set_rules('name', lang("customer_name"), 'trim|required');
+        $this->form_validation->set_rules('code', lang("plate_number"), 'required|is_unique[companies.code]');
 
         if ($this->form_validation->run('companies/add') == true) {
             $cg = $this->site->getCustomerGroupByID($this->input->post('customer_group'));
@@ -541,7 +541,7 @@ class Customers extends MY_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('company', 'code', 'name','email', 'phone', 'address', 'city', 'state', 'postal_code', 'country','group_areas_id', 'customer_group_id','vat_no', 'cf1', 'cf2', 'cf3', 'cf4', 'cf5', 'cf6');
+                $keys = array('code', 'name', 'email', 'phone', 'group_areas_id', 'customer_group_id', 'vat_no', 'address', 'address_1', 'address_2', 'address_3', 'address_4');
                 $final = array();
                 foreach ($arrResult as $key => $value) {
                     $final[] = array_combine($keys, $value);
