@@ -41,7 +41,7 @@
             }, {"mRender": center}, ((site.settings.show_company_code == 1)? null : {"bVisible": false}), null, null, null, null, null, null, null,null, null, null,  {"bSortable": false}]
         }).dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('no');?>]", filter_type: "text", data: []},
-			{column_number: 2, filter_default_label: "[<?=lang('code');?>]", filter_type: "text", data: []},
+            {column_number: 2, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('name');?>]", filter_type: "text", data: []},
             {column_number: 5, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
@@ -142,7 +142,7 @@
                                 <input class="checkbox checkth" type="checkbox" name="check"/>
                             </th>
 							<th><?= lang("no"); ?></th>
-							<th><?= lang("code"); ?></th>
+                            <th><?= lang("plate_number"); ?></th>
                             <th><?= lang("company"); ?></th>
                             <th><?= lang("name"); ?></th>
                             <th><?= lang("email_address"); ?></th>
