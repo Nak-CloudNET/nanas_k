@@ -516,11 +516,13 @@ class Erp
 
     public function update_award_points($total, $customer, $user, $scope = null, $saleman = NULL)
     {
+		$limit_points = floatval($this->Settings->limit_points);
         if (!empty($this->Settings->each_spent) && $total >= $this->Settings->each_spent) {
             $company = $this->site->getCompanyByID($customer);
             $points = floor(($total / $this->Settings->each_spent) * $this->Settings->ca_point);
-            $total_points = $scope ? $company->award_points - $points : $company->award_points + $points;
-            $this->db->update('companies', array('award_points' => $total_points), array('id' => $customer));
+			$total_points = $company->award_points + $points;
+			$this->db->update('companies', array('award_points' => $total_points,'last_updated_points'=>$points), array('id' => $customer));
+				
         }
         if($saleman){
             if (!empty($this->Settings->each_sale) && !$this->Customer && $total >= $this->Settings->each_sale) {

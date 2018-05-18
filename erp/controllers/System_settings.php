@@ -204,7 +204,9 @@ class system_settings extends MY_Controller
 				'increase_stock_import' 			=> $this->input->post('increase_stock_import'),
 				'member_card_expiry' 				=> $this->input->post('member_card_expiry'),
 				'tax_calculate' 					=> $this->input->post('tax_calculate'),
-				'business_type'						=> $this->input->post('business_type')
+				'business_type'						=> $this->input->post('business_type'),
+                'limit_points'                       => $this->input->post('limit_point'),
+                'increament'                       => $this->input->post('increament'),
             );
             //$this->erp->print_arrays($data);
             if ($this->input->post('smtp_pass')) {

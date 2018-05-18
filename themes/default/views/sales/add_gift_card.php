@@ -68,6 +68,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="control-label"
+                       for="customer_group"><?= lang("default_customer_group"); ?></label>
+
+                <div class="controls"> <?php
+                    foreach ($customer_groups as $customer_group) {
+                        $cgs[$customer_group->id] = $customer_group->name;
+                    }
+                    echo form_dropdown('customer_group', $cgs, $Settings->customer_group, 'class="form-control tip" id="customer_group" style="width:100%;" required="required"');
+                    ?>
+                </div>
+            </div>
+
 			
 			<?php if($Settings->member_card_expiry) { ?>
 				<div class="form-group">

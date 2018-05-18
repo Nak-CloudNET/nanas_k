@@ -337,3 +337,6 @@ $lang['default_biller']                 			= "អកំណត់្នកចេ�
 $lang['no']                 							= "ទេ";
 $lang['yes']                 						= "បាទ";
 $lang['suppend_layout']                 		= "ប្លង់បន្ទប់";
+$lang["increament"] = "ការកេីនឡេីង";
+$lang["member_ship_card"] = "កាតសមាជិក";
+$lang["limit_point"] = "ការកំនត់ points";

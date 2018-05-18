@@ -750,6 +750,7 @@ class Pos extends MY_Controller
 			$kh_paid 	= false;
             $pos_b      = 0;
             if (!$suspend) {
+				
                 $p 		= isset($_POST['amount']) ? sizeof($_POST['amount']) : 0;
 				$p_cur 	= isset($_POST['other_cur_paid']) ? sizeof($_POST['other_cur_paid']) : 0;
 
@@ -758,12 +759,14 @@ class Pos extends MY_Controller
 					$pos_b      += $this->erp->formatDecimal(($_POST['amount'][$r] + ($_POST['other_cur_paid'][$r]/$cur_rate->rate)));
 					$paid       = ($_POST['amount'][$r] + ($_POST['other_cur_paid'][$r]/$cur_rate->rate));
                     $pos_balance= $g_total - $this->erp->formatDecimal($pos_b);
+					
                     if ($pos_b < $g_total) {
                         $amount = $paid;
                     } else {
                         $amount = $g_total - ($pos_b - $paid);
                     }
-
+					
+					
                     $payment[] = array(
                         'biller_id'				=> $biller_id,
                         'date' 					=> $date,
@@ -939,6 +942,7 @@ class Pos extends MY_Controller
                 }
 				
             } else {
+				
 				$data['payment_status'] = $payment_status;
 
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did, $loans, $combine_table_id)) {

@@ -529,3 +529,6 @@ $lang["delete_prices"] = "Delete Prices";
 $lang["group_product_prices"] = "Group Product Prices";
 $lang["edit_price_group"] = "Edit Price Group";
 $lang["delete_price_group"] = "Delete Price Group";
+$lang["limit_point"] = "Limit Point";
+$lang["increament"] = "Increament";
+$lang["member_ship_card"] = "Member Ship Card";

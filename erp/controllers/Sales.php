@@ -82,6 +82,7 @@ class Sales extends MY_Controller
     
 	function index($warehouse_id = NULL)
     {
+		
         $this->erp->checkPermissions('index',null, 'sales');
         $this->load->model('reports_model');
          
@@ -4132,7 +4133,7 @@ class Sales extends MY_Controller
 			$credit         = (int)($amount_limit->amount) + (int)($total);
 			$setting_credit = $this->Settings->credit_limit;
 			
-			if ($setting_credit == 1 && $credit > $amount_limit->credit_limited && $amount_limit->credit_limit > 0) {
+			if ($setting_credit == 1 && $credit > $amount_limit->credit_limited && $amount_limit->credit_limited > 0) {
 				$this->session->set_flashdata('error', lang("credit_limit_required"));
 				redirect($_SERVER["HTTP_REFERER"]);
 			}
@@ -4188,6 +4189,7 @@ class Sales extends MY_Controller
             );
 			
             if ($payment_status == 'partial' || $payment_status == 'paid') {
+				
 				if ($this->input->post('payment_date')) {
                     $payment_date = $this->erp->fld($this->input->post('payment_date'));
 				} else {
@@ -4265,6 +4267,7 @@ class Sales extends MY_Controller
 				}
 				
             } else {
+				
                 $payment = array();
             }
             
@@ -4336,6 +4339,7 @@ class Sales extends MY_Controller
 		
         if ($this->form_validation->run() == true) {
 			$sale_id = $this->sales_model->addSale($data, $products, $payment, $loans, $delivery_update);
+			
 			if($sale_id > 0){
 				//add deposit
 				if($paid_by == "deposit"){
@@ -5757,6 +5761,7 @@ class Sales extends MY_Controller
 
     function edit($id = NULL)
     {
+		
         $this->erp->checkPermissions('edit',null,'sales');
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
@@ -9720,6 +9725,7 @@ class Sales extends MY_Controller
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
         if ($this->form_validation->run() == true) {
+			
             if ($this->Owner || $this->Admin) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
@@ -9777,6 +9783,7 @@ class Sales extends MY_Controller
 				'add_payment' => '1',
 				'bank_account' => $this->input->post('bank_account')
             );
+			
 
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
@@ -11496,8 +11503,7 @@ class Sales extends MY_Controller
 				}
 			
                 if ($opt->price != 0) {
-
-                    if($customer_group->makeup_cost == 1){
+					if($customer_group->makeup_cost == 1 && $percent!=""){
 						if($setting->attributes==1)
 						{
 							if(isset($percent->percent)) {
@@ -11512,25 +11518,26 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-
-                } else {
-
-                    if($customer_group->makeup_cost == 1){
-						if($setting->attributes==1)
-						{
-							if(isset($percent->percent)) {
-								$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-							}else {
+				} else {
+					if($row->type!='service'){
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
 								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
 							}
 						}
-					}else{
-						if($setting->attributes==1)
-						{
-							$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
-						}
 					}
-                }
+					
+				}
 
 
                 if($group_prices)
@@ -11595,7 +11602,6 @@ class Sales extends MY_Controller
 
     function suggestionsSale()
     {
-
         $term = $this->input->get('term', TRUE);
         $warehouse_id = $this->input->get('warehouse_id', TRUE);
         $customer_id = $this->input->get('customer_id', TRUE);
@@ -11728,22 +11734,25 @@ class Sales extends MY_Controller
 							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
 						}
 					}
-				} else { 
-					if($customer_group->makeup_cost == 1 && $percent!=""){
-						if($setting->attributes==1)
-						{
-							if(isset($percent->percent)) {
-								$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-							}else {
+				} else {
+					if($row->type!='service'){
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
 								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
 							}
 						}
-					}else{
-						if($setting->attributes==1)
-						{
-							$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
-						}
 					}
+					
 				}
 				
 				if($group_prices)
@@ -11831,7 +11840,7 @@ class Sales extends MY_Controller
             $option = '';
         }
         $customer = $this->site->getCompanyByID($customer_id);
-        $customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
+		$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting = $this->site->getUserSetting($this->session->userdata('user_id'));
         $rows = $this->sales_model->getProductNumber($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category, $category_id);
 		
@@ -11898,6 +11907,8 @@ class Sales extends MY_Controller
 				}else{
 					$row->expdate = NULL;
 				}
+				$setting = $this->sales_model->getSettings();
+				
 				if($row->subcategory_id)
 				{
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,1);
@@ -11905,21 +11916,46 @@ class Sales extends MY_Controller
 					$percent = $this->sales_model->getCustomerMakup($customer->customer_group_id,$row->id,0);
 				}
 				
-                if ($opt->price != 0) {
-					if($customer_group->makeup_cost == 1){
-						//$row->price = $row->cost + (($row->cost * $customer_group->percent) / 100);
-						$row->price = $row->cost + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+				if ($opt->price != 0) {
+					if($customer_group->makeup_cost == 1 && $percent!=""){
+						if($setting->attributes==1)
+						{
+							if(isset($percent->percent)) {
+								$row->price = ($row->cost*$opt->qty_unit)  + ((($row->cost*$opt->qty_unit)  * (isset($percent->percent)?$percent->percent:0)) / 100);
+							}else {
+								$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+							}
+						}
 					}else{
-						$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+						if($setting->attributes==1)
+						{
+							$row->price = $opt->price + (($opt->price * $customer_group->percent) / 100);
+						}
 					}
-                } else {
-					if($customer_group->makeup_cost == 1){
-						//$row->price = $row->cost + (($row->cost * $customer_group->percent) / 100);
-						$row->price = $row->cost + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
-					}else{
-						$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+				} else {
+					if($row->type!='service'){
+						
+						if($customer_group->makeup_cost == 1 && $percent!=""){
+							if($setting->attributes==1)
+							{
+								if(isset($percent->percent)) {
+									$row->price = $row->cost  + (($row->cost * (isset($percent->percent)?$percent->percent:0)) / 100);
+								}else {
+									$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+								}
+							}
+						}else{
+							if($setting->attributes==1)
+							{
+								$row->price = $row->price + (($row->price * $customer_group->percent) / 100);
+							}
+						}
 					}
-                }
+					
+					
+				}
+				
+				
 				
 				if($group_prices)
 				{
@@ -12999,7 +13035,6 @@ class Sales extends MY_Controller
     function gift_cards()
     {
         $this->erp->checkPermissions();
-
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
 
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('gift_cards')));
@@ -13012,8 +13047,9 @@ class Sales extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('gift_cards') . ".id as id, card_no, value, balance, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by, customer, expiry", FALSE)
+            ->select($this->db->dbprefix('gift_cards') . ".id as id, card_no, value, balance, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by, companies.name, expiry", FALSE)
             ->join('users', 'users.id=gift_cards.created_by', 'left')
+            ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
             ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
 		
@@ -13285,13 +13321,14 @@ class Sales extends MY_Controller
     function add_gift_card()
     {
         $this->erp->checkPermissions();
-
         $this->form_validation->set_rules('card_no', lang("card_no"), 'trim|is_unique[gift_cards.card_no]|required');
         $this->form_validation->set_rules('value', lang("value"), 'required');
 
         if ($this->form_validation->run() == true) {
             $customer_details = $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
             $customer = $customer_details ? $customer_details->company : NULL;
+            $customer_group_id = $this->input->post('customer_group');
+            $customer_group_name = $this->sales_model->getCustomerGroupByID($customer_group_id)->name;
             $data = array(
 				'card_no' 		=> $this->input->post('card_no'),
                 'value' 		=> $this->input->post('value'),
@@ -13299,11 +13336,14 @@ class Sales extends MY_Controller
                 'customer' 		=> $customer,
                 'balance' 		=> $this->input->post('value'),
                 'expiry' 		=> $this->input->post('expiry') ? $this->erp->fsd($this->input->post('expiry')) : NULL,
-                'created_by' 	=> $this->session->userdata('user_id')
+                'created_by' 	=> $this->session->userdata('user_id'),
+                'customer_group_id' => $this->input->post('customer_group'),
+                'customer_group_name' => $customer_group_name
             );
             $sa_data = array();
             $ca_data = array();
             if ($this->input->post('staff_points')) {
+
                 $sa_points 	= $this->input->post('sa_points');
                 $user 		= $this->site->getUser($this->input->post('user'));
                 if ($user->award_points < $sa_points) {
@@ -13312,6 +13352,7 @@ class Sales extends MY_Controller
                 }
                 $sa_data 	= array('user' => $user->id, 'points' => ($user->award_points - $sa_points));
             } elseif ($customer_details && $this->input->post('use_points')) {
+
                 $ca_points 	= $this->input->post('ca_points');
                 if ($customer_details->award_points < $ca_points) {
                     $this->session->set_flashdata('error', lang("award_points_wrong"));
@@ -13328,6 +13369,7 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('message', lang("gift_card_added"));
             redirect("sales/gift_cards");
         } else {
+            $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['modal_js'] = $this->site->modal_js();
             $this->data['users'] = $this->sales_model->getStaff();
@@ -13340,7 +13382,6 @@ class Sales extends MY_Controller
     {
         $this->erp->checkPermissions(false, true);
         $this->form_validation->set_rules('card_no', lang("card_no"), 'trim|required');
-		
         $gc_details = $this->site->getGiftCardByID($id);
 		
         if ($this->input->post('card_no') != $gc_details->card_no) {
@@ -13352,12 +13393,17 @@ class Sales extends MY_Controller
             $gift_card 			= $this->site->getGiftCardByID($id);
             $customer_details 	= $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
             $customer 			= $customer_details ? $customer_details->company : NULL;
+            $customer_group_id = $this->input->post('customer_group');
+            $customer_group_name = $this->sales_model->getCustomerGroupByID($customer_group_id)->name;
+
             $data = array(
 				'card_no' 		=> $this->input->post('card_no'),
                 'value' 		=> $this->input->post('value'),
                 'customer_id' 	=> $this->input->post('customer') ? $this->input->post('customer') : NULL,
                 'customer' 		=> $customer,
                 'balance' 		=> ($this->input->post('value') - $gift_card->value) + $gift_card->balance,
+                'customer_group_id' => $this->input->post('customer_group'),
+                'customer_group_name' => $customer_group_name,
                 'expiry' 		=> $this->input->post('expiry') ? $this->erp->fsd($this->input->post('expiry')) : NULL,
             );
         } elseif ($this->input->post('edit_gift_card')) {
@@ -13371,7 +13417,8 @@ class Sales extends MY_Controller
         } else {
             $this->data['error'] 		= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['gift_card'] 	= $this->site->getGiftCardByID($id);
-			
+            //$this->erp->print_arrays($this->site->getGiftCardByID($id));
+            $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['id'] 			= $id;
             $this->data['modal_js'] 	= $this->site->modal_js();
             $this->load->view($this->theme . 'sales/edit_gift_card', $this->data);

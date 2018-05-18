@@ -592,7 +592,14 @@ class Products_model extends CI_Model
             return $q->row();
         }
 	}
-	
+    public function getVariantNameByArrayId($option_id)
+    {
+        $this->db->where_in('id',$option_id);
+        $q = $this->db->get('product_variants');
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+    }
 	public function getVariantNameById($option_id)
 	{
 		$q = $this->db->get_where('variants', array('id' => $option_id), 1);
