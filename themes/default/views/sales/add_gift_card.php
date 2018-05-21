@@ -82,7 +82,6 @@
                 </div>
             </div>
 
-			
 			<?php if($Settings->member_card_expiry) { ?>
 				<div class="form-group">
 					<?= lang("expiry_date", "expiry"); ?>

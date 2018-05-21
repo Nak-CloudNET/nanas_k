@@ -40,6 +40,7 @@
                     <ul class="dropdown-menu pull-right" class="tasks-menus" role="menu" aria-labelledby="dLabel">
                         
 						<?php if ($Owner || $Admin) { ?>
+
 							<li><a href="<?php echo site_url('sales/add_gift_card'); ?>" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i> <?= lang('add_gift_card') ?></a></li>
 							<li><a href="#" id="excel" data-action="export_excel"><i class="fa fa-file-excel-o"></i> <?= lang('export_to_excel') ?></a></li>
 							<li><a href="#" id="pdf" data-action="export_pdf"><i class="fa fa-file-pdf-o"></i> <?= lang('export_to_pdf') ?></a></li>
@@ -49,7 +50,9 @@
 									<span class="text"> <?= lang('import_gift_card'); ?></span>
 								</a>
 							</li>
+
 						<?php }else{ ?>
+
 							<?php  if($GP['sales-add_gift_card']){ ?>
 								<li><a href="<?php echo site_url('sales/add_gift_card'); ?>" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i> <?= lang('add_gift_card') ?></a></li>
 							<?php } ?>
@@ -58,7 +61,6 @@
 								<li><a href="#" id="excel" data-action="export_excel"><i class="fa fa-file-excel-o"></i> <?= lang('export_to_excel') ?></a></li>
 								<li><a href="#" id="pdf" data-action="export_pdf"><i class="fa fa-file-pdf-o"></i> <?= lang('export_to_pdf') ?></a></li>
 							<?php }?>
-							
 							<?php if($GP['sales-import_gift_card']) { ?>
 								<li>
 									<a href="<?= site_url('sales/import_gift_card'); ?>">
@@ -67,7 +69,6 @@
 									</a>
 								</li>
 							<?php } ?>
-							
 						<?php }?>
 						
                         <li class="divider"></li>
