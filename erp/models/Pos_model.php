@@ -426,6 +426,8 @@ class Pos_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
+
+
         $this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -562,11 +564,13 @@ class Pos_model extends CI_Model
                                     $msg[] = '<p class="text-danger">' . $result['code'] . ': ' . $result['message'] . '</p>';
                                 }
                             } else {
-								
+
                                 if ($payment['paid_by'] == 'gift_card') {
-									$customer = $this->sales_model->getCustomerGifCard($data['customer_id']);
-									$balance = $customer->balance - $payment['amount'];
-                                    $this->db->update('gift_cards', array('balance' => $balance), array('card_no' => $payment['cc_no']));
+                                    $gc = $this->site->getGiftCardbyNO($payment['cc_no']);
+                                    $this->db->update('gift_cards', array('balance' => ($gc->balance - $payment['amount'])), array('card_no' => $payment['cc_no']));
+                                    if($this->db->affected_rows()){
+                                        $this->increase_award_points($payment,$data['customer_id']);
+                                    }
                                 }
 								
                                 unset($payment['cc_cvv2']);
@@ -610,23 +614,9 @@ class Pos_model extends CI_Model
                 }
             }
 
-            if ($data['sale_status'] != 'order') {
-                $limit_points = floatval($this->Settings->limit_points);
-				if($data['grand_total'] > $limit_points){
-					if($this->Settings->increament == 1){
-						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-						return $sale_id;
-					}else{
-						
-						$data['grand_total'] = $data['grand_total'] - $limit_points;
-						
-						$this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-						return $sale_id;
-					}
-				}
-            }
             return array('sale_id' => $sale_id, 'message' => $msg);
         }
+
         return false;
     }
 
@@ -2155,6 +2145,22 @@ class Pos_model extends CI_Model
             return true;
         }
         return false;
+    }
+
+    public function increase_award_points($payment,$customer_id){
+
+        $limit_points = floatval($this->Settings->limit_points);
+        if($payment['amount'] >= $limit_points){
+            if($this->Settings->increament == 1){
+                $this->erp->update_award_points($payment['amount'], $customer_id, $payment['created_by'], NULL ,$payment['created_by']);
+                return true;
+            }else{
+                $payment['amount'] = $payment['amount'] - $limit_points;
+                $this->erp->update_award_points($payment['amount'], $customer_id, $payment['created_by'], NULL ,$payment['saleman_by']);
+                return true;
+            }
+        }
+
     }
 
 
