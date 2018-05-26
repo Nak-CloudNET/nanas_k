@@ -556,10 +556,18 @@ class Customers extends MY_Controller
                 
                 foreach ($final as $record) {
                     $customer_group = $this->site->get_customer_groups($record['customer_group_id']);
+                    $customers = $this->site->getAllCustomers();
                     $record['group_id'] = 3;
                     $record['group_name'] = 'customer';
                     $record['customer_group_id'] = $customer_group->id;
                     $record['customer_group_name'] = $customer_group->name;
+
+                    foreach ($customers as $cus) {
+                        if ($record['code'] == $cus->plate_number) {
+                            $this->session->set_flashdata('error', 'Plate Number : ' . $cus->plate_number . ' is already exist!');
+                            redirect("customers");
+                        }
+                    }
 
                     if ($arrResult[0][1] != '') {
                             $record['code'] = $record['code'];

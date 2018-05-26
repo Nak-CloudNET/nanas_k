@@ -568,7 +568,21 @@ class Site extends CI_Model
             return $data;
         }
         return FALSE;
-	}
+    }
+
+    public function getAllCustomers()
+    {
+        $this->db->select("id,code as plate_number");
+        $this->db->where('group_name', 'customer');
+        $q = $this->db->get('companies');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 	
 	public function getCustomerSale()
 	{
