@@ -9782,6 +9782,7 @@ class Sales extends MY_Controller
 				'deposit_customer_id' => $this->input->post('customer'),
 				'add_payment' => '1',
 				'bank_account' => $this->input->post('bank_account')
+
             );
 			
 
@@ -9826,7 +9827,8 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect($_SERVER["HTTP_REFERER"]);
         }
-        if ($this->form_validation->run() == true && $payment_id = $this->sales_model->addPayment($payment)) {
+
+        if ($this->form_validation->run() == true && $payment_id = $this->sales_model->addPayment($payment,$customer_id)) {
 			if($payment_id > 0) {
 				//add deposit
 				if($paid_by == "deposit"){
@@ -13051,7 +13053,7 @@ class Sales extends MY_Controller
             ->join('users', 'users.id=gift_cards.created_by', 'left')
             ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
-            ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
+            ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='" . site_url('sales/add_amount_gift_card/$1') . "' class='tip' title='" . lang("add_amount_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-plus\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
 		
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');
@@ -19725,4 +19727,70 @@ function invoice_concrete_angkor($id=null)
         $this->data['rows'] = $this->sales_model->getSaleItemsBySaleId($inv->id);
         $this->load->view($this->theme .'sales/invoice_jessica_shop',$this->data);
     }
+
+    function add_amount_gift_card()
+    {
+        $this->erp->checkPermissions();
+        $this->form_validation->set_rules('card_no', lang("card_no"), 'required');
+        $this->form_validation->set_rules('value', lang("value"), 'required');
+
+        if ($this->form_validation->run() == true) {
+            $customer_details = $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
+            $customer = $customer_details ? $customer_details->company : NULL;
+            $customer_group_id = $this->input->post('customer_group');
+            $customer_group_name = $this->sales_model->getCustomerGroupByID($customer_group_id)->name;
+
+            $data = array(
+                'card_no' 		=> $this->input->post('card_no'),
+                'value' 		=> $this->input->post('value'),
+                'customer_id' 	=> $this->input->post('customer') ? $this->input->post('customer') : NULL,
+                'customer' 		=> $customer,
+                'balance' 		=> $this->input->post('value'),
+                'expiry' 		=> $this->input->post('expiry') ? $this->erp->fsd($this->input->post('expiry')) : NULL,
+                'created_by' 	=> $this->session->userdata('user_id'),
+                'customer_group_id' => $this->input->post('customer_group'),
+                'customer_group_name' => $customer_group_name
+
+            );
+            $sa_data = array();
+            $ca_data = array();
+            /*
+            $sa_data = array();
+            $ca_data = array();
+            if ($this->input->post('staff_points')) {
+
+                $sa_points 	= $this->input->post('sa_points');
+                $user 		= $this->site->getUser($this->input->post('user'));
+                if ($user->award_points < $sa_points) {
+                    $this->session->set_flashdata('error', lang("award_points_wrong"));
+                    redirect("sales/gift_cards");
+                }
+                $sa_data 	= array('user' => $user->id, 'points' => ($user->award_points - $sa_points));
+            } elseif ($customer_details && $this->input->post('use_points')) {
+
+                $ca_points 	= $this->input->post('ca_points');
+                if ($customer_details->award_points < $ca_points) {
+                    $this->session->set_flashdata('error', lang("award_points_wrong"));
+                    redirect("sales/gift_cards");
+                }
+                $ca_data 	= array('customer' => $customer_details->id, 'points' => ($customer_details->award_points - $ca_points));
+            }
+            */
+
+        }
+
+        if ($this->form_validation->run() == true && $this->sales_model->add_amount_gift_card($data)) {
+            $this->session->set_flashdata('message', lang("gift_card_updated"));
+            redirect("sales/gift_cards");
+        } else {
+            $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
+            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->data['users'] = $this->sales_model->getStaff();
+            $this->data['page_title'] = lang("new_gift_card");
+            $this->load->view($this->theme . 'sales/add_amount_gift_card', $this->data);
+        }
+    }
+
+
 }
