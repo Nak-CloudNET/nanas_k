@@ -7013,7 +7013,7 @@ public function getRielCurrency(){
     public function increase_award_points($payment,$customer_id){
 
         $limit_points = floatval($this->Settings->limit_points);
-        if($payment['amount'] > $limit_points){
+        if($payment['amount'] >= $limit_points){
             if($this->Settings->increament == 1){
                 $this->erp->update_award_points($payment['amount'], $customer_id, $payment['created_by'], NULL ,$payment['created_by']);
                 return true;

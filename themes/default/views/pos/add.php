@@ -388,7 +388,7 @@ if ($q->num_rows() > 0) {
 							</div>
 							<?php if ($Owner || $Admin || $GP['sales-add_gift_card']) { ?>
 							<div class="btn-group">
-								<button style="" class="btn btn-primary pos-tip" type="button" id="sellGiftCard" title="<?= lang('sell_gift_card') ?>">
+								<button style="" class="btn btn-primary pos-tip" type="button" id="sellGiftCard" title="<?= lang('sell_gift_cards') ?>">
 									<i class="fa fa-credit-card" id="addIcon"></i> <?= lang('sell_gift_card') ?>
 								</button>
 							</div>
@@ -956,11 +956,13 @@ if ($q->num_rows() > 0) {
                                                 </button>
                                             </div>
                                             <?php if ($Owner || $Admin || $GP['sales-add_gift_card']) { ?>
-                                            <div class="btn-group">
+                                                <!--
+                                                <div class="btn-group">
                                                 <button style="z-index:10003;" class="btn btn-primary pos-tip" type="button" id="sellGiftCard" title="<?= lang('sell_gift_card') ?>">
                                                     <i class="fa fa-credit-card" id="addIcon"></i> <?= lang('sell_gift_card') ?>
                                                 </button>
-                                            </div>
+                                                </div>
+                                                -->
                                             <?php } ?>
                                             <div class="btn-group">
                                                 <button style="z-index:10004;" class="btn btn-primary pos-tip" title="<?= lang('next') ?>" type="button" id="next">
@@ -3105,8 +3107,10 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		}
 
 		$('#posbiller').change(function(){
+
 			$('#biller').val($(this).val());
 			var id = $(this).val();
+
 			$.ajax({
             url: '<?= base_url() ?>sales/getReferenceByProject/pos/'+id,
             dataType: 'json',
@@ -3117,7 +3121,29 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					$("#slref").prop('readonly', true);
 				}
 			});
-		});
+
+
+            var customer_id = $("#poscustomer").val();
+            $.ajax({
+                type: "get",
+                async: false,
+                data: {'customer_id': customer_id},
+                url: site.base_url + "pos/getCustomerMemberCard/",
+                dataType: "json",
+                success: function (data) {
+                    if(data){
+                        $('.paid_by').val('gift_card');
+                        $('.paid_by').trigger('change');
+                        $('.gift_card_no').val(data.card_no);
+                        $('.gift_card_no').trigger('change');
+                    }
+
+                }
+            });
+
+
+
+        });
 
 		$('#saleman').change(function(){
 			$('#saleman_1').val($(this).val());
@@ -3210,6 +3236,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		<?php }
 		?>
         $('#payment').click(function () {
+
             var GP = '<?= $GP['sales-discount'];?>';
 			var Owner = '<?= $Owner?>';
 			var Admin = '<?= $Admin?>';
@@ -3503,6 +3530,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             // set balance to zero when clear cash
             $('#balance, .curr_balance, .currencies_payment').html('0');
         });
+
 
         $(document).on('change', '.gift_card_no', function () {
             var cn = $(this).val() ? $(this).val() : '';
@@ -6546,9 +6574,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		}
 
         $(document).on('change', '.paid_by', function () {
+            var gift_card = $('.gift_card_no').val();
+            if(gift_card){
+                $('.gift_card_no').trigger('change');
+            }
             var p_val = $(this).val(),
                 id = $(this).attr('id'),
                 pa_no = id.substr(id.length - 1);
+
             $('#rpaidby').val(p_val);
             if (p_val == 'cash' || p_val == 'other') {
                 $('.pcheque_' + pa_no).hide();
