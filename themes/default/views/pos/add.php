@@ -822,6 +822,7 @@ if ($q->num_rows() > 0) {
 								<input type="hidden" name="suspend_room" value="" id="suspend_room1">
 								<input type="hidden" name="suppend_name" value="<?= isset($suppend_name);?>">
 								<input type="hidden" name="pos_date" value="" id="pos_date">
+                                <input type="hidden" name="plate_number" id="plate_number" value=""/>
 
                                 <div id="payment-con">
                                     <?php for ($i = 1; $i <= 5; $i++) { ?>
@@ -3242,10 +3243,11 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var Admin = '<?= $Admin?>';
 			var user_log = '<?= $this->session->userdata('user_id');?>';
 
-			if(__getItem('addre')){
-				//$("#sale_note").attr("value", __getItem('addre'));
-				//var nott = $("#sale_note").val();
-				//__setItem('nott',nott);
+            // Get value from radio button of Plate Number
+            if (__getItem('pnumber')) {
+                $("#plate_number").attr("value", __getItem('pnumber'));
+                var pnumber = $("#plate_number").val();
+                __setItem('pnumber', pnumber);
 			}
 
 			if(Owner || Admin || (GP == 1)){
@@ -7139,10 +7141,11 @@ $(document).ready(function(){
         return false;
     });
 
-	$('body').on('change', '#addr,#addr1,#addr2,#addr3,#addr4,#addr5', function(e) {
+    // Set value to localstorage for Plate Number
+    $('body').on('change', '#plate_number,#plate_number_2,#plate_number_3,#plate_number_4,#plate_number_5', function (e) {
 		  e.preventDefault();
-		  var addr = $(this).val();
-			__setItem('addre',addr);
+        var plate_number = $(this).val();
+        __setItem('pnumber', plate_number);
 	});
 
     $('#submit-sale').click(function() {

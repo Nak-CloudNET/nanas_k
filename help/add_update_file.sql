@@ -17,3 +17,7 @@ ADD COLUMN `plate_number_2` varchar(55) NULL AFTER `plate_number`;
 ADD COLUMN `plate_number_3` varchar(55) NULL AFTER `plate_number_2`;
 ADD COLUMN `plate_number_4` varchar(55) NULL AFTER `plate_number_3`;
 ADD COLUMN `plate_number_5` varchar(55) NULL AFTER `plate_number_4`;
+
+/* 29-05-2018 By Chanthy */
+ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_sales` 
+ADD COLUMN `plate_number` varchar(55) NULL AFTER `start_date`;

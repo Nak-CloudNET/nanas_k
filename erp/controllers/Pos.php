@@ -433,6 +433,8 @@ class Pos extends MY_Controller
             $total_items 		= $this->input->post('total_items');
             $sale_status        = $this->input->post('sale_status');
             $bank_account = $this->input->post('bank_account');
+            $plate_number = $this->input->post('plate_number');
+
             $payment_status 	= 'due';
             $payment_term 		= 0;
             $due_date 			= date('Y-m-d', strtotime('+' . $payment_term . ' days'));
@@ -719,7 +721,8 @@ class Pos extends MY_Controller
 				'saleman_by'        => $saleman_id,
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
-				'queue'             => $query
+                'queue' => $query,
+                'plate_number' => $plate_number
             );
             
 			if($_POST['paid_by'][0] == 'depreciation'){
@@ -788,97 +791,7 @@ class Pos extends MY_Controller
                         'pos_paid_other_rate' 	=> $cur_rate->rate,
                         'bank_account' 			=> $bank_account[$r]
                     );
-
-                    /*if (isset($_POST['amount'][$r]) && !empty($_POST['amount'][$r]) && isset($_POST['paid_by'][$r]) && !empty($_POST['paid_by'][$r])  ) {
-						if(strpos($_POST['amount'][$r], '-') !== false){
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($amount),
-								'paid_by' 				=> $_POST['paid_by'][$r],
-                                'cheque_no' 			=> $_POST['cheque_no'][$r],
-								'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
-								'cc_holder' 			=> $_POST['cc_holder'][$r],
-								'cc_month' 				=> $_POST['cc_month'][$r],
-								'cc_year' 				=> $_POST['cc_year'][$r],
-								'cc_type' 				=> $_POST['cc_type'][$r],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'returned',
-								'note' 					=> $_POST['payment_note'][$r],
-								'pos_paid' 				=> $_POST['amount'][$r],
-								'pos_balance' 			=> ($pos_b - $this->erp->formatDecimal($grand_total)),
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$r],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$r]
-							); 
-						} else {
-							
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($amount),
-								'paid_by' 				=> $_POST['paid_by'][$r],
-								'cheque_no' 			=> $_POST['cheque_no'][$r],
-								'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
-								'cc_holder' 			=> $_POST['cc_holder'][$r],
-								'cc_month' 				=> $_POST['cc_month'][$r],
-								'cc_year' 				=> $_POST['cc_year'][$r],
-								'cc_type' 				=> $_POST['cc_type'][$r],
-								'cc_cvv2' 				=> $_POST['cc_cvv2'][$r],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'received',
-								'note' 					=> $_POST['payment_note'][$r],
-								'pos_paid' 				=> $_POST['amount'][$r],
-								'pos_balance' 			=> ($pos_b - $this->erp->formatDecimal($grand_total)),
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$r],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$r]
-							);
-							
-						}
-						
-                        $pp[] = $paidd;
-                    }*/
                 }
-
-				/*if(isset($p_cur) && empty($_POST['amount'][0])){
-
-					$kh_paid = true;
-					for ($j = 0; $j < $p_cur; $j++) {
-                        $pos_balance = number_format($pos_b - $this->erp->formatDecimal($grand_total), 6);
-                        //$pos_b += ($_POST['amount'][$j] + ($_POST['other_cur_paid'][$j]/$cur_rate->rate));
-                        $pos_b += ($_POST['amount'][$j] - ($_POST['other_cur_paid'][$j] / $cur_rate->rate));
-						$paidi  = ($_POST['amount'][$j] + ($_POST['other_cur_paid'][$j]/$cur_rate->rate));
-
-                        if (isset($_POST['other_cur_paid'][$j]) && !empty($_POST['other_cur_paid'][$j]) && isset($_POST['paid_by'][$j]) && !empty($_POST['paid_by'][$j])) {
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($paidi),
-								'paid_by' 				=> $_POST['paid_by'][$j],
-								'cheque_no' 			=> $_POST['cheque_no'][$j],
-								'cc_no' 				=> ($_POST['paid_by'][$j] == 'gift_card' ? $_POST['paying_gift_card_no'][$j] : $_POST['cc_no'][$j]),
-								'cc_holder' 			=> $_POST['cc_holder'][$j],
-								'cc_month' 				=> $_POST['cc_month'][$j],
-								'cc_year' 				=> $_POST['cc_year'][$j],
-								'cc_type' 				=> $_POST['cc_type'][$j],
-								'cc_cvv2' 				=> $_POST['cc_cvv2'][$j],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'received',
-								'note' 					=> $_POST['payment_note'][$j],
-								'pos_paid' 				=> $_POST['amount'][$j],
-                                'pos_balance' 			=> $pos_balance,
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$j],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$j]
-							);
-							$pp[] = $paidd;
-						}
-					}
-                }*/
 
                 if($kh_paid == true){
 					if (!empty($pp)) {

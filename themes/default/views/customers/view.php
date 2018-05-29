@@ -70,6 +70,61 @@
                         <td><?= $customer->address_4; ?></strong>
 						</td>
                     </tr>
+                    <?php if ($customer->plate_number) { ?>
+                        <tr>
+                            <td><strong><?= lang("plate_number"); ?></strong></td>
+                            <td><?= $customer->plate_number; ?></strong>
+                                <span style="float:right;">
+                                <input type="radio" value="<?= $customer->plate_number; ?>" class="checkbox"
+                                       name="plate_number" id="plate_number">
+                            </span>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                    <?php if ($customer->plate_number_2) { ?>
+                        <tr>
+                            <td><strong><?= lang("plate_number2"); ?></strong></td>
+                            <td><?= $customer->plate_number_2; ?></strong>
+                                <span style="float:right;">
+                                <input type="radio" value="<?= $customer->plate_number_2; ?>" class="checkbox"
+                                       name="plate_number" id="plate_number_2">
+                            </span>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                    <?php if ($customer->plate_number_3) { ?>
+                        <tr>
+                            <td><strong><?= lang("plate_number3"); ?></strong></td>
+                            <td><?= $customer->plate_number_3; ?></strong>
+                                <span style="float:right;">
+                                <input type="radio" value="<?= $customer->plate_number_3; ?>" class="checkbox"
+                                       name="plate_number" id="plate_number_3">
+                            </span>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                    <?php if ($customer->plate_number_4) { ?>
+                        <tr>
+                            <td><strong><?= lang("plate_number4"); ?></strong></td>
+                            <td><?= $customer->plate_number_4; ?></strong>
+                                <span style="float:right;">
+                                <input type="radio" value="<?= $customer->plate_number_4; ?>" class="checkbox"
+                                       name="plate_number" id="plate_number_4">
+                            </span>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                    <?php if ($customer->plate_number_5) { ?>
+                        <tr>
+                            <td><strong><?= lang("plate_number5"); ?></strong></td>
+                            <td><?= $customer->plate_number_5; ?></strong>
+                                <span style="float:right;">
+                                <input type="radio" value="<?= $customer->plate_number_5; ?>" class="checkbox"
+                                       name="plate_number" id="plate_number_5">
+                            </span>
+                            </td>
+                        </tr>
+                    <?php } ?>
                     </tbody>
                 </table>
             </div>
@@ -89,26 +144,25 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-	
+
 	var not2 = __getItem('nott');
-	var addr = $("#addr").val();
-	var addr1 = $("#addr1").val();
-	var addr2 = $("#addr2").val();
-	var addr3 = $("#addr3").val();
-	var addr4 = $("#addr4").val();
-	var addr5 = $("#addr5").val();
-	if(not2 == addr){
-		$("#addr").attr('checked', 'checked');
-	}else if(not2 == addr1){
-		$("#addr1").attr('checked', 'checked');
-	}else if(not2 == addr2){
-		$("#addr2").attr('checked', 'checked');
-	}else if(not2 == addr3){
-		$("#addr3").attr('checked', 'checked');
-	}else if(not2 == addr4){
-		$("#addr4").attr('checked', 'checked');
-	}else{
-		$("#addr5").attr('checked', 'checked');
+    var plate_number = $("#plate_number").val();
+    var plate_number_2 = $("#plate_number_2").val();
+    var plate_number_3 = $("#plate_number_3").val();
+    var plate_number_4 = $("#plate_number_4").val();
+    var plate_number_5 = $("#plate_number_5").val();
+
+    if (not2 == plate_number) {
+        $("#plate_number").attr('checked', 'checked');
+    } else if (not2 == plate_number_2) {
+        $("#plate_number_2").attr('checked', 'checked');
+    } else if (not2 == plate_number_3) {
+        $("#plate_number_3").attr('checked', 'checked');
+    } else if (not2 == plate_number_4) {
+        $("#plate_number_4").attr('checked', 'checked');
+    } else (not2 == plate_number_5);
+    {
+        $("#plate_number_5").attr('checked', 'checked');
 	}
 });
 </script>
