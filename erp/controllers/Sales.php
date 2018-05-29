@@ -9731,10 +9731,10 @@ class Sales extends MY_Controller
             } else {
                 $date = date('Y-m-d H:i:s');
             }
-			$sale_id    = $this->input->post('sale_id');
-			$sale       = $this->sales_model->getSaleById($sale_id);
-			$sale_ref   = $sale->reference_no;
-			$paid_by    = $this->input->post('paid_by');
+            $sale_id    = $this->input->post('sale_id');
+            $sale       = $this->sales_model->getSaleById($sale_id);
+            $sale_ref   = $sale->reference_no;
+            $paid_by    = $this->input->post('paid_by');
             $purchase   = NULL;
 
             if($this->Settings->system_management == 'biller') {
@@ -13053,7 +13053,7 @@ class Sales extends MY_Controller
             ->join('users', 'users.id=gift_cards.created_by', 'left')
             ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
-            ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='" . site_url('sales/add_amount_gift_card/$1') . "' class='tip' title='" . lang("add_amount_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-plus\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
+            ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='" . site_url('sales/add_amount_gift_card/$1') . "' class='tip' title='" . lang("add_money") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-plus\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
 		
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');
@@ -19728,7 +19728,7 @@ function invoice_concrete_angkor($id=null)
         $this->load->view($this->theme .'sales/invoice_jessica_shop',$this->data);
     }
 
-    function add_amount_gift_card()
+    function add_amount_gift_card($id)
     {
         $this->erp->checkPermissions();
         $this->form_validation->set_rules('card_no', lang("card_no"), 'required');
@@ -19783,11 +19783,13 @@ function invoice_concrete_angkor($id=null)
             $this->session->set_flashdata('message', lang("gift_card_updated"));
             redirect("sales/gift_cards");
         } else {
+            $gc = $this->site->getGiftCardByID($id);
             $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['modal_js'] = $this->site->modal_js();
             $this->data['users'] = $this->sales_model->getStaff();
             $this->data['page_title'] = lang("new_gift_card");
+            $this->data['card_no'] = $gc->card_no;
             $this->load->view($this->theme . 'sales/add_amount_gift_card', $this->data);
         }
     }

@@ -765,8 +765,7 @@ class Pos extends MY_Controller
                     } else {
                         $amount = $g_total - ($pos_b - $paid);
                     }
-					
-					
+
                     $payment[] = array(
                         'biller_id'				=> $biller_id,
                         'date' 					=> $date,
@@ -3742,6 +3741,18 @@ class Pos extends MY_Controller
 		$this->data['payment'] 		= $this->sales_model->getPaymentBySaleID($id);
 		$this->data['logo'] 		= true;
         $this->load->view($this->theme . 'pos/invoice_print_a4_ttr_combo', $this->data);
+    }
+
+    function getCustomerMemberCard(){
+        $customer_id = $this->input->get('customer_id');
+        $this->db->select("*");
+        $this->db->from("erp_gift_cards");
+        $this->db->where("erp_gift_cards.customer_id",$customer_id);
+        $q = $this->db->get();
+        if($q->num_rows() > 0){
+            echo json_encode($q->row());
+        }
+        return false;
     }
 
 
