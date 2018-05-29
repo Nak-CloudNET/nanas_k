@@ -427,7 +427,6 @@ class Pos_model extends CI_Model
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
 
-
         $this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -522,6 +521,7 @@ class Pos_model extends CI_Model
                     $paid = 0;
 
                     foreach ($payments as $payment) {
+
                         if (!empty($payment) && isset($payment['amount']) && $payment['amount'] > 0) {
                             $payment['sale_id'] = $sale_id;
                             if ($payment['paid_by'] == 'ppp') {
@@ -571,6 +571,21 @@ class Pos_model extends CI_Model
                                     if($this->db->affected_rows()){
                                         $this->increase_award_points($payment,$data['customer_id']);
                                     }
+
+
+                                    // generate gift_card_log
+                                    $gift_card_log = array(
+                                        'gift_card_id'      => $gc->id,
+                                        'date'              => $date = date('Y-m-d H:i:s'),
+                                        'transaction_type'  => 'paid',
+                                        'amount'            => $payment['amount'],
+                                        'sale_id'           => $sale_id,
+                                        'created_by'         => $this->session->userdata('user_id')
+
+                                    );
+
+                                    $this->addGiftCardLog($gift_card_log);
+
                                 }
 								
                                 unset($payment['cc_cvv2']);
@@ -2161,6 +2176,14 @@ class Pos_model extends CI_Model
             }
         }
 
+    }
+
+    public function addGiftCardLog($data = array())
+    {
+        if ($this->db->insert('gift_card_logs', $data)) {
+            return true;
+        }
+        return false;
     }
 
 

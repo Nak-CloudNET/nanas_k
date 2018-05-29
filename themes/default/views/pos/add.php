@@ -294,7 +294,9 @@ if ($q->num_rows() > 0) {
             </div>
         </div>
     </header>
-<?php if ($layout != 0 && $layout != 1 && $layout != 3 && $layout != 5) {?>
+<?php if ($layout != 0 && $layout != 1 && $layout != 3 && $layout != 5) {
+	
+?>
 	<div id="content" style="margin-bottom: -40px !Important; ">
 		<div class="grid-view" style="width:98%; overflow: hidden;">
 			<div id="proContainer" style="height: 118px !important;">
@@ -303,7 +305,9 @@ if ($q->num_rows() > 0) {
 			</div>
 		</div>
 	</div>
-<?php } else if($layout == 5) { ?>
+<?php } else if($layout == 5) {
+    
+    ?>
 	<div id="cp">
 		<div id="cpinner" style="padding:0;">
 			<div class="quick-menu">
@@ -3185,8 +3189,12 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         });
 
         $('#paymentModal').on('select2-close', '#paid_by_<?=$i?>', function (e) {
-            $('#paid_by_val_<?=$i?>').val($(this).val());
+			$('#paid_by_val_<?=$i?>').val($(this).val());
 
+        });
+		
+		$('#paymentModal').on('change', '#paid_by_<?=$i?>', function (e) {
+			$('#paid_by_val_<?=$i?>').val($(this).val());
         });
 
 		$('#paymentModal').on('select2-close', '#bank_account_<?=$i?>', function (e) {
@@ -3235,6 +3243,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		<?php }
 		?>
+		
         $('#payment').click(function () {
 
             var GP = '<?= $GP['sales-discount'];?>';
@@ -6581,7 +6590,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             var p_val = $(this).val(),
                 id = $(this).attr('id'),
                 pa_no = id.substr(id.length - 1);
-
             $('#rpaidby').val(p_val);
             if (p_val == 'cash' || p_val == 'other') {
                 $('.pcheque_' + pa_no).hide();

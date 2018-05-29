@@ -13342,6 +13342,8 @@ class Sales extends MY_Controller
                 'customer_group_id' => $this->input->post('customer_group'),
                 'customer_group_name' => $customer_group_name
             );
+
+
             $sa_data = array();
             $ca_data = array();
             if ($this->input->post('staff_points')) {
@@ -13367,9 +13369,23 @@ class Sales extends MY_Controller
             redirect("sales/gift_cards");
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->addGiftCard($data, $ca_data, $sa_data)) {
-            $this->session->set_flashdata('message', lang("gift_card_added"));
-            redirect("sales/gift_cards");
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->addGiftCard($data, $ca_data, $sa_data)) {
+            if($gift_card_id){
+                // generate gift_card_log
+                $gift_card_log = array(
+                    'gift_card_id'      => $gift_card_id,
+                    'date'              => $date = date('Y-m-d H:i:s'),
+                    'transaction_type'  => 'created',
+                    'amount'            => $this->input->post('value'),
+                    'created_by'         => $this->session->userdata('user_id')
+                );
+                if($this->sales_model->addGiftCardLog($gift_card_log)){
+                    $this->session->set_flashdata('message', lang("gift_card_added"));
+                    redirect("sales/gift_cards");
+
+                }
+            }
+
         } else {
             $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
@@ -19735,6 +19751,7 @@ function invoice_concrete_angkor($id=null)
         $this->form_validation->set_rules('value', lang("value"), 'required');
 
         if ($this->form_validation->run() == true) {
+
             $customer_details = $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
             $customer = $customer_details ? $customer_details->company : NULL;
             $customer_group_id = $this->input->post('customer_group');
@@ -19752,6 +19769,8 @@ function invoice_concrete_angkor($id=null)
                 'customer_group_name' => $customer_group_name
 
             );
+
+
             $sa_data = array();
             $ca_data = array();
             /*
@@ -19779,7 +19798,22 @@ function invoice_concrete_angkor($id=null)
 
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->add_amount_gift_card($data)) {
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->add_amount_gift_card($data)) {
+
+            $gift_card_log = array(
+                'gift_card_id'      => $gift_card_id,
+                'date'              => $date = date('Y-m-d H:i:s'),
+                'transaction_type'  => 'added',
+                'amount'            => $this->input->post('value'),
+                'created_by'         => $this->session->userdata('user_id')
+            );
+
+            if($this->sales_model->addGiftCardLog($gift_card_log)){
+                $this->session->set_flashdata('message', lang("gift_card_added"));
+                redirect("sales/gift_cards");
+
+            }
+
             $this->session->set_flashdata('message', lang("gift_card_updated"));
             redirect("sales/gift_cards");
         } else {
