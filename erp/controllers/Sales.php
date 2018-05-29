@@ -13039,6 +13039,10 @@ class Sales extends MY_Controller
         $this->erp->checkPermissions();
         $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
 
+        $this->data['gift_cards'] = $this->site->getAllGiftCards();
+        $this->data['customers'] = $this->site->getAllCustomers();
+        $this->data['plate_numbers'] = $this->site->getAllCustomers();
+
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('sales'), 'page' => lang('sales')), array('link' => '#', 'page' => lang('gift_cards')));
         $meta = array('page_title' => lang('gift_cards'), 'bc' => $bc);
         $this->page_construct('sales/gift_cards', $meta, $this->data);
@@ -13046,14 +13050,52 @@ class Sales extends MY_Controller
 
     function getGiftCards()
     {
+        if ($this->input->get('card_no')) {
+            $card_no = $this->input->get('card_no');
+        } else {
+            $card_no = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('plate_number')) {
+            $plate_number = $this->input->get('plate_number');
+        } else {
+            $plate_number = NULL;
+        }
+        //$this->erp->print_arrays($plate_number);
 
         $this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('gift_cards') . ".id as id, card_no, value, balance, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by, companies.name, expiry", FALSE)
+            ->select($this->db->dbprefix('gift_cards') . ".id as id,
+                                card_no,
+                                value,
+                                balance,
+                                CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by,
+                                companies.name,
+                                CONCAT_WS('<br>',plate_number,plate_number_2,plate_number_3,plate_number_4,plate_number_5) as plate_number,
+                                expiry", FALSE)
             ->join('users', 'users.id=gift_cards.created_by', 'left')
             ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
             ->add_column("Actions", "<center><a href='" . site_url('sales/view_gift_card_history/$2') . "' class='tip' title='" . lang("view_gift_card_history") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-file-text-o\"></i></a> <a href='" . site_url('sales/view_gift_card/$1') . "' class='tip' title='" . lang("view_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-eye\"></i></a> <a href='" . site_url('sales/edit_gift_card/$1') . "' class='tip' title='" . lang("edit_gift_card") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-edit\"></i></a> <a href='" . site_url('sales/add_amount_gift_card/$1') . "' class='tip' title='" . lang("add_money") . "' data-toggle='modal' data-target='#myModal'><i class=\"fa fa-plus\"></i></a> <a href='#' class='tip po' title='<b>" . lang("delete_gift_card") . "</b>' data-content=\"<p>" . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . site_url('sales/delete_gift_card/$1') . "'>" . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i></a></center>", "id,card_no");
+
+        if ($card_no) {
+            $this->datatables->where('gift_cards.id', $card_no);
+        }
+        if ($customer) {
+            $this->datatables->where('companies.id', $customer);
+        }
+        if ($plate_number) {
+            $this->datatables->where("companies.plate_number LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_2 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_3 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_4 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_5 LIKE '%" . $plate_number . "%'
+                                      ");
+        }
 		
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');

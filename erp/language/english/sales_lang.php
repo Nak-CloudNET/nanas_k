@@ -449,3 +449,4 @@ $lang['print_sale_order']			        = "Print Sale Order";
 $lang['contact'] = "Contact";
 $lang['customer_opening_balance'] = "Add Customer Opening Balance (A/R)";
 $lang['add_money'] = "Add Money";
+$lang['plate_number'] = "Plate Number";

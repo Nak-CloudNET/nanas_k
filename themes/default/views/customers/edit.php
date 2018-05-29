@@ -60,6 +60,26 @@
                     </div>
 					<?php } ?>
                     <div class="form-group person">
+                        <?= lang("plate_number", "plate_number"); ?>
+                        <?php echo form_input('plate_number', $customer->plate_number, 'class="form-control tip" id="plate_number" required="required"'); ?>
+                    </div>
+                    <div class="form-group person">
+                        <?= lang("plate_number2", "plate_number2"); ?>
+                        <?php echo form_input('plate_number2', $customer->plate_number_2, 'class="form-control tip" id="plate_number2"'); ?>
+                    </div>
+                    <div class="form-group person">
+                        <?= lang("plate_number3", "plate_number3"); ?>
+                        <?php echo form_input('plate_number3', $customer->plate_number_3, 'class="form-control tip" id="plate_number3"'); ?>
+                    </div>
+                    <div class="form-group person">
+                        <?= lang("plate_number4", "plate_number4"); ?>
+                        <?php echo form_input('plate_number4', $customer->plate_number_4, 'class="form-control tip" id="plate_number4"'); ?>
+                    </div>
+                    <div class="form-group person">
+                        <?= lang("plate_number5", "plate_number5"); ?>
+                        <?php echo form_input('plate_number5', $customer->plate_number_5, 'class="form-control tip" id="plate_number5"'); ?>
+                    </div>
+                    <div class="form-group person">
                         <?= lang("name", "name"); ?>
                         <?php echo form_input('name', $customer->name, 'class="form-control tip" id="name" required="required"'); ?>
                     </div>

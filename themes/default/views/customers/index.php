@@ -38,21 +38,23 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": center}, ((site.settings.show_company_code == 1)? null : {"bVisible": false}), null, null, null, null, null, null, null,null, null, null,  {"bSortable": false}]
+            }, {"mRender": center}, ((site.settings.show_company_code == 1) ? null : {"bVisible": false}),
+                null, null, null, null, null, null, null, null, null, null, null, {"bSortable": false}]
         }).dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('no');?>]", filter_type: "text", data: []},
-            {column_number: 2, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('name');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
-            {column_number: 6, filter_default_label: "[<?=lang('phone');?>]", filter_type: "text", data: []},
+            {column_number: 2, filter_default_label: "[<?=lang('code');?>]", filter_type: "text", data: []},
+            {column_number: 3, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('company');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('name');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('email_address');?>]", filter_type: "text", data: []},
+            {column_number: 7, filter_default_label: "[<?=lang('phone');?>]", filter_type: "text", data: []},
             //{column_number: 7, filter_default_label: "[<?=lang('group_area');?>]", filter_type: "text", data: []},
-            {column_number: 7, filter_default_label: "[<?=lang('customer_group');?>]", filter_type: "text", data: []},
-            {column_number: 8, filter_default_label: "[<?=lang('address');?>]", filter_type: "text", data: []},
-            {column_number: 9, filter_default_label: "[<?=lang('group_area');?>]", filter_type: "text", data: []},
-            {column_number: 10, filter_default_label: "[<?=lang('note');?>]", filter_type: "text", data: []},
-            {column_number: 11, filter_default_label: "[<?=lang('deposit');?>]", filter_type: "text", data: []},
-            {column_number: 12, filter_default_label: "[<?=lang('award_points');?>]", filter_type: "text", data: []},
+            {column_number: 8, filter_default_label: "[<?=lang('customer_group');?>]", filter_type: "text", data: []},
+            {column_number: 9, filter_default_label: "[<?=lang('address');?>]", filter_type: "text", data: []},
+            {column_number: 10, filter_default_label: "[<?=lang('group_area');?>]", filter_type: "text", data: []},
+            {column_number: 11, filter_default_label: "[<?=lang('note');?>]", filter_type: "text", data: []},
+            {column_number: 12, filter_default_label: "[<?=lang('deposit');?>]", filter_type: "text", data: []},
+            {column_number: 13, filter_default_label: "[<?=lang('award_points');?>]", filter_type: "text", data: []},
         ], "footer");
         $('#myModal').on('hidden.bs.modal', function () {
             cTable.fnDraw( false );
@@ -142,6 +144,7 @@
                                 <input class="checkbox checkth" type="checkbox" name="check"/>
                             </th>
 							<th><?= lang("no"); ?></th>
+                            <th><?= lang("code"); ?></th>
                             <th><?= lang("plate_number"); ?></th>
                             <th><?= lang("company"); ?></th>
                             <th><?= lang("name"); ?></th>
@@ -160,7 +163,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="14" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
+                            <td colspan="15" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
                         </tr>
                         </tbody>
                         <tfoot class="dtFilter">
@@ -168,6 +171,7 @@
                             <th style="min-width:30px; width: 30px; text-align: center;">
                                 <input class="checkbox checkft" type="checkbox" name="check"/>
                             </th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

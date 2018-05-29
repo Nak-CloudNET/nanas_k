@@ -572,7 +572,11 @@ class Site extends CI_Model
 
     public function getAllCustomers()
     {
-        $this->db->select("id,code as plate_number");
+        $this->db->select("id,
+                           code as plate_number,
+                           name,
+                           CONCAT_WS(' ',plate_number,plate_number_2,plate_number_3,plate_number_4,plate_number_5) as plate_no,
+                           ");
         $this->db->where('group_name', 'customer');
         $q = $this->db->get('companies');
         if ($q->num_rows() > 0) {
@@ -1338,6 +1342,15 @@ class Site extends CI_Model
         $q = $this->db->get_where('gift_cards', array('card_no' => $no), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function getAllGiftCards()
+    {
+        $q = $this->db->get('gift_cards');
+        if ($q->num_rows() > 0) {
+            return $q->result();
         }
         return FALSE;
     }
