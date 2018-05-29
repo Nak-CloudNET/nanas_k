@@ -38,7 +38,20 @@ class Customers extends MY_Controller
 		$setting = $this->site->get_setting();
         $this->load->library('datatables');
 		$this->datatables
-            ->select("companies.id, companies.id as cid, (code) AS code, company, name, email, phone, customer_group_name, address, group_areas.areas_group as group_area, invoice_footer, (SELECT SUM(erp_deposits.amount) FROM erp_deposits WHERE erp_companies.id = erp_deposits.company_id) as deposit_amount, award_points")
+            ->select("companies.id,
+                     companies.id as cid,
+                     (code) AS code,
+                     CONCAT_WS('<br>',plate_number,plate_number_2,plate_number_3,plate_number_4,plate_number_5) as plate_number,
+                     company,
+                     name,
+                     email,
+                     phone,
+                     customer_group_name,
+                     address,
+                     group_areas.areas_group as group_area,
+                     invoice_footer,
+                     (SELECT SUM(erp_deposits.amount) FROM erp_deposits WHERE erp_companies.id = erp_deposits.company_id) as deposit_amount,
+                     award_points")
             ->from("companies")
 			->join('group_areas', 'companies.group_areas_id = group_areas.areas_g_code', 'left')
             ->where('group_name', 'customer')
@@ -125,8 +138,14 @@ class Customers extends MY_Controller
                 'sale_man' => $this->input->post('saleman'),
                 'invoice_footer' => $this->input->post('note'),
                 'identify_date' =>$this->erp->fld(trim($this->input->post('identify_date'))),
-                'public_charge_id' => ''
+                'public_charge_id' => '',
+                'plate_number' => $this->input->post('plate_number'),
+                'plate_number_2' => $this->input->post('plate_number2'),
+                'plate_number_3' => $this->input->post('plate_number3'),
+                'plate_number_4' => $this->input->post('plate_number4'),
+                'plate_number_5' => $this->input->post('plate_number5')
             );
+
             // attachment
             if ($_FILES['userfile']['size'][0] != "") {
                 $this->load->library('upload');
@@ -342,7 +361,12 @@ class Customers extends MY_Controller
                 'sale_man' => $this->input->post('saleman'),
                 'invoice_footer' => $this->input->post('note'),
                 'identify_date' =>$this->erp->fld(trim($this->input->post('identify_date'))),
-                'public_charge_id' => ''
+                'public_charge_id' => '',
+                'plate_number' => $this->input->post('plate_number'),
+                'plate_number_2' => $this->input->post('plate_number2'),
+                'plate_number_3' => $this->input->post('plate_number3'),
+                'plate_number_4' => $this->input->post('plate_number4'),
+                'plate_number_5' => $this->input->post('plate_number5')
             );
             //$this->erp->print_arrays($data);
             // attachment

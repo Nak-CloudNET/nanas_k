@@ -83,3 +83,7 @@ $lang['brand'] = "Brand";
 $lang['price'] = "Price";
 $lang['color'] = "Color";
 $lang['edit_customer'] = "Edit Customer";
+$lang['plate_number2'] = "Plate Number 2";
+$lang['plate_number3'] = "Plate Number 3";
+$lang['plate_number4'] = "Plate Number 4";
+$lang['plate_number5'] = "Plate Number 5";

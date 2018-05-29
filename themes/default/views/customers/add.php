@@ -62,7 +62,7 @@
                 <div class="col-md-6">
 					<?php if($setting->show_company_code == 1) { ?>
 					<div class="form-group">
-                        <?= lang("plate_number", "plate_number"); ?>
+                        <?= lang("code", "code"); ?>
                         <?php
                             if (!empty($Settings->customer_code_prefix)) {
                                 $reference = $reference;
@@ -70,8 +70,33 @@
                                 $reference = substr($reference, 5);
                             }
                         ?>
-                        <?php echo form_input('code', "", 'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
+                        <?php echo form_input('code', $reference ? $reference : "", 'class="form-control input-tip" id="code" data-bv-notempty="true"'); ?>
                     </div>
+                        <div class="form-group">
+                            <span style="float:right;"><button
+                                        class="btn btn-xs btn-primary add_more">Add More Fields</button></span>
+                            <?= lang("plate_number", "plate_number"); ?>
+                            <?php echo form_input('plate_number', '', 'class="form-control tip" id="plate_number" data-bv-notempty="true"'); ?>
+                        </div>
+                        <div id="address_show">
+                            <div class="form-group">
+                                <?= lang("plate_number2", "plate_number2"); ?>
+                                <?php echo form_input('plate_number2', '', 'class="form-control" id="plate_number2" '); ?>
+                            </div>
+                            <div class="form-group">
+                                <?= lang("plate_number3", "plate_number3"); ?>
+                                <?php echo form_input('plate_number3', '', 'class="form-control" id="plate_number3" '); ?>
+                            </div>
+                            <div class="form-group">
+                                <?= lang("plate_number4", "plate_number4"); ?>
+                                <?php echo form_input('plate_number4', '', 'class="form-control" id="plate_number4" '); ?>
+                            </div>
+                            <div class="form-group">
+                                <?= lang("plate_number5", "plate_number5"); ?>
+                                <?php echo form_input('plate_number5', '', 'class="form-control" id="plate_number5" '); ?>
+                            </div>
+
+                        </div>
 					<?php } ?>
                     <div class="form-group person">
                         <?= lang("name", "name"); ?>
@@ -191,10 +216,11 @@
 <?= $modal_js ?>
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#code').focus();
+    $('#plate_number').focus();
+    $("#address_show").hide();
 	$('body').on('click', '.add_more', function(e) {
 		  e.preventDefault();
-        //$("#address_show").toggle();
+        $("#address_show").toggle();
 	});
 
     $('#customer_group').on('change', function(e) {
@@ -220,7 +246,6 @@ $(document).ready(function(){
             }
         });
     });
-
 
 });
 </script>
