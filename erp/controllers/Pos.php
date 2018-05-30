@@ -778,7 +778,7 @@ class Pos extends MY_Controller
                         'amount' 				=> $this->erp->formatDecimal($amount),
                         'paid_by' => $_POST['rpaidby'],
                         'cheque_no' 			=> $_POST['cheque_no'][$r],
-                        'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
+                        'cc_no' => ($_POST['rpaidby'] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
                         'cc_holder' 			=> $_POST['cc_holder'][$r],
                         'cc_month' 				=> $_POST['cc_month'][$r],
                         'cc_year' 				=> $_POST['cc_year'][$r],
