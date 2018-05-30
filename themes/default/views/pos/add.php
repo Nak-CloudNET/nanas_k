@@ -144,7 +144,9 @@ if ($q->num_rows() > 0) {
         //$arrSuspend[$row->suspend_id]['total']  = $row->total;
         $arrSuspend[$row->suspend_id]['id']     = $row->id;
         $arrSuspend[$row->id]['suspend_not']    = $row->suspend_id;
-		$arrSuspend[$row->id]['suspend_name']   = $row->suspend_name;
+        $arrSuspend[$row->id]['suspend_name'] = $row->suspend_name;
+        $arrSuspend[$row->id]['plate_number'] = $row->plate_number;
+        $arrSuspend[$row->id]['date'] = $row->date;
 		//echo $row->total;exit;
     }
 }
@@ -653,10 +655,16 @@ if ($q->num_rows() > 0) {
                                         <tbody>
                                         </tbody>
                                     </table>
+
 									<input type="hidden" name="table_no" class=" table_no" id="table_no" value="<?=(isset($arrSuspend[$sid]['suspend_not']) ? $arrSuspend[$sid]['suspend_not'] : '')?>"/>
                                     <input type="hidden" name="suspend_" id="suspend_id" value="<?=(isset($sid) ? $sid : 0)?>" />
-									<input type="hidden" name="suspend_date" id="suspend_date" value="<?=(isset($arrSuspend[$sid]['date'])?$arrSuspend[$sid]['date']:"")?>">
+                                        <input type="hidden" name="suspend_date" id="suspend_date"
+                                               value="<?= (isset($arrSuspend[$suspend_id]['date']) ? $arrSuspend[$suspend_id]['date'] : "") ?>">
 									<input type="hidden" name="suspend_name" id="suspend_name" value="<?=(isset($arrSuspend[$sid]['suspend_name'])?$arrSuspend[$sid]['suspend_name']:0)?>">
+                                        <input type="hidden" name="sus_date" id="sus_date"
+                                               value="<?= ($arrSuspend[$sid]['date']) ?>">
+                                        <input type="hidden" name="sus_plate_number" id="sus_plate_number"
+                                               value="<?= ($arrSuspend[$sid]['plate_number']) ?>">
 
                                     <div style="clear:both;"></div>
                                 </div>
@@ -826,6 +834,8 @@ if ($q->num_rows() > 0) {
 								<input type="hidden" name="suspend_room" value="" id="suspend_room1">
 								<input type="hidden" name="suppend_name" value="<?= isset($suppend_name);?>">
 								<input type="hidden" name="pos_date" value="" id="pos_date">
+                                <input type="hidden" name="plate_number" id="plate_number" value=""/>
+                                <input type="hidden" name="plate_number2" id="plate_number2" value=""/>
 
                                 <div id="payment-con">
                                     <?php for ($i = 1; $i <= 5; $i++) { ?>
@@ -863,7 +873,7 @@ if ($q->num_rows() > 0) {
                                 <input name="combine_table_id" type="hidden" value="<?= $combine_table ? $combine_table : '' ?>" id="combine_table">
                                 <input name="discount" type="hidden" value="<?= $suspend_sale ? $suspend_sale->order_discount_id : ''; ?>" id="posdiscount">
                                 <input name="shipping" type="hidden" value="" id="posshipping">
-                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash" style="display: none;"/>
+                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash"/>
                                 <input type="hidden" name="total_items" id="total_items" value="0" style="display: none;"/>
                                 <input type="submit" id="submit_sale" value="Submit Sale" style="display: none;"/>
                             </div>
@@ -3251,11 +3261,13 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var Admin = '<?= $Admin?>';
 			var user_log = '<?= $this->session->userdata('user_id');?>';
 
-			if(__getItem('addre')){
-				//$("#sale_note").attr("value", __getItem('addre'));
-				//var nott = $("#sale_note").val();
-				//__setItem('nott',nott);
+            // Get value from radio button of Plate Number
+            if (__getItem('pnumber')) {
+                $("#plate_number").attr("value", __getItem('pnumber'));
+                var pnumber = $("#plate_number").val();
+                __setItem('pnumber', pnumber);
 			}
+
 
 			if(Owner || Admin || (GP == 1)){
 				<?php if ($sid) { ?>
@@ -3297,6 +3309,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					increaseArea: '20%' // optional
 				});
 				$("#posbiller").trigger("change");
+                $("#rpaidby").trigger("change");
 				//$('.currencies_payment').focus();
 				$("#date").trigger('change');
 				$("#saleman").trigger('change');
@@ -3348,6 +3361,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					});
 
 					$("#posbiller").trigger("change");
+                    $("#rpaidby").trigger("change");
 					//$('.currencies_payment').focus();
 					$("#date").trigger('change');
 					$("#saleman").trigger('change');
@@ -3399,6 +3413,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									});
 
 									$("#posbiller").trigger("change");
+                                    $("#rpaidby").trigger("change");
 									//$('.currencies_payment').focus();
 									$("#date").trigger('change');
 									$("#saleman").trigger('change');
@@ -6779,6 +6794,13 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		$('.suspend-button').dblclick(function () {
 
+            // Get value from radio button of Plate Number
+            if (__getItem('pnumber')) {
+                $("#plate_number2").attr("value", __getItem('pnumber'));
+                var pnumber = $("#plate_number").val();
+                __setItem('pnumber', pnumber);
+            }
+
             ref = $(this).val();
 			nref = $(this).attr('id');
 
@@ -7147,10 +7169,11 @@ $(document).ready(function(){
         return false;
     });
 
-	$('body').on('change', '#addr,#addr1,#addr2,#addr3,#addr4,#addr5', function(e) {
+    // Set value to localstorage for Plate Number
+    $('body').on('change', '#plate_number,#plate_number_2,#plate_number_3,#plate_number_4,#plate_number_5', function (e) {
 		  e.preventDefault();
-		  var addr = $(this).val();
-			__setItem('addre',addr);
+        var plate_number = $(this).val();
+        __setItem('pnumber', plate_number);
 	});
 
     $('#submit-sale').click(function() {

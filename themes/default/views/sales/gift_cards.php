@@ -149,7 +149,7 @@ if ($this->input->post('plate_number')) {
                                 foreach ($customers as $customer) {
                                     $cus[$customer->id] = $customer->name;
                                 }
-                                echo form_dropdown('customer', $cus, (isset($_POST['customer']) ? $_POST['customer'] : ""), 'id="customer" class="form-control customer"');
+                                echo form_dropdown('customer', $cus, null, 'class="form-control" ');
                                 ?>
                             </div>
                         </div>

@@ -433,6 +433,10 @@ class Pos extends MY_Controller
             $total_items 		= $this->input->post('total_items');
             $sale_status        = $this->input->post('sale_status');
             $bank_account = $this->input->post('bank_account');
+            $plate_number = $this->input->post('plate_number');
+            $sus_date = $this->input->post('sus_date');
+            $sus_plate_number = $this->input->post('sus_plate_number');
+
             $payment_status 	= 'due';
             $payment_term 		= 0;
             $due_date 			= date('Y-m-d', strtotime('+' . $payment_term . ' days'));
@@ -714,12 +718,13 @@ class Pos extends MY_Controller
                 'paid'              => $paidd ? $paidd:0,
                 'created_by'        => $this->session->userdata('user_id'),
 				'suspend_note'      => $this->input->post('suppend_name') ? $this->input->post('suppend_name') : $suppend_name->suspend_name,
-				'start_date'        => isset($suppend_name->date) ? $suppend_name->date : '',
+                'start_date' => $sus_date,
 				'other_cur_paid_rate' => $cur_rate->rate,
 				'saleman_by'        => $saleman_id,
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
-				'queue'             => $query
+                'queue' => $query,
+                'plate_number' => $sus_plate_number
             );
             
 			if($_POST['paid_by'][0] == 'depreciation'){
@@ -771,9 +776,9 @@ class Pos extends MY_Controller
                         'date' 					=> $date,
                         'reference_no'          => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
                         'amount' 				=> $this->erp->formatDecimal($amount),
-                        'paid_by' 				=> $_POST['paid_by'][$r],
+                        'paid_by' => $_POST['rpaidby'],
                         'cheque_no' 			=> $_POST['cheque_no'][$r],
-                        'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
+                        'cc_no' => ($_POST['rpaidby'] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
                         'cc_holder' 			=> $_POST['cc_holder'][$r],
                         'cc_month' 				=> $_POST['cc_month'][$r],
                         'cc_year' 				=> $_POST['cc_year'][$r],
@@ -788,97 +793,7 @@ class Pos extends MY_Controller
                         'pos_paid_other_rate' 	=> $cur_rate->rate,
                         'bank_account' 			=> $bank_account[$r]
                     );
-
-                    /*if (isset($_POST['amount'][$r]) && !empty($_POST['amount'][$r]) && isset($_POST['paid_by'][$r]) && !empty($_POST['paid_by'][$r])  ) {
-						if(strpos($_POST['amount'][$r], '-') !== false){
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($amount),
-								'paid_by' 				=> $_POST['paid_by'][$r],
-                                'cheque_no' 			=> $_POST['cheque_no'][$r],
-								'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
-								'cc_holder' 			=> $_POST['cc_holder'][$r],
-								'cc_month' 				=> $_POST['cc_month'][$r],
-								'cc_year' 				=> $_POST['cc_year'][$r],
-								'cc_type' 				=> $_POST['cc_type'][$r],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'returned',
-								'note' 					=> $_POST['payment_note'][$r],
-								'pos_paid' 				=> $_POST['amount'][$r],
-								'pos_balance' 			=> ($pos_b - $this->erp->formatDecimal($grand_total)),
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$r],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$r]
-							); 
-						} else {
-							
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($amount),
-								'paid_by' 				=> $_POST['paid_by'][$r],
-								'cheque_no' 			=> $_POST['cheque_no'][$r],
-								'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
-								'cc_holder' 			=> $_POST['cc_holder'][$r],
-								'cc_month' 				=> $_POST['cc_month'][$r],
-								'cc_year' 				=> $_POST['cc_year'][$r],
-								'cc_type' 				=> $_POST['cc_type'][$r],
-								'cc_cvv2' 				=> $_POST['cc_cvv2'][$r],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'received',
-								'note' 					=> $_POST['payment_note'][$r],
-								'pos_paid' 				=> $_POST['amount'][$r],
-								'pos_balance' 			=> ($pos_b - $this->erp->formatDecimal($grand_total)),
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$r],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$r]
-							);
-							
-						}
-						
-                        $pp[] = $paidd;
-                    }*/
                 }
-
-				/*if(isset($p_cur) && empty($_POST['amount'][0])){
-
-					$kh_paid = true;
-					for ($j = 0; $j < $p_cur; $j++) {
-                        $pos_balance = number_format($pos_b - $this->erp->formatDecimal($grand_total), 6);
-                        //$pos_b += ($_POST['amount'][$j] + ($_POST['other_cur_paid'][$j]/$cur_rate->rate));
-                        $pos_b += ($_POST['amount'][$j] - ($_POST['other_cur_paid'][$j] / $cur_rate->rate));
-						$paidi  = ($_POST['amount'][$j] + ($_POST['other_cur_paid'][$j]/$cur_rate->rate));
-
-                        if (isset($_POST['other_cur_paid'][$j]) && !empty($_POST['other_cur_paid'][$j]) && isset($_POST['paid_by'][$j]) && !empty($_POST['paid_by'][$j])) {
-							$payment[] = array(
-								'biller_id'				=> $biller_id,
-								'date' 					=> $date,
-                                'reference_no' => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
-								'amount' 				=> $this->erp->formatDecimal($paidi),
-								'paid_by' 				=> $_POST['paid_by'][$j],
-								'cheque_no' 			=> $_POST['cheque_no'][$j],
-								'cc_no' 				=> ($_POST['paid_by'][$j] == 'gift_card' ? $_POST['paying_gift_card_no'][$j] : $_POST['cc_no'][$j]),
-								'cc_holder' 			=> $_POST['cc_holder'][$j],
-								'cc_month' 				=> $_POST['cc_month'][$j],
-								'cc_year' 				=> $_POST['cc_year'][$j],
-								'cc_type' 				=> $_POST['cc_type'][$j],
-								'cc_cvv2' 				=> $_POST['cc_cvv2'][$j],
-								'created_by' 			=> $this->session->userdata('user_id'),
-								'type' 					=> 'received',
-								'note' 					=> $_POST['payment_note'][$j],
-								'pos_paid' 				=> $_POST['amount'][$j],
-                                'pos_balance' 			=> $pos_balance,
-								'pos_paid_other' 		=> $_POST['other_cur_paid'][$j],
-								'pos_paid_other_rate' 	=> $cur_rate->rate,
-								'bank_account' 			=> $bank_account[$j]
-							);
-							$pp[] = $paidd;
-						}
-					}
-                }*/
 
                 if($kh_paid == true){
 					if (!empty($pp)) {
@@ -927,7 +842,8 @@ class Pos extends MY_Controller
 			$cur_rate = $this->pos_model->getExchange_rate();
 			if ($suspend) {
                 $data['suspend_id']     = $this->input->post('suspend_id');
-				$data['suspend_name']   = $this->input->post('suspend_name');
+                $data['suspend_name'] = $this->input->post('suspend_name');
+                $data['plate_number'] = $this->input->post('plate_number2');
 
                 $arr_suspend = $this->pos_model->suspendSale($data, $products, $did);
                 if ($arr_suspend['suppend_id'] >0) {
@@ -995,7 +911,7 @@ class Pos extends MY_Controller
 						$this->sales_model->addDelivery($dlDetails);
 					}
                     $s = $sale['sale_id'] ? $sale['sale_id'] : $sale;
-                    redirect("pos/view/" . $s);
+                    redirect("pos/receipt_invoice/" . $s);
                 }
                
             }
@@ -2441,6 +2357,36 @@ class Pos extends MY_Controller
         $this->data['modal'] 				= $modal;
         $this->data['page_title'] 			= $this->lang->line("invoice");
         $this->load->view($this->theme . 'pos/view', $this->data);
+    }
+
+    function receipt_invoice($sale_id = NULL, $modal = NULL)
+    {
+        $this->erp->checkPermissions('index');
+        if ($this->input->get('id')) {
+            $sale_id = $this->input->get('id');
+        }
+
+        $this->load->helper('text');
+        $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+        $this->data['message'] = $this->session->flashdata('message');
+        $this->data['rows'] = $this->pos_model->getAllInvoiceItems($sale_id);
+        $inv = $this->pos_model->getInvoicePosByID($sale_id);
+        $biller_id = $inv->biller_id;
+        $customer_id = $inv->customer_id;
+        $this->data['biller'] = $this->pos_model->getCompanyByID($biller_id);
+        $this->data['customer'] = $this->pos_model->getCompanyByID($customer_id);
+        $this->data['payments'] = $this->pos_model->getInvoicePaymentsPOS($sale_id);
+        $this->data['pos'] = $this->pos_model->getSetting();
+        $this->data['barcode'] = $this->barcode($inv->reference_no, 'code39', 30);
+        $this->data['inv'] = $inv;
+        $this->data['sid'] = $sale_id;
+        $this->data['exchange_rate'] = $this->pos_model->getExchange_rate();
+        $this->data['outexchange_rate'] = $this->pos_model->getExchange_rate('KHM_o');
+        $this->data['exchange_rate_th'] = $this->pos_model->getExchange_rate('THA');
+        $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
+        $this->data['modal'] = $modal;
+        $this->data['page_title'] = $this->lang->line("invoice");
+        $this->load->view($this->theme . 'pos/receipt_invoice', $this->data);
     }
 	
 	function invoice_ktv($sale_id = NULL, $modal = NULL)
