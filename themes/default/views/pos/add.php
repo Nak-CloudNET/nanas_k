@@ -869,7 +869,7 @@ if ($q->num_rows() > 0) {
                                 <input name="combine_table_id" type="hidden" value="<?= $combine_table ? $combine_table : '' ?>" id="combine_table">
                                 <input name="discount" type="hidden" value="<?= $suspend_sale ? $suspend_sale->order_discount_id : ''; ?>" id="posdiscount">
                                 <input name="shipping" type="hidden" value="" id="posshipping">
-                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash" style="display: none;"/>
+                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash"/>
                                 <input type="hidden" name="total_items" id="total_items" value="0" style="display: none;"/>
                                 <input type="submit" id="submit_sale" value="Submit Sale" style="display: none;"/>
                             </div>
@@ -3259,6 +3259,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 __setItem('pnumber', pnumber);
 			}
 
+
 			if(Owner || Admin || (GP == 1)){
 				<?php if ($sid) { ?>
 				suspend = $('<span></span>');
@@ -3299,6 +3300,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					increaseArea: '20%' // optional
 				});
 				$("#posbiller").trigger("change");
+                $("#rpaidby").trigger("change");
 				//$('.currencies_payment').focus();
 				$("#date").trigger('change');
 				$("#saleman").trigger('change');
@@ -3350,6 +3352,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					});
 
 					$("#posbiller").trigger("change");
+                    $("#rpaidby").trigger("change");
 					//$('.currencies_payment').focus();
 					$("#date").trigger('change');
 					$("#saleman").trigger('change');
@@ -3401,6 +3404,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									});
 
 									$("#posbiller").trigger("change");
+                                    $("#rpaidby").trigger("change");
 									//$('.currencies_payment').focus();
 									$("#date").trigger('change');
 									$("#saleman").trigger('change');

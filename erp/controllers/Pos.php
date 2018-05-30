@@ -776,7 +776,7 @@ class Pos extends MY_Controller
                         'date' 					=> $date,
                         'reference_no'          => (($_POST['paid_by'][$r] == 'deposit' || $_POST['paid_by'][$r] == 'depreciation') ? $reference : $this->site->getReference('sp', $this->session->userdata('biller_id') ? $default_biller[0] : $default_biller)),
                         'amount' 				=> $this->erp->formatDecimal($amount),
-                        'paid_by' 				=> $_POST['paid_by'][$r],
+                        'paid_by' => $_POST['rpaidby'],
                         'cheque_no' 			=> $_POST['cheque_no'][$r],
                         'cc_no' 				=> ($_POST['paid_by'][$r] == 'gift_card' ? $_POST['paying_gift_card_no'][$r] : $_POST['cc_no'][$r]),
                         'cc_holder' 			=> $_POST['cc_holder'][$r],
