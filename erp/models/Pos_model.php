@@ -426,8 +426,6 @@ class Pos_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
-
-
         $this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -571,6 +569,20 @@ class Pos_model extends CI_Model
                                     if($this->db->affected_rows()){
                                         $this->increase_award_points($payment,$data['customer_id']);
                                     }
+                                    // generate log
+
+                                    $gift_card_log = array(
+                                        'gift_card_id'      => $gc->id,
+                                        'date'              => $date = date('Y-m-d H:i:s'),
+                                        'transaction_type'  => 'paid',
+                                        'amount'            => floatval($payment['amount']),
+                                        'sale_id'           => $sale_id,
+                                        'created_by'         => $this->session->userdata('user_id')
+                                    );
+
+                                    $this->sales_model->addGiftCardLog($gift_card_log);
+
+
                                 }
 								
                                 unset($payment['cc_cvv2']);
