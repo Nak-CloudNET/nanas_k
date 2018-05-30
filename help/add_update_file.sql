@@ -12,7 +12,7 @@ ADD COLUMN `expiry_id`  int(11) NULL AFTER `expiry`;
 
 /* channa */
 
-CREATE TABLE `NewTable` (
+CREATE TABLE `erp_gift_card_logs` (
 `id`  int(11) NOT NULL ,
 `gift_card_id`  int(11) NULL ,
 `date`  datetime NULL ,
