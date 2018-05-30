@@ -144,7 +144,9 @@ if ($q->num_rows() > 0) {
         //$arrSuspend[$row->suspend_id]['total']  = $row->total;
         $arrSuspend[$row->suspend_id]['id']     = $row->id;
         $arrSuspend[$row->id]['suspend_not']    = $row->suspend_id;
-		$arrSuspend[$row->id]['suspend_name']   = $row->suspend_name;
+        $arrSuspend[$row->id]['suspend_name'] = $row->suspend_name;
+        $arrSuspend[$row->id]['plate_number'] = $row->plate_number;
+        $arrSuspend[$row->id]['date'] = $row->date;
 		//echo $row->total;exit;
     }
 }
@@ -649,10 +651,16 @@ if ($q->num_rows() > 0) {
                                         <tbody>
                                         </tbody>
                                     </table>
+
 									<input type="hidden" name="table_no" class=" table_no" id="table_no" value="<?=(isset($arrSuspend[$sid]['suspend_not']) ? $arrSuspend[$sid]['suspend_not'] : '')?>"/>
                                     <input type="hidden" name="suspend_" id="suspend_id" value="<?=(isset($sid) ? $sid : 0)?>" />
-									<input type="hidden" name="suspend_date" id="suspend_date" value="<?=(isset($arrSuspend[$sid]['date'])?$arrSuspend[$sid]['date']:"")?>">
+                                        <input type="hidden" name="suspend_date" id="suspend_date"
+                                               value="<?= (isset($arrSuspend[$suspend_id]['date']) ? $arrSuspend[$suspend_id]['date'] : "") ?>">
 									<input type="hidden" name="suspend_name" id="suspend_name" value="<?=(isset($arrSuspend[$sid]['suspend_name'])?$arrSuspend[$sid]['suspend_name']:0)?>">
+                                        <input type="hidden" name="sus_date" id="sus_date"
+                                               value="<?= ($arrSuspend[$sid]['date']) ?>">
+                                        <input type="hidden" name="sus_plate_number" id="sus_plate_number"
+                                               value="<?= ($arrSuspend[$sid]['plate_number']) ?>">
 
                                     <div style="clear:both;"></div>
                                 </div>
@@ -823,6 +831,7 @@ if ($q->num_rows() > 0) {
 								<input type="hidden" name="suppend_name" value="<?= isset($suppend_name);?>">
 								<input type="hidden" name="pos_date" value="" id="pos_date">
                                 <input type="hidden" name="plate_number" id="plate_number" value=""/>
+                                <input type="hidden" name="plate_number2" id="plate_number2" value=""/>
 
                                 <div id="payment-con">
                                     <?php for ($i = 1; $i <= 5; $i++) { ?>
@@ -6772,6 +6781,13 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         });
 
 		$('.suspend-button').dblclick(function () {
+
+            // Get value from radio button of Plate Number
+            if (__getItem('pnumber')) {
+                $("#plate_number2").attr("value", __getItem('pnumber'));
+                var pnumber = $("#plate_number").val();
+                __setItem('pnumber', pnumber);
+            }
 
             ref = $(this).val();
 			nref = $(this).attr('id');

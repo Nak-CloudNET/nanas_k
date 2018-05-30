@@ -434,6 +434,8 @@ class Pos extends MY_Controller
             $sale_status        = $this->input->post('sale_status');
             $bank_account = $this->input->post('bank_account');
             $plate_number = $this->input->post('plate_number');
+            $sus_date = $this->input->post('sus_date');
+            $sus_plate_number = $this->input->post('sus_plate_number');
 
             $payment_status 	= 'due';
             $payment_term 		= 0;
@@ -716,13 +718,13 @@ class Pos extends MY_Controller
                 'paid'              => $paidd ? $paidd:0,
                 'created_by'        => $this->session->userdata('user_id'),
 				'suspend_note'      => $this->input->post('suppend_name') ? $this->input->post('suppend_name') : $suppend_name->suspend_name,
-				'start_date'        => isset($suppend_name->date) ? $suppend_name->date : '',
+                'start_date' => $sus_date,
 				'other_cur_paid_rate' => $cur_rate->rate,
 				'saleman_by'        => $saleman_id,
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
                 'queue' => $query,
-                'plate_number' => $plate_number
+                'plate_number' => $sus_plate_number
             );
             
 			if($_POST['paid_by'][0] == 'depreciation'){
@@ -840,7 +842,8 @@ class Pos extends MY_Controller
 			$cur_rate = $this->pos_model->getExchange_rate();
 			if ($suspend) {
                 $data['suspend_id']     = $this->input->post('suspend_id');
-				$data['suspend_name']   = $this->input->post('suspend_name');
+                $data['suspend_name'] = $this->input->post('suspend_name');
+                $data['plate_number'] = $this->input->post('plate_number2');
 
                 $arr_suspend = $this->pos_model->suspendSale($data, $products, $did);
                 if ($arr_suspend['suppend_id'] >0) {
@@ -908,7 +911,7 @@ class Pos extends MY_Controller
 						$this->sales_model->addDelivery($dlDetails);
 					}
                     $s = $sale['sale_id'] ? $sale['sale_id'] : $sale;
-                    redirect("pos/view/" . $s);
+                    redirect("pos/receipt_invoice/" . $s);
                 }
                
             }
@@ -2354,6 +2357,36 @@ class Pos extends MY_Controller
         $this->data['modal'] 				= $modal;
         $this->data['page_title'] 			= $this->lang->line("invoice");
         $this->load->view($this->theme . 'pos/view', $this->data);
+    }
+
+    function receipt_invoice($sale_id = NULL, $modal = NULL)
+    {
+        $this->erp->checkPermissions('index');
+        if ($this->input->get('id')) {
+            $sale_id = $this->input->get('id');
+        }
+
+        $this->load->helper('text');
+        $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+        $this->data['message'] = $this->session->flashdata('message');
+        $this->data['rows'] = $this->pos_model->getAllInvoiceItems($sale_id);
+        $inv = $this->pos_model->getInvoicePosByID($sale_id);
+        $biller_id = $inv->biller_id;
+        $customer_id = $inv->customer_id;
+        $this->data['biller'] = $this->pos_model->getCompanyByID($biller_id);
+        $this->data['customer'] = $this->pos_model->getCompanyByID($customer_id);
+        $this->data['payments'] = $this->pos_model->getInvoicePaymentsPOS($sale_id);
+        $this->data['pos'] = $this->pos_model->getSetting();
+        $this->data['barcode'] = $this->barcode($inv->reference_no, 'code39', 30);
+        $this->data['inv'] = $inv;
+        $this->data['sid'] = $sale_id;
+        $this->data['exchange_rate'] = $this->pos_model->getExchange_rate();
+        $this->data['outexchange_rate'] = $this->pos_model->getExchange_rate('KHM_o');
+        $this->data['exchange_rate_th'] = $this->pos_model->getExchange_rate('THA');
+        $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
+        $this->data['modal'] = $modal;
+        $this->data['page_title'] = $this->lang->line("invoice");
+        $this->load->view($this->theme . 'pos/receipt_invoice', $this->data);
     }
 	
 	function invoice_ktv($sale_id = NULL, $modal = NULL)
