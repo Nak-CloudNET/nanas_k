@@ -22,7 +22,7 @@ ALTER TABLE `erp_companies`
 ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_sales` 
 ADD COLUMN `plate_number` varchar(55) NULL AFTER `start_date`;
 
-/* 29-05-2018 By Nak */
+/* 29-05-2018 By Nak    */
 ALTER TABLE `erp_suspended_items`
   ADD COLUMN `quantity_balance`  decimal(15,4) NULL AFTER `unit_price`;
   
