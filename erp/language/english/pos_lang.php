@@ -376,8 +376,8 @@ $lang['reminded_value'] = "Reminded Value";
 $lang['number'] = "Number";
 $lang['smart_point'] = "Smart Point";
 $lang['disc'] = "Disc.";
-$lang['p_number'] = "P.Number";
-$lang['membership'] = "Membership";
+$lang['plate_no'] = "Plate No.";
+$lang['member'] = "Member";
 
 
 // Please help tidy the code :-)

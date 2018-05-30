@@ -156,29 +156,29 @@ if ($modal) {
             <div class="row" id="cinfo">
                 <div class="col-sm-6 col-xs-6">
                     <div class="row">
-                        <div class="col-sm-6 col-xs-6" style="width: 40%; padding-right: 0">
-                            <?= lang('p_number') ?>
+                        <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
+                            <?= lang('plate_no') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 60%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
                             : <?= $inv->plate_number ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 40%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
                             <?= lang('time_in') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 60%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
                             : <?= $this->erp->hrld($inv->start_date); ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 40%; padding-right: 0">
-                            <?= lang('membership') ?>
+                        <div class="col-sm-6 col-xs-6" style="width: 30%">
+                            <?= lang('customer') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 60%; padding-right: 0">
-                            : <?= $inv->card_no; ?>
-                        </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 40%; padding-right: 0">
-                            <?= lang('cashier') ?>
-                        </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 60%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
                             : <?= $inv->username; ?>
+                        </div>
+                        <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
+                            <?= lang('member') ?>
+                        </div>
+                        <div class="col-sm-6 col-xs-6" style="width: 70%; padding-right: 0">
+                            : <?= $inv->cc_no; ?>
                         </div>
                     </div>
                 </div>
@@ -197,8 +197,9 @@ if ($modal) {
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
                             : <?= $this->erp->hrld($inv->date); ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%">
-                            <?= lang('customer') ?>
+                        
+                        <div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 0">
+                            <?= lang('cashier') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
                             : <?= $inv->customer; ?>
@@ -220,7 +221,7 @@ if ($modal) {
             <thead>
                 <tr style="border:1px dotted black !important;">
                     <th style="width: 5%;"><?= lang("no"); ?></th>
-                    <th style="text-align: left;"><?= lang("Description"); ?></th>
+                    <th style="text-align: left; width: 45%"><?= lang("Description"); ?></th>
                     <th style="text-align:center;width: 100px;"><?= lang("qty"); ?></th>
                     <th style="text-align:center;"><?= lang("Price"); ?></th>
                     <th style="text-align:center;"><?= lang("disc"); ?></th>
@@ -297,40 +298,40 @@ if ($modal) {
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2"><?= lang('total') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('total') ?></td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $this->erp->formatMoney($total) ?></td>
                 </tr>
                 <?php foreach ($payments as $payment) { ?>
                 <tr>
-                    <td colspan="2"><?= lang('paid') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('paid') ?>&nbsp;(<?= lang($payment->paid_by); ?>)</td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></td>
                 </tr>
                 <?php } ?>
                 <tr>
-                    <td colspan="2"><?= lang('discount_price') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('discount_price') ?></td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $this->erp->formatMoney($inv->order_discount) ?></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?= lang('final_price') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('final_price') ?></td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $this->erp->formatMoney($total - $inv->order_discount); ?></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?= lang('reminded_value') ?></td>
-                    <td colspan="3"></td>
-                    <td class="text-right"></td>
+                    <td colspan="3"><?= lang('reminded_value') ?></td>
+                    <td colspan="2"></td>
+                    <td class="text-right"><?= $inv->paid_by=='gift_card'?$this->erp->formatMoney($inv->reminded_value):''; ?></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?= lang('number') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('number') ?></td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $inv->suspend_note ?></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?= lang('smart_point') ?></td>
-                    <td colspan="3"></td>
+                    <td colspan="3"><?= lang('smart_point') ?></td>
+                    <td colspan="2"></td>
                     <td class="text-right"><?= $inv->award_points ?></td>
                 </tr>
             </tfoot>
