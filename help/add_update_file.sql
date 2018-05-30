@@ -40,6 +40,7 @@ ADD COLUMN `plate_number` varchar(55) NULL AFTER `start_date`;
 ALTER TABLE `erp_suspended_items`
   ADD COLUMN `quantity_balance`  decimal(15,4) NULL AFTER `unit_price`;
 
-/* 30-05-2018 By Chanthy */
+/*      30-05-2018 By Chanthy */
   ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_suspended_bills`
 ADD COLUMN `plate_number` varchar(55) NULL AFTER `suspend_name`;
+
