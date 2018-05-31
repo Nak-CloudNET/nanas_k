@@ -1,10 +1,5 @@
 <?php
 $v = "";
-/* if($this->input->post('name')){
-  $v .= "&name=".$this->input->post('name');
-} */
-
-//$c = $card_no;
 if($card_no) {
 	$v .= "&no=".$card_no;
 }
@@ -17,12 +12,11 @@ if($card_no) {
 		var iStartDateCol = 2;
 		var iEndDateCol = 2;
 
-    iFini=iFini.substring(0,2) + iFini.substring(3,5)+ iFini.substring(6,10)
-    iFfin=iFfin.substring(0,2) + iFfin.substring(3,5)+ iFfin.substring(6,10)       
+        iFini = iFini.substring(0, 2) + iFini.substring(3, 5) + iFini.substring(6, 10);
+        iFfin = iFfin.substring(0, 2) + iFfin.substring(3, 5) + iFfin.substring(6, 10);
 
     var datofini=aData[iStartDateCol].substring(0,2) + aData[iStartDateCol].substring(3,5)+ aData[iStartDateCol].substring(6,10);
     var datoffin=aData[iEndDateCol].substring(0,2) + aData[iEndDateCol].substring(3,5)+ aData[iEndDateCol].substring(6,10);
-
 
 			if ( iFini == "" && iFfin == "" )
 			{
@@ -70,19 +64,10 @@ if($card_no) {
 		$('#btn-search').click(function(){
 			var start_date = $('#fdate').val();
 			var end_date = $('#tdate').val();
-			
-			/*$.ajax({
-				type: "GET",
-				url: '<?= site_url('sales/getGiftCardsHistory/?v=1' . $v) ?>',
-				data: ({start:start_date,end:end_date}),
-				success: function() {
-					//alert('form was submitted');
-				}
-			});*/
 		});
         var oTable = $('#PayRData').dataTable({
 			"bJQueryUI": true,
-            "aaSorting": [[0, "desc"]],
+            //"aaSorting": [[0, "desc"]],
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
@@ -94,7 +79,7 @@ if($card_no) {
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
-            "aoColumns": [{"mRender": fld}, null, {"mRender": ref}, {"mRender": ref}, {"mRender": currencyFormat}, {"mRender": row_status}],
+            "aoColumns": [{"mRender": fld}, null, {"mRender": ref}, {"mRender": ref}, null, {"mRender": row_status}, null],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
                 var oSettings = oTable.fnSettings();
                 if (aData[5] == 'sent') {
@@ -107,21 +92,22 @@ if($card_no) {
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var total = 0;
                 for (var i = 0; i < aaData.length; i++) {
-                    if (aaData[aiDisplay[i]][5] != 'received' || aaData[aiDisplay[i]][5] != 'received')
+                    if (aaData[aiDisplay[i]][5] == 'received')
                         total -= parseFloat(aaData[aiDisplay[i]][4]);
                     else
                         total += parseFloat(aaData[aiDisplay[i]][4]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[4].innerHTML = currencyFormat(parseFloat(total));
+                nCells[4].innerHTML = parseFloat(total);
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 0, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
-			{column_number: 1, filter_default_label: "[<?=lang('card_no');?>]", filter_type: "text", data: []},
+            {column_number: 1, filter_default_label: "[<?=lang('card_number');?>]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('payment_ref');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('sale_ref');?>]", filter_type: "text", data: []},
             //{column_number: 4, filter_default_label: "[<?=lang('purchase_ref');?>]", filter_type: "text", data: []},            
             {column_number: 5, filter_default_label: "[<?=lang('type');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('tran_type');?>]", filter_type: "text", data: []},
         ], "footer");
 		
 		//$('#fdate').keyup( function() { oTable.fnDraw();});
@@ -159,22 +145,24 @@ if($card_no) {
 					<thead>
 						<tr>
 							<th><?= lang("date"); ?></th>
-							<th><?= lang("card_no"); ?></th>
+                            <th><?= lang("card_number"); ?></th>
 							<th><?= lang("payment_ref"); ?></th>
 							<th><?= lang("sale_ref"); ?></th>
 							<th><?= lang("amount"); ?></th>
 							<th><?= lang("type"); ?></th>
+                            <th><?= lang("tran_type"); ?></th>
 						</tr>
 					</thead>
 					
 					<tbody>
 						<tr>
-							<td colspan="7" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
+                            <td colspan="8" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
 						</tr>
 					</tbody>
 					
 					<tfoot class="dtFilter">
 						<tr class="active">
+                            <th></th>
 							<th></th>
 							<th></th>
 							<th></th>

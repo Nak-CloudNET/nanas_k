@@ -13312,13 +13312,22 @@ class Sales extends MY_Controller
 
 		$this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('payments') . ".date as date, card_no,". $this->db->dbprefix('payments') . ".reference_no as payment_ref, " . $this->db->dbprefix('sales') . ".reference_no as sale_ref, amount, payments.type", FALSE)
-			->from("payments")
-            ->join('sales', 'payments.sale_id = sales.id', 'inner')
-			->join('gift_cards', 'gift_cards.card_no=payments.cc_no', 'inner')
-			->where($this->db->dbprefix('gift_cards') . '.card_no', $no);
+            ->select("
+                      gift_card_logs.date,
+                      gift_cards.card_no,
+                      payments.reference_no as payment_ref,
+                      erp_sales.reference_no as sale_ref,
+                      gift_card_logs.amount,
+                      payments.type,
+                      gift_card_logs.transaction_type
+                      ", false)
+            ->from("gift_card_logs")
+            ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
+            ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
+            ->join('gift_cards', 'gift_card_logs.gift_card_id = gift_cards.id', 'left')
+            ->where('gift_cards.card_no', $no);
 			if (isset($start)) {
-				$this->datatables->where($this->db->dbprefix('sales') . '.date', '2016-02-18 15:31:10');
+                $this->datatables->where($this->db->dbprefix('gift_card_logs') . '.date', '2016-02-18 15:31:10');
 			}
 
         echo $this->datatables->generate();
