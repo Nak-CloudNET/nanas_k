@@ -1076,15 +1076,15 @@ if (slwarehouse = __getItem('slwarehouse')) {
 		item = slitems[item_id];
 		var curStockQuantities = [];
 		var w_piece = item.row.w_piece;
-		var expdates = item.expdates?item.expdates:null;
+		var expdates = item.expdates ? item.expdates : null;
+		var customer_gift_card = item.customer_gift_card ? item.customer_gift_card : null;
 		var qty = row.children().children('.rquantity').val(),
 		product_option = row.children().children('.roption').val(),
 		unit_price = row.children().children('.realuprice').val(),
-		discount = row.children().children('.rdiscount').val();
-
+		discount = row.children().children('.rdiscount').val(),
+		package_expiry_date = row.children().children('.package_expiry_date').val() ? row.children().children('.package_expiry_date').val() : '';		
 		var default_price = formatDecimal(row.find('.default_price').val());
 		var net_price = unit_price;
-
 		var opt_group_price = '<p style="margin: 12px 0 0 0;">n/a</p>';
 		if(item.all_group_prices !== false) {
 			var gp_count = 1;
@@ -1162,6 +1162,13 @@ if (slwarehouse = __getItem('slwarehouse')) {
 			});
 		}
 		
+		if(customer_gift_card !== null) {
+			exp = $("<select id=\"gift_card_id\" name=\"gift_card_id\" class=\"form-control select gift_card_id\" />");
+			$.each(customer_gift_card, function () {
+				$("<option />", {value: this.id, text: this.card_no}).appendTo(exp);				
+			});
+		}
+		
 		var opt = '<p style="margin: 12px 0 0 0;">n/a</p>';
 		//if(site.settings.attributes == 1){
 			if(item.options !== false) {
@@ -1190,16 +1197,32 @@ if (slwarehouse = __getItem('slwarehouse')) {
 			
 		//}
 		
+		
 		$('#poptions-div').html(opt);
 		$('#expdates-div').html(exp);
+		$('#gift_card-div').html(exp);
 		$('#pgroup_prices-div').html(opt_group_price);
 		$('select.select').select2({minimumResultsForSearch: 6});
 		$('#pquantity').val(qty);
 		$('#pnote').redactor('set',item.row.product_noted?item.row.product_noted:'');
 		
 		$('#old_qty').val(qty);
+		$('#package_expiry').val(package_expiry_date);
 		$('#pprice_show').val(parseFloat(unit_price).toFixed(2));
 		$('#expdate').select2('val', item.row.expdate);
+		if(item.row.customer_gift_card_id){
+			if(item.row.customer_gift_card){
+				if(item.row.customer_gift_card_id != item.row.customer_gift_card){
+					$('#gift_card_id').select2('val', item.row.customer_gift_card);
+				}else{
+					$('#gift_card_id').select2('val', item.row.customer_gift_card_id);
+				}
+			}else{
+				$('#gift_card_id').select2('val', item.row.customer_gift_card_id);
+			}
+		}else{
+			$('#gift_card_id').select2('val', item.row.customer_gift_card);
+		}
 		$('#pprice').val(formatDecimal(unit_price));
 		$('#punit_price').val(formatDecimal(parseFloat(unit_price) + parseFloat(pr_tax_val)));
 		$('#poption').select2('val', item.row.option);
@@ -1446,6 +1469,7 @@ if (slwarehouse = __getItem('slwarehouse')) {
 				}
 			});
 		}
+		
 		var request_quantity = $("#request_quantity").val();
 		var cur_stock_qty = $("#cur_stock_qty").val();
 	    var price	= parseFloat($('#pprice').val());
@@ -1491,6 +1515,8 @@ if (slwarehouse = __getItem('slwarehouse')) {
 		slitems[item_id].row.price_id = price_id,
 		slitems[item_id].row.option = $('#poption').val() ? $('#poption').val() : '',
 		slitems[item_id].row.expdate = $('#expdate').val() ? $('#expdate').val() : '',
+		slitems[item_id].row.customer_gift_card = $('#gift_card_id').val() ? $('#gift_card_id').val() : '',
+		slitems[item_id].row.package_expiry_date = $('#package_expiry').val() ? $('#package_expiry').val() : '',
 		slitems[item_id].row.product_noted = $('#pnote').val() ? $('#pnote').val() : '',
 		slitems[item_id].row.serial = $('#pserial').val();
 
@@ -1915,7 +1941,6 @@ function loadItems() {
 		if (gp) {
 			var sale_price = gp['sales-price'];
 		}
-		
 		var no=1;
 		$.each(slitems, function () {
 			var item = this;
@@ -1942,7 +1967,9 @@ function loadItems() {
 				item_option 		= item.row.option,
 				
 				request_quantity 	= item.row.request_quantity,
-				expdate 			= item.row.expdate?item.row.expdate:null,
+				expdate 			= item.row.expdate ? item.row.expdate : null,
+				customer_gift_card 	= item.row.customer_gift_card ? item.row.customer_gift_card : null,
+				package_expiry_date = item.row.package_expiry_date ? item.row.package_expiry_date : '',
 				item_cost  			= 0,
 				group_prices 		= item.group_prices,
 				group_price_id 		= (item.group_prices!=''?item.group_prices.price_group_id:0),
@@ -1968,8 +1995,6 @@ function loadItems() {
 				var exchange_rate 	= $("#exchange_rate").val();
 				var is_edit 		= $("#is_edit").val() ? $("#is_edit").val() : 0;
 				var default_price 	= item_price;
-
-			// kaoly erro add about start_date and end_date
 			if(item.row.start_date != null){
 				var start_date = moment(item.row.start_date).format('DD/MM/YYYY');
 			}
@@ -2269,13 +2294,13 @@ function loadItems() {
 
 			if(site.settings.show_code == 1 && site.settings.separate_code == 1) {
 				tr_html+='<td class="text-left"><span class="text-left">'+ (digital_id?digital_code:item_code) +'</span></td>';
-				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="slaeid[]" type="hidden" class="slaeid" value="' + slaeid + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
+				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="slaeid[]" type="hidden" class="slaeid" value="' + slaeid + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="customer_gift_card[]" type="hidden" class="customer_gift_card" value="' + customer_gift_card + '"><input name="package_expiry_date[]" type="hidden" class="package_expiry_date" value="' + package_expiry_date + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 			}
 			if(site.settings.show_code == 1 && site.settings.separate_code == 0) {
-				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) + ' (' + (digital_id?digital_code:item_code) + ')'+(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
+				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="customer_gift_card[]" type="hidden" class="customer_gift_card" value="' + customer_gift_card + '"><input name="package_expiry_date[]" type="hidden" class="package_expiry_date" value="' + package_expiry_date + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) + ' (' + (digital_id?digital_code:item_code) + ')'+(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 			}
 			if(site.settings.show_code == 0) {
-				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
+				tr_html += '<td><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="roption_qty_unit[]" type="hidden" class="roption_qty_unit" value="' + item_qty_unit + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="customer_gift_card[]" type="hidden" class="customer_gift_card" value="' + customer_gift_card + '"><input name="package_expiry_date[]" type="hidden" class="package_expiry_date" value="' + package_expiry_date + '"><input name="piece[]" type="hidden" class="piece" value="' + piece + '"><input name="wpiece[]" type="hidden" class="wpiece" value="' + wpiece + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input type="hidden" value="'+group_price_id+'" class="group_price_id" name="group_price_id[]"><span class="sname" id="name_' + row_no + '">' + ((item_promotion == 1 && (current_date >= start_date && current_date <= end_date)) ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span> <i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 			}
 			
 			if(site.settings.product_serial == 1){

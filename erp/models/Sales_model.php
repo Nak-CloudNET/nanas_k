@@ -1904,7 +1904,7 @@ class Sales_model extends CI_Model
         return FALSE;
     }
 
-    public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(),$deliver_id_muti=NULL)
+    public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(), $deliver_id_muti = NULL, $packages = NULL)
     {
 		
         if ($data['sale_status'] == 'completed') {
@@ -2004,6 +2004,26 @@ class Sales_model extends CI_Model
                 }
 
             }
+			
+			foreach($packages as $package){
+				if ($package['product_type'] == 'combo') {
+					$combo = $this->site->getProductComboItems($package['product_id']);
+					foreach ($combo as $combo_item) {
+						$p_var = $this->site->getProductSmallVariant($combo_item->id);
+						$data_package = array(							
+							'sale_id' 		=> $sale_id,
+							'customer_id' 	=> $data['customer_id'],
+							'combo_id' 		=> $package['product_id'],
+							'product_id' 	=> $combo_item->id,
+							'card_id' 		=> $package['card_id'],
+							'quantity' 		=> $package['quantity'] * $combo_item->qty,
+							'use_quantity'  => 0,
+							'expiry' 		=> $package['expiry']
+						);
+						$this->db->insert('packages', $data_package);
+					}
+				}				
+			}
 
             if ($data['sale_status'] == 'completed') {
                 $this->site->syncQuantity($sale_id);
@@ -2416,7 +2436,7 @@ class Sales_model extends CI_Model
 		return FALSE;
 	}
 	
-    public function updateSale($id, $data, $items = array(), $sale_data)
+    public function updateSale($id, $data, $items = array(), $sale_data, $payment, $packages)
     {
 		
 		if ($data['sale_status'] == 'completed') {
@@ -2503,6 +2523,28 @@ class Sales_model extends CI_Model
                 }
 				$i++;
             }
+			
+			$this->db->delete('packages', array('sale_id' => $id));
+			
+			foreach($packages as $package){
+				if ($package['product_type'] == 'combo') {
+					$combo = $this->site->getProductComboItems($package['product_id']);
+					foreach ($combo as $combo_item) {
+						$p_var = $this->site->getProductSmallVariant($combo_item->id);
+						$data_package = array(							
+							'sale_id' 		=> $id,
+							'customer_id' 	=> $data['customer_id'],
+							'combo_id' 		=> $package['product_id'],
+							'product_id' 	=> $combo_item->id,
+							'card_id' 		=> $package['card_id'],
+							'quantity' 		=> $package['quantity'] * $combo_item->qty,
+							'use_quantity'  => 0,
+							'expiry' 		=> $package['expiry']
+						);
+						$this->db->insert('packages', $data_package);
+					}
+				}				
+			}
 			
 			if($data['payment_status'] == 'paid' || $data['payment_status'] == 'partial'){
 				$this->db->update('payments', array('amount' => $data['paid']), array('sale_id' => $id));
@@ -7072,7 +7114,11 @@ public function getRielCurrency(){
         }
         return false;
     }
-
-
-
+	public function getGiftCardByID($id) {
+        $q = $this->db->get_where('gift_cards', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
 }
