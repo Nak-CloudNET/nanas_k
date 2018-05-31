@@ -13488,7 +13488,7 @@ class Sales extends MY_Controller
                     'gift_card_id'      => $gift_card_id,
                     'date'              => $date = date('Y-m-d H:i:s'),
                     'updated_at'        => $date = date('Y-m-d H:i:s'),
-                    'transaction_type'  => 'created',
+                    'transaction_type'  => 'updated',
                     'amount'            => $this->input->post('value'),
                     'created_by'         => $this->session->userdata('user_id')
                 );
