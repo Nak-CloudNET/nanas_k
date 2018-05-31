@@ -5,7 +5,7 @@ function product_name($name)
 }
 
 if ($modal) {
-    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 510px; margin: 0px auto;"><div class="modal-body" style="max-width: 510px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
+    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 520px; margin: 0px auto;"><div class="modal-body" style="max-width: 510px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
 } else { ?>
     <!doctype html>
 <html>
