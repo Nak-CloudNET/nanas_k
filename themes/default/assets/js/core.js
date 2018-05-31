@@ -1406,7 +1406,7 @@ $(document).ready(function() {
         //window.location.href = site.base_url + 'sales/view/' + $(this).parent('.invoice_link').attr('id');
     });
     $('body').on('click', '.receipt_link td:not(:first-child :last-child)', function() {
-        $('#myModal').modal({ remote: site.base_url + 'pos/view/' + $(this).parent('.receipt_link').attr('id') + '/1' });
+        $('#myModal').modal({remote: site.base_url + 'pos/receipt_invoice/' + $(this).parent('.receipt_link').attr('id') + '/1'});
     });
 	$('body').on('click', '.acc_payment_note td:not(:first-child :last-child)', function() {
         $('#myModal').modal({remote: site.base_url + 'account/payment_note/' + $(this).parent('.acc_payment_note').attr('id')});
