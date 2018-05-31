@@ -13337,13 +13337,22 @@ class Sales extends MY_Controller
 
 		$this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('payments') . ".date as date, card_no,". $this->db->dbprefix('payments') . ".reference_no as payment_ref, " . $this->db->dbprefix('sales') . ".reference_no as sale_ref, amount, payments.type", FALSE)
-			->from("payments")
-            ->join('sales', 'payments.sale_id = sales.id', 'inner')
-			->join('gift_cards', 'gift_cards.card_no=payments.cc_no', 'inner')
-			->where($this->db->dbprefix('gift_cards') . '.card_no', $no);
+            ->select("
+                      gift_card_logs.date,
+                      gift_cards.card_no,
+                      payments.reference_no as payment_ref,
+                      erp_sales.reference_no as sale_ref,
+                      gift_card_logs.amount,
+                      payments.type,
+                      gift_card_logs.transaction_type
+                      ", false)
+            ->from("gift_card_logs")
+            ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
+            ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
+            ->join('gift_cards', 'gift_card_logs.gift_card_id = gift_cards.id', 'left')
+            ->where('gift_cards.card_no', $no);
 			if (isset($start)) {
-				$this->datatables->where($this->db->dbprefix('sales') . '.date', '2016-02-18 15:31:10');
+                $this->datatables->where($this->db->dbprefix('gift_card_logs') . '.date', '2016-02-18 15:31:10');
 			}
 
         echo $this->datatables->generate();
@@ -13409,6 +13418,8 @@ class Sales extends MY_Controller
                 'customer_group_id' => $this->input->post('customer_group'),
                 'customer_group_name' => $customer_group_name
             );
+
+
             $sa_data = array();
             $ca_data = array();
             if ($this->input->post('staff_points')) {
@@ -13434,9 +13445,23 @@ class Sales extends MY_Controller
             redirect("sales/gift_cards");
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->addGiftCard($data, $ca_data, $sa_data)) {
-            $this->session->set_flashdata('message', lang("gift_card_added"));
-            redirect("sales/gift_cards");
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->addGiftCard($data, $ca_data, $sa_data)) {
+            if($gift_card_id){
+                // generate gift_card_log
+                $gift_card_log = array(
+                    'gift_card_id'      => $gift_card_id,
+                    'date'              => $date = date('Y-m-d H:i:s'),
+                    'transaction_type'  => 'created',
+                    'amount'            => $this->input->post('value'),
+                    'created_by'         => $this->session->userdata('user_id')
+                );
+                if($this->sales_model->addGiftCardLog($gift_card_log)){
+                    $this->session->set_flashdata('message', lang("gift_card_added"));
+                    redirect("sales/gift_cards");
+
+                }
+            }
+
         } else {
             $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
@@ -13480,9 +13505,26 @@ class Sales extends MY_Controller
             redirect("sales/gift_cards");
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->updateGiftCard($id, $data)) {
-            $this->session->set_flashdata('message', lang("gift_card_updated"));
-            redirect("sales/gift_cards");
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->updateGiftCard($id, $data)) {
+
+            if($gift_card_id){
+                // generate gift_card_log
+                $gift_card_log = array(
+                    'gift_card_id'      => $gift_card_id,
+                    'date'              => $date = date('Y-m-d H:i:s'),
+                    'updated_at'        => $date = date('Y-m-d H:i:s'),
+                    'transaction_type'  => 'updated',
+                    'amount'            => $this->input->post('value'),
+                    'created_by'         => $this->session->userdata('user_id')
+                );
+
+                if($this->sales_model->addGiftCardLog($gift_card_log)){
+                    $this->session->set_flashdata('message', lang("gift_card_updated"));
+                    redirect("sales/gift_cards");
+
+                }
+            }
+
         } else {
             $this->data['error'] 		= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['gift_card'] 	= $this->site->getGiftCardByID($id);
@@ -19802,6 +19844,7 @@ function invoice_concrete_angkor($id=null)
         $this->form_validation->set_rules('value', lang("value"), 'required');
 
         if ($this->form_validation->run() == true) {
+
             $customer_details = $this->input->post('customer') ? $this->site->getCompanyByID($this->input->post('customer')) : NULL;
             $customer = $customer_details ? $customer_details->company : NULL;
             $customer_group_id = $this->input->post('customer_group');
@@ -19819,6 +19862,8 @@ function invoice_concrete_angkor($id=null)
                 'customer_group_name' => $customer_group_name
 
             );
+
+
             $sa_data = array();
             $ca_data = array();
             /*
@@ -19846,7 +19891,22 @@ function invoice_concrete_angkor($id=null)
 
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->add_amount_gift_card($data)) {
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->add_amount_gift_card($data)) {
+
+            $gift_card_log = array(
+                'gift_card_id'      => $gift_card_id,
+                'date'              => $date = date('Y-m-d H:i:s'),
+                'transaction_type'  => 'added',
+                'amount'            => $this->input->post('value'),
+                'created_by'         => $this->session->userdata('user_id')
+            );
+
+            if($this->sales_model->addGiftCardLog($gift_card_log)){
+                $this->session->set_flashdata('message', lang("gift_card_added"));
+                redirect("sales/gift_cards");
+
+            }
+
             $this->session->set_flashdata('message', lang("gift_card_updated"));
             redirect("sales/gift_cards");
         } else {

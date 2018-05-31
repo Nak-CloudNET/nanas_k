@@ -22,10 +22,13 @@ ALTER TABLE `erp_companies`
 ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_sales` 
 ADD COLUMN `plate_number` varchar(55) NULL AFTER `start_date`;
 
-/* 29-05-2018 By Nak */
+/* 29-05-2018 By Nak    */
 ALTER TABLE `erp_suspended_items`
   ADD COLUMN `quantity_balance`  decimal(15,4) NULL AFTER `unit_price`;
   
 /* 30-05-2018 By Chanthy */
   ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_suspended_bills` 
 ADD COLUMN `plate_number` varchar(55) NULL AFTER `suspend_name`;
+
+ALTER TABLE `erp_gift_card_logs`
+ADD COLUMN `updated_at`  datetime NULL AFTER `created_by`;

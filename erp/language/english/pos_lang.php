@@ -374,10 +374,11 @@ $lang['card_bay'] = "Card Bay";
 $lang['final_price'] = "Final Price";
 $lang['reminded_value'] = "Reminded Value";
 $lang['number'] = "Number";
-$lang['smart_point'] = "Smart Point";
+$lang['smart_point'] = "S. Point";
 $lang['disc'] = "Disc.";
-$lang['p_number'] = "P.Number";
-$lang['membership'] = "Membership";
+$lang['plate_no'] = "Plate No.";
+$lang['member'] = "Member";
+$lang['r_value'] = "R. Value";
 
 
 // Please help tidy the code :-)

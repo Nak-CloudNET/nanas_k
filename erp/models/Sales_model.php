@@ -3843,6 +3843,21 @@ class Sales_model extends CI_Model
                 if($this->db->affected_rows()){
                     $this->increase_award_points($data,$customer_id);
                 }
+
+                // generate log
+
+                $gift_card_log = array(
+                    'gift_card_id'      => $gc->id,
+                    'date'              => $date = date('Y-m-d H:i:s'),
+                    'transaction_type'  => 'paid',
+                    'amount'            => floatval($data['amount']),
+                    'sale_id'           => $data['sale_id'],
+                    'created_by'         => $this->session->userdata('user_id')
+                );
+
+                $this->sales_model->addGiftCardLog($gift_card_log);
+
+
             }
 			
 			if($data['paid_by'] == 'deposit'){
@@ -4116,6 +4131,7 @@ class Sales_model extends CI_Model
 
         unset($data['customer_group_name']);
         if ($this->db->insert('gift_cards', $data)) {
+            $gift_card_id = $this->db->insert_id();
             if (!empty($ca_data)) {
                 $this->db->update('companies', array('award_points' => $ca_data['points']), array('id' => $ca_data['customer']));
             } elseif (!empty($sa_data)) {
@@ -4125,10 +4141,20 @@ class Sales_model extends CI_Model
             $this->db->where(array('id'=>$data['customer_id']));
             $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
 
+            return $gift_card_id;
+        }
+        return false;
+    }
+
+
+    public function addGiftCardLog($data = array())
+    {
+        if ($this->db->insert('gift_card_logs', $data)) {
             return true;
         }
         return false;
     }
+
 
 
 	
@@ -4148,7 +4174,7 @@ class Sales_model extends CI_Model
         if ($this->db->update('gift_cards', $data)) {
             $this->db->where(array('id'=>$data['customer_id']));
             $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
-            return true;
+            return $id;
         }
         return false;
 
@@ -4162,7 +4188,7 @@ class Sales_model extends CI_Model
         $this->db->where(array('card_no'=>$data['card_no']));
         $this->db->update('gift_cards', array('value'=>$value,'balance'=>$balance));
         if($this->db->affected_rows()){
-            return true;
+            return $gift_card->id;
         }
         return false;
     }

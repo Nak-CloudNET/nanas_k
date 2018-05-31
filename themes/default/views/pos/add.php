@@ -296,7 +296,9 @@ if ($q->num_rows() > 0) {
             </div>
         </div>
     </header>
-<?php if ($layout != 0 && $layout != 1 && $layout != 3 && $layout != 5) {?>
+<?php if ($layout != 0 && $layout != 1 && $layout != 3 && $layout != 5) {
+	
+?>
 	<div id="content" style="margin-bottom: -40px !Important; ">
 		<div class="grid-view" style="width:98%; overflow: hidden;">
 			<div id="proContainer" style="height: 118px !important;">
@@ -305,7 +307,9 @@ if ($q->num_rows() > 0) {
 			</div>
 		</div>
 	</div>
-<?php } else if($layout == 5) { ?>
+<?php } else if($layout == 5) {
+    
+    ?>
 	<div id="cp">
 		<div id="cpinner" style="padding:0;">
 			<div class="quick-menu">
@@ -869,7 +873,7 @@ if ($q->num_rows() > 0) {
                                 <input name="combine_table_id" type="hidden" value="<?= $combine_table ? $combine_table : '' ?>" id="combine_table">
                                 <input name="discount" type="hidden" value="<?= $suspend_sale ? $suspend_sale->order_discount_id : ''; ?>" id="posdiscount">
                                 <input name="shipping" type="hidden" value="" id="posshipping">
-                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash" style="display: none;"/>
+                                <input type="hidden" name="rpaidby" id="rpaidby" value="cash"/>
                                 <input type="hidden" name="total_items" id="total_items" value="0" style="display: none;"/>
                                 <input type="submit" id="submit_sale" value="Submit Sale" style="display: none;"/>
                             </div>
@@ -3195,8 +3199,12 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         });
 
         $('#paymentModal').on('select2-close', '#paid_by_<?=$i?>', function (e) {
-            $('#paid_by_val_<?=$i?>').val($(this).val());
+			$('#paid_by_val_<?=$i?>').val($(this).val());
 
+        });
+		
+		$('#paymentModal').on('change', '#paid_by_<?=$i?>', function (e) {
+			$('#paid_by_val_<?=$i?>').val($(this).val());
         });
 
 		$('#paymentModal').on('select2-close', '#bank_account_<?=$i?>', function (e) {
@@ -3245,6 +3253,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		<?php }
 		?>
+		
         $('#payment').click(function () {
 
             var GP = '<?= $GP['sales-discount'];?>';
@@ -3258,6 +3267,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 var pnumber = $("#plate_number").val();
                 __setItem('pnumber', pnumber);
 			}
+
 
 			if(Owner || Admin || (GP == 1)){
 				<?php if ($sid) { ?>
@@ -3299,6 +3309,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					increaseArea: '20%' // optional
 				});
 				$("#posbiller").trigger("change");
+                $("#rpaidby").trigger("change");
 				//$('.currencies_payment').focus();
 				$("#date").trigger('change');
 				$("#saleman").trigger('change');
@@ -3350,6 +3361,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					});
 
 					$("#posbiller").trigger("change");
+                    $("#rpaidby").trigger("change");
 					//$('.currencies_payment').focus();
 					$("#date").trigger('change');
 					$("#saleman").trigger('change');
@@ -3401,6 +3413,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									});
 
 									$("#posbiller").trigger("change");
+                                    $("#rpaidby").trigger("change");
 									//$('.currencies_payment').focus();
 									$("#date").trigger('change');
 									$("#saleman").trigger('change');
@@ -3564,7 +3577,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                             
 							$('#gift_card_no_' + id).parent('.form-group').removeClass('has-error');
                             //calculateTotals();
-                            $('#amount_' + id).val(parseFloat(data.balance)).focus();
+                            //$('#amount_' + id).val(parseFloat(data.balance)).focus();
                             var e = $.Event("keyup", {keyCode: 13});
 							//$("#amount_1").trigger(e);
 							
@@ -6594,6 +6607,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 pa_no = id.substr(id.length - 1);
 
             $('#rpaidby').val(p_val);
+            $('#paid_by_val_<?= $i ?>').val(p_val);
             if (p_val == 'cash' || p_val == 'other') {
                 $('.pcheque_' + pa_no).hide();
                 $('.pvoucher_' + pa_no).hide();
