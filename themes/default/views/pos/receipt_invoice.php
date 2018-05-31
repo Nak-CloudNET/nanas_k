@@ -102,10 +102,6 @@ if ($modal) {
                 padding-right: 20px !important;
             }
 
-            /* .received_amount {
-                width: 69% !important;
-            } */
-
         }
     </style>
 
@@ -114,7 +110,6 @@ if ($modal) {
 <body>
 
 <?php } ?>
-
 
 <div id="wrapper">
     <div id="receiptData">
