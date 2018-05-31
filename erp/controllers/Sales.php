@@ -13471,9 +13471,26 @@ class Sales extends MY_Controller
             redirect("sales/gift_cards");
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->updateGiftCard($id, $data)) {
-            $this->session->set_flashdata('message', lang("gift_card_updated"));
-            redirect("sales/gift_cards");
+        if ($this->form_validation->run() == true && $gift_card_id = $this->sales_model->updateGiftCard($id, $data)) {
+
+            if($gift_card_id){
+                // generate gift_card_log
+                $gift_card_log = array(
+                    'gift_card_id'      => $gift_card_id,
+                    'date'              => $date = date('Y-m-d H:i:s'),
+                    'updated_at'        => $date = date('Y-m-d H:i:s'),
+                    'transaction_type'  => 'created',
+                    'amount'            => $this->input->post('value'),
+                    'created_by'         => $this->session->userdata('user_id')
+                );
+
+                if($this->sales_model->addGiftCardLog($gift_card_log)){
+                    $this->session->set_flashdata('message', lang("gift_card_updated"));
+                    redirect("sales/gift_cards");
+
+                }
+            }
+
         } else {
             $this->data['error'] 		= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['gift_card'] 	= $this->site->getGiftCardByID($id);

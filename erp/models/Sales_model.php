@@ -4132,7 +4132,7 @@ class Sales_model extends CI_Model
         if ($this->db->update('gift_cards', $data)) {
             $this->db->where(array('id'=>$data['customer_id']));
             $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
-            return true;
+            return $id;
         }
         return false;
 

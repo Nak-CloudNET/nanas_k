@@ -3577,7 +3577,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                             
 							$('#gift_card_no_' + id).parent('.form-group').removeClass('has-error');
                             //calculateTotals();
-                            $('#amount_' + id).val(parseFloat(data.balance)).focus();
+                            //$('#amount_' + id).val(parseFloat(data.balance)).focus();
                             var e = $.Event("keyup", {keyCode: 13});
 							//$("#amount_1").trigger(e);
 							

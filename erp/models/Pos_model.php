@@ -454,6 +454,7 @@ class Pos_model extends CI_Model
         }
 		
         if ($this->db->insert('sales', $data)) {
+
             $sale_id = $this->db->insert_id();
             if ($this->site->getReference('pos',$data['biller_id']) == $data['reference_no']) {
                 $this->site->updateReference('pos',$data['biller_id']);

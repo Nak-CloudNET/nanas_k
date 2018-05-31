@@ -29,3 +29,6 @@ ALTER TABLE `erp_suspended_items`
 /* 30-05-2018 By Chanthy */
   ALTER TABLE `iclouderp_v3_5_nanas_k`.`erp_suspended_bills` 
 ADD COLUMN `plate_number` varchar(55) NULL AFTER `suspend_name`;
+
+ALTER TABLE `erp_gift_card_logs`
+ADD COLUMN `updated_at`  datetime NULL AFTER `created_by`;
