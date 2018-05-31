@@ -1345,6 +1345,22 @@ class Site extends CI_Model
         }
         return FALSE;
     }
+	
+	public function getGiftCardByCustomeerID($id) {
+        $q = $this->db->get_where('gift_cards', array('customer_id' => $id));
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+	
+	public function getPackageBySaleId($id = NULL, $combo_id) {
+        $q = $this->db->get_where('packages', array('sale_id' => $id, 'combo_id' => $combo_id));
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
 
     public function getAllGiftCards()
     {
