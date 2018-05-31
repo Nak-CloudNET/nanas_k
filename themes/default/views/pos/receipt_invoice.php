@@ -336,13 +336,13 @@ if ($modal) {
                 <td class="text-left flabel"><?= lang('សរុបចុងក្រោយ') ?></td>
                 <td style="text-align:right;"><?= $this->erp->formatMoney($total - $inv->order_discount); ?></td>
             </tr>
-            <?php foreach ($payments as $payment) { ?>
+            <?php /*foreach ($payments as $payment) { */ ?><!--
                 <tr>
-                    <td class="text-left"><?= lang('paid') ?>&nbsp;(<?= lang($payment->paid_by); ?>)</td>
-                    <td class="text-left flabel"><?= lang('ទឹកប្រាក់បានបង់') ?></td>
-                    <td style="text-align:right;"><?= $this->erp->formatMoney($payment->pos_paid); ?></td>
+                    <td class="text-left"><? /*= lang('paid') */ ?>&nbsp;(<? /*= lang($payment->paid_by); */ ?>)</td>
+                    <td class="text-left flabel"><? /*= lang('ទឹកប្រាក់បានបង់') */ ?></td>
+                    <td style="text-align:right;"><? /*= $this->erp->formatMoney($payment->pos_paid); */ ?></td>
                 </tr>
-            <?php } ?>
+            --><?php /*} */ ?>
             <!--  </table>
             <table class="received" style="width:100%;margin-top: 5px;"> -->
             <?php
