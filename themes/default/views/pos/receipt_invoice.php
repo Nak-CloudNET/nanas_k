@@ -104,9 +104,7 @@ if ($modal) {
 
         }
     </style>
-
 </head>
-
 <body>
 
 <?php } ?>
