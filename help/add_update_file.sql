@@ -32,3 +32,19 @@ ADD COLUMN `plate_number` varchar(55) NULL AFTER `suspend_name`;
 
 ALTER TABLE `erp_gift_card_logs`
 ADD COLUMN `updated_at`  datetime NULL AFTER `created_by`;
+
+
+/* 31-05-2018 Kaoly create new table */
+DROP TABLE IF EXISTS `erp_packages`;
+CREATE TABLE `erp_packages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sale_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `combo_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `card_id` int(11) DEFAULT NULL,
+  `quantity` decimal(15,4) DEFAULT NULL,
+  `use_quantity` decimal(15,4) DEFAULT NULL,
+  `expiry` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
