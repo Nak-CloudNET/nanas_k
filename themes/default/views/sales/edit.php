@@ -773,13 +773,30 @@
 							<input type="hidden" class="form-control" id="cur_stock_qty">
                         </div>
                     </div>
+					
 					<div class="form-group">
-                        <label for="expdates" class="col-sm-4 control-label"><?= lang('expdates') ?></label>
+						<label for="package_expiry" class="col-sm-4 control-label"><?= lang('package_expiry') ?></label>
+						<div class="col-sm-8">
+								<?php echo form_input('package_expiry', (isset($_POST['package_expiry']) ? $_POST['package_expiry'] : ""), 'class="form-control input-tip datetime" id="package_expiry"'); ?>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="expdates" class="col-sm-4 control-label"><?= lang('member_card_no') ?></label>
+						<div class="col-sm-8">
+							<div id="gift_card-div"></div>
+						</div>
+					</div>
+					
+					<?php if($Settings->product_expiry == 1) { ?>
+						<div class="form-group">
+							<label for="expdates" class="col-sm-4 control-label"><?= lang('expdates') ?></label>
 
-                        <div class="col-sm-8">
-                            <div id="expdates-div"></div>
-                        </div>
-                    </div>
+							<div class="col-sm-8">
+								<div id="expdates-div"></div>
+							</div>
+						</div>
+					<?php } ?>
                     <div class="form-group">
                         <label for="poption" class="col-sm-4 control-label"><?= lang('product_option') ?></label>
 

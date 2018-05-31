@@ -19,6 +19,11 @@
                 <?= lang("value", "value"); ?>
                 <?php echo form_input('value', '', 'class="form-control" id="value" required="required"'); ?>
             </div>
+
+            <div class="form-group">
+                <?php echo form_hidden('customer_id', $customer_id, 'class="form-control" id="customer_id" required="required"'); ?>
+            </div>
+
             <!--
             <div class="form-group">
                 <input type="checkbox" class="checkbox" name="staff_points" id="staff_points">

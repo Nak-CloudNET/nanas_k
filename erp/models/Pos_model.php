@@ -568,7 +568,7 @@ class Pos_model extends CI_Model
                                     $gc = $this->site->getGiftCardbyNO($payment['cc_no']);
                                     $this->db->update('gift_cards', array('balance' => ($gc->balance - $payment['amount'])), array('card_no' => $payment['cc_no']));
                                     if($this->db->affected_rows()){
-                                        $this->increase_award_points($payment,$data['customer_id']);
+                                        //$this->increase_award_points($payment,$data['customer_id']);
                                     }
                                     // generate log
 
