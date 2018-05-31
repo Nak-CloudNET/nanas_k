@@ -6297,7 +6297,6 @@ class Sales extends MY_Controller
                 $pis = $this->sales_model->getPurchasedItems($item->product_id, $item->warehouse_id, $item->option_id);
 				$group_prices = $this->sales_model->getProductPriceGroup($item->product_id, $customer->price_group_id);
                 $all_group_prices = $this->sales_model->getProductPriceGroup($item->product_id);
-				//$row->price_id = $group_prices[0]->id ? $group_prices[0]->id : 0;
 				
                 if($pis){
                     foreach ($pis as $pi) {
