@@ -6605,7 +6605,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             var p_val = $(this).val(),
                 id = $(this).attr('id'),
                 pa_no = id.substr(id.length - 1);
+
             $('#rpaidby').val(p_val);
+            $('#paid_by_val_<?= $i ?>').val(p_val);
             if (p_val == 'cash' || p_val == 'other') {
                 $('.pcheque_' + pa_no).hide();
                 $('.pvoucher_' + pa_no).hide();
