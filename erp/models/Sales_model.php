@@ -2125,12 +2125,14 @@ class Sales_model extends CI_Model
                         $payment['sale_id'] = $sale_id;
                         //if($payment['amount'] == $payment['amount'])
                         if ($payment['paid_by'] == 'gift_card') {
+
                             $this->db->update('gift_cards', array('balance' => $payment['gc_balance']), array('card_no' => $payment['cc_no']));
                             unset($payment['gc_balance']);
                             $payment['reference_no'] = $this->site->getReference('re');
                             $payment['type'] = 'returned';
                             $payment['return_id'] = $return_id;
                             $this->db->insert('payments', $payment);
+
                         } else {
                             $payment['reference_no'] = $this->site->getReference('re');
                             $payment['type'] = 'returned';
@@ -2186,7 +2188,7 @@ class Sales_model extends CI_Model
                         }
                         $this->calculateSaleTotals($sale_id, $return_id, NULL, $payment_status);
                     }
-                    $this->site->syncQuantity(NULL, NULL, $sale_items);
+                    //$this->site->syncQuantity(NULL, NULL, $sale_items);
                 }
             }
 
@@ -3839,9 +3841,10 @@ class Sales_model extends CI_Model
 
             if ($data['paid_by'] == 'gift_card') {
                 $gc = $this->site->getGiftCardbyNO($data['cc_no']);
+
                 $this->db->update('gift_cards', array('balance' => ($gc->balance - $data['amount'])), array('card_no' => $data['cc_no']));
                 if($this->db->affected_rows()){
-                    $this->increase_award_points($data,$customer_id);
+                    //$this->increase_award_points($data,$customer_id);
                 }
 
                 // generate log
@@ -4127,8 +4130,12 @@ class Sales_model extends CI_Model
 
     public function addGiftCard($data = array(), $ca_data = array(), $sa_data = array())
     {
-        $customer_group_name = $data['customer_group_name'];
 
+        $company = $this->getCustomerByID($data['customer_id']);
+        $old_award_point = $company->award_points;
+        $last_point = $old_award_point + $data['value'];
+
+        $customer_group_name = $data['customer_group_name'];
         unset($data['customer_group_name']);
         if ($this->db->insert('gift_cards', $data)) {
             $gift_card_id = $this->db->insert_id();
@@ -4139,7 +4146,7 @@ class Sales_model extends CI_Model
             }
 
             $this->db->where(array('id'=>$data['customer_id']));
-            $this->db->update('erp_companies',array('customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
+            $this->db->update('erp_companies',array('award_points' => $last_point,'last_updated_points' => $last_point,'customer_group_id'=>$data['customer_group_id'],'customer_group_name'=>$customer_group_name));
 
             return $gift_card_id;
         }
@@ -4182,11 +4189,19 @@ class Sales_model extends CI_Model
 
     public function add_amount_gift_card($data = array())
     {
+        $company = $this->getCustomerByID($data['customer_id']);
+        $old_award_point = $company->award_points;
+        $last_point = $old_award_point + $data['value'];
+
         $gift_card = $this->getGiftCardByCardNo($data['card_no']);
         $value = $gift_card->value + $data['value'];
         $balance = $gift_card->balance + $data['balance'];
         $this->db->where(array('card_no'=>$data['card_no']));
         $this->db->update('gift_cards', array('value'=>$value,'balance'=>$balance));
+
+        $this->db->where(array('id'=>$data['customer_id']));
+        $this->db->update('erp_companies',array('award_points' => $last_point,'last_updated_points' => $last_point));
+
         if($this->db->affected_rows()){
             return $gift_card->id;
         }

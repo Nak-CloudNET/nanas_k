@@ -5,7 +5,7 @@ function product_name($name)
 }
 
 if ($modal) {
-    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 510px; margin: 0px auto;"><div class="modal-body" style="max-width: 510px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
+    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 520px; margin: 0px auto;"><div class="modal-body" style="max-width: 510px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
 } else { ?>
     <!doctype html>
 <html>
@@ -102,19 +102,12 @@ if ($modal) {
                 padding-right: 20px !important;
             }
 
-            /* .received_amount {
-                width: 69% !important;
-            } */
-
         }
     </style>
-
 </head>
-
 <body>
 
 <?php } ?>
-
 
 <div id="wrapper">
     <div id="receiptData">
@@ -343,13 +336,13 @@ if ($modal) {
                 <td class="text-left flabel"><?= lang('សរុបចុងក្រោយ') ?></td>
                 <td style="text-align:right;"><?= $this->erp->formatMoney($total - $inv->order_discount); ?></td>
             </tr>
-            <?php foreach ($payments as $payment) { ?>
+            <?php /*foreach ($payments as $payment) { */ ?><!--
                 <tr>
-                    <td class="text-left"><?= lang('paid') ?>&nbsp;(<?= lang($payment->paid_by); ?>)</td>
-                    <td class="text-left flabel"><?= lang('ទឹកប្រាក់បានបង់') ?></td>
-                    <td style="text-align:right;"><?= $this->erp->formatMoney($payment->pos_paid); ?></td>
+                    <td class="text-left"><? /*= lang('paid') */ ?>&nbsp;(<? /*= lang($payment->paid_by); */ ?>)</td>
+                    <td class="text-left flabel"><? /*= lang('ទឹកប្រាក់បានបង់') */ ?></td>
+                    <td style="text-align:right;"><? /*= $this->erp->formatMoney($payment->pos_paid); */ ?></td>
                 </tr>
-            <?php } ?>
+            --><?php /*} */ ?>
             <!--  </table>
             <table class="received" style="width:100%;margin-top: 5px;"> -->
             <?php
@@ -378,36 +371,47 @@ if ($modal) {
                             <?php
                             foreach ($payments as $payment) {
                                 ?>
-                                <table style="width: 100%;">
+                                <table style="width:126%;">
                                     <caption style="float: left; padding-left: 13px;">
-                                        <?php if ($payment->paid_by == 'Cheque') {
-                                            echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
-                                        } elseif ($payment->paid_by == 'CC') {
-                                            echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
-                                        } else {
-                                            echo lang('paid_by') . ' ' . lang($payment->paid_by);
-                                        } ?>
+                                        <tr>
+                                            <th colspan="3">
+                                                <?php if ($payment->paid_by == 'Cheque') {
+                                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
+                                                } elseif ($payment->paid_by == 'CC') {
+                                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
+                                                } else {
+                                                    echo lang('paid_by') . ' ' . lang($payment->paid_by);
+                                                } ?>
+                                            </th>
+                                        </tr>
                                     </caption>
+
                                     <tr>
-                                        <th style="padding-right:12px; width:40%;"
-                                            class="text-left received_amount">Received (USD) :
+                                        <th style="width: 40%" colspan="<?= $colspan ?>"
+                                            class="text-left received_amount">
+                                            <span style="padding-left:5px">Received (<?= $default_currency->code; ?>
+                                                ): </span>
                                         </th>
                                         <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
                                         <th style="width: 20%"
                                             class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                                     </tr>
                                     <?php
-                                    if ($payment->pos_paid_other == 0) {
+                                    if ($inv->other_cur_paid) {
+
                                         ?>
                                         <tr>
-                                            <th style="padding-right:12px; width:40%;"
-                                                class="text-left received_amount">Received (Riel) :
+                                            <th style="width: 40%"
+                                                colspan="<?= $colspan ?>" class="text-left received_amount">
+                                                Received (Riel):
                                             </th>
                                             <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
                                             <th style="width: 20%"
                                                 class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
                                         </tr>
                                         <?php
+
+                                    } else {
                                     }
                                     ?>
                                 </table>
@@ -427,17 +431,30 @@ if ($modal) {
                         $khr_paid = 0;
                     }
                     ?>
+                    <caption style="float: left; padding-left: 13px;">
+                        <tr>
+                            <th colspan="3">
+                                <?php if ($payment->paid_by == 'Cheque') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
+                                } elseif ($payment->paid_by == 'CC') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
+                                } else {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by);
+                                } ?>
+                            </th>
+                        </tr>
+                    </caption>
                     <tr>
-                        <th style="width:40%;"
-                            class="text-left received_amount">Received (<?= $default_currency->code; ?>) :
+                        <th style="width:40%;" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>) :</span>
                         </th>
                         <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
                         <th style="width: 20%"
                             class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                     </tr>
                     <tr>
-                        <th style="width:40%;"
-                            class="text-left received_amount">Received (Riel) :
+                        <th style="width:40%;" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (Riel) :</span>
                         </th>
                         <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
                         <th style="width: 20%"
@@ -541,9 +558,10 @@ if ($modal) {
                                         </caption>
 
                                         <tr>
-                                            <th style="width: 40%"
-                                                colspan="<?= $colspan ?>" class="text-left received_amount">Received
-                                                (<?= $default_currency->code; ?>):
+                                            <th style="width: 40%" colspan="<?= $colspan ?>"
+                                                class="text-left received_amount">
+                                                <span style="padding-left:5px">Received (<?= $default_currency->code; ?>
+                                                    ): </span>
                                             </th>
                                             <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
                                             <th style="width: 20%"
@@ -554,7 +572,7 @@ if ($modal) {
 
                                             ?>
                                             <tr>
-                                                <th style="width: 32%"
+                                                <th style="width: 40%"
                                                     colspan="<?= $colspan ?>" class="text-left received_amount">
                                                     Received (Riel):
                                                 </th>
@@ -578,16 +596,29 @@ if ($modal) {
                     <?php
                 } else {
                     ?>
+                    <caption style="float: left; padding-left: 13px;">
+                        <tr>
+                            <th colspan="3">
+                                <?php if ($payment->paid_by == 'Cheque') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
+                                } elseif ($payment->paid_by == 'CC') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
+                                } else {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by);
+                                } ?>
+                            </th>
+                        </tr>
+                    </caption>
                     <tr>
-                        <th colspan="<?= $colspan ?>"
-                            class="text-left received_amount">Received (<?= $default_currency->code; ?>):
+                        <th colspan="<?= $colspan ?>" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>):</span>
                         </th>
                         <th><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
                         <th class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                     </tr>
                     <tr>
-                        <th style="padding-right: 0px;"
-                            colspan="<?= $colspan ?>" class="text-left received_amount">Received (Riel):
+                        <th style="padding-right: 0px;" colspan="<?= $colspan ?>" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (Riel):</span>
                         </th>
                         <th><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
                         <th class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>

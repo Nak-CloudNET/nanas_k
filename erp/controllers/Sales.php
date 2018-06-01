@@ -19852,7 +19852,7 @@ function invoice_concrete_angkor($id=null)
             $data = array(
                 'card_no' 		=> $this->input->post('card_no'),
                 'value' 		=> $this->input->post('value'),
-                'customer_id' 	=> $this->input->post('customer') ? $this->input->post('customer') : NULL,
+                'customer_id' 	=> $this->input->post('customer_id') ? $this->input->post('customer_id') : NULL,
                 'customer' 		=> $customer,
                 'balance' 		=> $this->input->post('value'),
                 'expiry' 		=> $this->input->post('expiry') ? $this->erp->fsd($this->input->post('expiry')) : NULL,
@@ -19910,6 +19910,7 @@ function invoice_concrete_angkor($id=null)
             redirect("sales/gift_cards");
         } else {
             $gc = $this->site->getGiftCardByID($id);
+            $this->data['customer_id'] = $gc->customer_id;
             $this->data['customer_groups'] 	= $this->settings_model->getAllCustomerGroups();
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['modal_js'] = $this->site->modal_js();
