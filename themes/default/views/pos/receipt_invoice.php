@@ -65,9 +65,6 @@ if ($modal) {
         
 
         @media print {
-            #logo {
-                /*margin-top: -10px !important;*/
-            }
             #cinfo .col-sm-6, .col-xs-6 {
                 padding: 0 !important;
                 font-size: 9px !important;
@@ -77,9 +74,13 @@ if ($modal) {
                 display: none;
             }
 
+            .bill h3 {
+                margin-left: -20px !important;
+            }
+
             #wrapper {
                 /*max-width: 480px;*/
-                width: 95% !important;
+                width: 98% !important;
                 /*min-width: 250px;*/
                 margin: 0 auto !important;
                 padding: 0 !important;
@@ -101,6 +102,10 @@ if ($modal) {
 
             img {
                 padding-right: 20px !important;
+            }
+
+            .biller {
+                margin-left: -20px !important;
             }
 
         }
@@ -134,14 +139,16 @@ if ($modal) {
                 <div class="row" id="logo">
                     <?php if (isset($biller->logo)) { ?>
                         <div class="col-xs-12 text-center">
-                            <img src="<?= base_url() . 'assets/uploads/logos/' . $biller->logo; ?>" alt="<?= $biller->company; ?>">
+                            <img src="<?= base_url() . 'assets/uploads/logos/' . $biller->logo; ?>"
+                                 alt="<?= $biller->company; ?>" width="150px"/>
+                            <span class="biller"><?= strstr($biller->company, '(') ?></span>
                         </div>
                     <?php }else{
                         echo "";
                     } ?>
                 </div>
 
-                <div class="row">
+                <div class="row bill">
                     <div class="col-sm-12"><h3><?= lang('bill') ?></h3></div>
                 </div>
 
