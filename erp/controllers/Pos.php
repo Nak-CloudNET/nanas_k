@@ -61,8 +61,7 @@ class Pos extends MY_Controller
 			if($warehouse_id){
 				$this->data['warehouse_id'] = $warehouse_id;
 				$this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-			}else{
-				//sokhan
+			}else{				
 				$this->data['warehouse_id'] = str_replace(',', '-',$this->session->userdata('warehouse_id'));
 				$this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
 			}

@@ -13378,9 +13378,8 @@ class Sales extends MY_Controller
         }
     }
 
-    function validate_gift_card($no)
-    {
-        //$this->erp->checkPermissions();
+    function validate_gift_card($no)    {
+        
         if ($gc = $this->site->getGiftCardByNO($no)) {
             if ($gc->expiry) {
                 if ($gc->expiry >= date('Y-m-d')) {
