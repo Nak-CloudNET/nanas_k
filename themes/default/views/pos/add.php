@@ -3255,7 +3255,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		?>
 		
         $('#payment').click(function () {
-
             var GP = '<?= $GP['sales-discount'];?>';
 			var Owner = '<?= $Owner?>';
 			var Admin = '<?= $Admin?>';
@@ -3573,14 +3572,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                             $('#gift_card_no_' + id).parent('.form-group').addClass('has-error');
                             bootbox.alert('<?=lang('gift_card_not_for_customer')?>');
                         } else {
-                            $('#gc_details_' + id).html('<small>Card No: ' + data.card_no + '<br>Value: ' + data.value + ' - Balance: ' + data.balance + '</small><input type="hidden" id="gift_card_balance" value="'+data.balance+'"/>');
-                            
+                            $('#gc_details_' + id).html('<small>Card No: ' + data.card_no + '<br>Value: ' + formatMoney(data.value) + ' - Balance: ' + formatMoney(data.balance) + '</small><input type="hidden" id="gift_card_balance" value="'+data.balance+'"/>');
 							$('#gift_card_no_' + id).parent('.form-group').removeClass('has-error');
-                            //calculateTotals();
-                            //$('#amount_' + id).val(parseFloat(data.balance)).focus();
                             var e = $.Event("keyup", {keyCode: 13});
-							//$("#amount_1").trigger(e);
-							
                         }
                     }
                 });
