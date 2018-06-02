@@ -62,11 +62,9 @@ if ($modal) {
         .footer_info td, th {
             padding: 2px !important;
         }
+        
 
         @media print {
-            #logo {
-                margin-top: 20px !important;
-            }
             #cinfo .col-sm-6, .col-xs-6 {
                 padding: 0 !important;
                 font-size: 9px !important;
@@ -76,9 +74,13 @@ if ($modal) {
                 display: none;
             }
 
+            .bill h3 {
+                margin-left: -20px !important;
+            }
+
             #wrapper {
                 /*max-width: 480px;*/
-                width: 95% !important;
+                width: 98% !important;
                 /*min-width: 250px;*/
                 margin: 0 auto !important;
                 padding: 0 !important;
@@ -100,6 +102,10 @@ if ($modal) {
 
             img {
                 padding-right: 20px !important;
+            }
+
+            .biller {
+                margin-left: -20px !important;
             }
 
         }
@@ -133,14 +139,16 @@ if ($modal) {
                 <div class="row" id="logo">
                     <?php if (isset($biller->logo)) { ?>
                         <div class="col-xs-12 text-center">
-                            <img src="<?= base_url() . 'assets/uploads/logos/' . $biller->logo; ?>" alt="<?= $biller->company; ?>">
+                            <img src="<?= base_url() . 'assets/uploads/logos/' . $biller->logo; ?>"
+                                 alt="<?= $biller->company; ?>" width="150px"/>
+                            <span class="biller"><?= strstr($biller->company, '(') ?></span>
                         </div>
                     <?php }else{
                         echo "";
                     } ?>
                 </div>
 
-                <div class="row">
+                <div class="row bill">
                     <div class="col-sm-12"><h3><?= lang('bill') ?></h3></div>
                 </div>
 
@@ -243,8 +251,8 @@ if ($modal) {
 
         <table class="table-condensed receipt no_border_btm" style="width:100%; margin-top: 10px">
             <thead>
-            <tr style="border:1px dotted black !important;">
-                <th style="width: 5%;"><?= lang("no"); ?></th>
+            <tr style="border:1px dotted black !important; height: 30px">
+                <th style="text-align: center; width: 10%;"><?= lang("no"); ?></th>
                 <th style="text-align: left; width: 45%"><?= lang("Description"); ?></th>
                 <th style="text-align:center;width: 100px;"><?= lang("qty"); ?></th>
                 <th style="text-align:center;"><?= lang("Price"); ?></th>
@@ -336,15 +344,7 @@ if ($modal) {
                 <td class="text-left flabel"><?= lang('សរុបចុងក្រោយ') ?></td>
                 <td style="text-align:right;"><?= $this->erp->formatMoney($total - $inv->order_discount); ?></td>
             </tr>
-            <?php /*foreach ($payments as $payment) { */ ?><!--
-                <tr>
-                    <td class="text-left"><? /*= lang('paid') */ ?>&nbsp;(<? /*= lang($payment->paid_by); */ ?>)</td>
-                    <td class="text-left flabel"><? /*= lang('ទឹកប្រាក់បានបង់') */ ?></td>
-                    <td style="text-align:right;"><? /*= $this->erp->formatMoney($payment->pos_paid); */ ?></td>
-                </tr>
-            --><?php /*} */ ?>
-            <!--  </table>
-            <table class="received" style="width:100%;margin-top: 5px;"> -->
+            
             <?php
             $pos_paid = 0;
             $pos_paidd = 0;
@@ -392,7 +392,7 @@ if ($modal) {
                                             <span style="padding-left:5px">Received (<?= $default_currency->code; ?>
                                                 ): </span>
                                         </th>
-                                        <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
+                                        <th style="width: 40%"><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
                                         <th style="width: 20%"
                                             class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                                     </tr>
@@ -405,7 +405,7 @@ if ($modal) {
                                                 colspan="<?= $colspan ?>" class="text-left received_amount">
                                                 Received (Riel):
                                             </th>
-                                            <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
+                                            <th style="width: 40%"><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
                                             <th style="width: 20%"
                                                 class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
                                         </tr>
@@ -448,7 +448,7 @@ if ($modal) {
                         <th style="width:40%;" class="text-left received_amount">
                             <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>) :</span>
                         </th>
-                        <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
+                        <th style="width: 40%"><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
                         <th style="width: 20%"
                             class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                     </tr>
@@ -456,7 +456,7 @@ if ($modal) {
                         <th style="width:40%;" class="text-left received_amount">
                             <span style="padding-left: 5px">Received (Riel) :</span>
                         </th>
-                        <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
+                        <th style="width: 40%"><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
                         <th style="width: 20%"
                             class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
                     </tr>
@@ -563,7 +563,7 @@ if ($modal) {
                                                 <span style="padding-left:5px">Received (<?= $default_currency->code; ?>
                                                     ): </span>
                                             </th>
-                                            <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
+                                            <th style="width: 40%"><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
                                             <th style="width: 20%"
                                                 class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                                         </tr>
@@ -576,7 +576,7 @@ if ($modal) {
                                                     colspan="<?= $colspan ?>" class="text-left received_amount">
                                                     Received (Riel):
                                                 </th>
-                                                <th style="width: 40%"><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
+                                                <th style="width: 40%"><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
                                                 <th style="width: 20%"
                                                     class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
                                             </tr>
@@ -613,14 +613,14 @@ if ($modal) {
                         <th colspan="<?= $colspan ?>" class="text-left received_amount">
                             <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>):</span>
                         </th>
-                        <th><?= lang('ប្រាក់ទទួលបាន (ដុល្លារ)') ?></th>
+                        <th><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
                         <th class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                     </tr>
                     <tr>
                         <th style="padding-right: 0px;" colspan="<?= $colspan ?>" class="text-left received_amount">
                             <span style="padding-left: 5px">Received (Riel):</span>
                         </th>
-                        <th><?= lang('ប្រាក់ទទួលបាន (រៀល)') ?></th>
+                        <th><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
                         <th class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
                     </tr>
                     <?php
