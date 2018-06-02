@@ -1361,6 +1361,19 @@ class Site extends CI_Model
         }
         return FALSE;
     }
+	
+	public function getPackageByCustomerID($id) {
+		$this->db->select('packages.quantity, packages.product_id, packages.expiry, products.code, products.name as name, products.name_kh, (erp_packages.quantity - erp_packages.use_quantity) as total_qty, prodcut_combo.name as combo_name,');
+		$this->db->join('products', 'products.id = packages.product_id', 'left');
+		$this->db->join('products as prodcut_combo', 'prodcut_combo.id = packages.combo_id', 'left');
+		$this->db->from('packages');
+		$this->db->where('packages.customer_id', $id);
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
 
     public function getAllGiftCards()
     {

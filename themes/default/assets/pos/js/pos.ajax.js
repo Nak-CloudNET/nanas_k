@@ -1126,6 +1126,8 @@ function fsd(oObj) {
     }
 }
 
+
+
 /* -----------------------
  * Load all items
  ----------------------- */
@@ -1975,7 +1977,9 @@ function getNumber(x) {
 function formatQuantity(x) {
     return (x != null) ? '<div class="text-center">'+formatNumber(x, site.settings.qty_decimals)+'</div>' : '';
 }
-
+function formatQuantity2(x) {
+    return (x != null) ? formatNumber(x, site.settings.qty_decimals) : '';
+}
 function formatNumber(x, d) {
     if(!d && d != 0) { d = site.settings.decimals; }
     if(site.settings.sac == 1) {
