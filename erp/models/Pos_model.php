@@ -426,7 +426,7 @@ class Pos_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
-        
+       
 		$this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -501,7 +501,11 @@ class Pos_model extends CI_Model
                             $this->db->insert('costing', $item_cost);
                         }
                     }
-                }
+                }				
+				foreach ($payments as $payment) {
+					$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
+					$this->db->update('packages', array('use_quantity' => $item['quantity_balance']), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));										
+				}
                 $i++;
             }
 
@@ -583,12 +587,6 @@ class Pos_model extends CI_Model
                                     );
 
                                     $this->sales_model->addGiftCardLog($gift_card_log);
-									
-									$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-									foreach ($items as $item) {
-										$this->db->update('packages', array('use_quantity' => $item['quantity_balance']), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));										
-									}
-									
                                 }
 								
                                 unset($payment['cc_cvv2']);

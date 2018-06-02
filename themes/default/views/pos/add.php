@@ -3600,7 +3600,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                         $(data).each(function(i , result) {
 							package_product_id.push(result.product_id);
 							$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + result.expiry + ')' + '</strong></span>');
-							$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
+							if(result.total_qty > 0){
+								$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
+							}
 							if(date > result.expiry){
 								check_package = 1;
 							}else{
