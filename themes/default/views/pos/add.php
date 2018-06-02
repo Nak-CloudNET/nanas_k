@@ -1166,7 +1166,7 @@ if ($q->num_rows() > 0) {
 						$this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
 						$this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
 						$this->db->where('floor', $row->floor);
-						$this->db->order_by('name', 'asc');
+						$this->db->order_by('erp_suspended.id', 'asc');
 						$query = $this->db->get();
 
 						$this->db->select('*');
