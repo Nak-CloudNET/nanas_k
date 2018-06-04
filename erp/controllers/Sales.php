@@ -13370,7 +13370,6 @@ class Sales extends MY_Controller
 	
 	function validate_deposit($customer_id)
     {
-        //$this->erp->checkPermissions();
         if ($dp = $this->site->getDepositByCompanyID($customer_id)) {
             echo json_encode($dp);
         } else {
@@ -13390,6 +13389,15 @@ class Sales extends MY_Controller
             } else {
                 echo json_encode($gc);
             }
+        } else {
+            echo json_encode(false);
+        }
+    }
+	
+	function getPackageByCustomerID($customer_id)
+    {
+        if ($package = $this->site->getPackageByCustomerID($customer_id)) {
+            echo json_encode($package);
         } else {
             echo json_encode(false);
         }

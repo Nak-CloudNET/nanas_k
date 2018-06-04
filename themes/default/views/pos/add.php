@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -1167,7 +1166,7 @@ if ($q->num_rows() > 0) {
 						$this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
 						$this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
 						$this->db->where('floor', $row->floor);
-						$this->db->order_by('name', 'asc');
+						$this->db->order_by('erp_suspended.id', 'asc');
 						$query = $this->db->get();
 
 						$this->db->select('*');
@@ -1974,6 +1973,8 @@ if ($q->num_rows() > 0) {
                                                        class="pa form-control kb-pad gift_card_no"/>
 
                                                 <div id="gc_details_1"></div>
+												<div id="package_header"></div>
+												<div id="package"></div>
                                             </div>
 
 											<div class="form-group dp_1" style="display: none;">
@@ -3554,11 +3555,21 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             $('#balance, .curr_balance, .currencies_payment').html('0');
         });
 
-
+		
         $(document).on('change', '.gift_card_no', function () {
-            var cn = $(this).val() ? $(this).val() : '';
-            var payid = $(this).attr('id'),
-                id = payid.substr(payid.length - 1);
+			var customer_id  = $("#poscustomer").val();            
+			var date         = $("#date").val();
+			var paid_by 	 = $('#paid_by_1').val();
+			var product_id   = [];
+			var check_package = 0;
+			var package_product_id = [];            
+            var cn           = $(this).val() ? $(this).val() : '';
+            var payid        = $(this).attr('id'),
+                id           = payid.substr(payid.length - 1);
+			$( ".rid" ).each(function() {
+				product_id.push($(this).val());
+			});
+			
             if (cn != '') {
                 $.ajax({
                     type: "get", async: false,
@@ -3579,6 +3590,50 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                     }
                 });
             }
+			
+			if(paid_by == 'gift_card'){			
+				$.ajax({
+					type: "get",
+					async: false,               
+					url: site.base_url + "sales/getPackageByCustomerID/" + customer_id,
+					dataType: "json",
+					success: function (data) {
+						if(data){
+							$('#package').empty();
+							$(data).each(function(i , result) {
+								var expiry_date = result.expiry;
+								var arr_expiry_date = expiry_date.split(' ');
+								package_product_id.push(result.product_id);
+								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
+								if(result.total_qty > 0){
+									$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
+								}
+								if(date > result.expiry){
+									check_package = 1;
+								}else{
+									
+								}
+							});
+						}
+					}
+				});				
+				
+				$.each(product_id, function(index, value) {
+					if ($.inArray(value, package_product_id) !== -1) {
+						
+					} else {
+						check_package = 1;
+					}
+				});
+				
+				if(check_package == 1){
+					$("#submit-sale").prop( "disabled", true );
+				}else{
+					$("#submit-sale").prop( "disabled", false);
+				}
+			}else{
+				$("#submit-sale").prop( "disabled", false);
+			}
         });
 
         $(document).on('click', '.addButton', function () {
@@ -6652,6 +6707,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $('.ngc_' + pa_no).show();
                 $('.gc_' + pa_no).hide();
                 $('#gc_details_' + pa_no).html('');
+                $('#package').html('');
             }
 			if(p_val == 'deposit') {
 				$('.dp_' + pa_no).show();
