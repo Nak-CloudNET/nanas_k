@@ -373,7 +373,6 @@ class Customers extends MY_Controller
                 'plate_number_4' => $this->input->post('plate_number4'),
                 'plate_number_5' => $this->input->post('plate_number5')
             );
-            //$this->erp->print_arrays($data);
             // attachment
             if ($_FILES['userfile']['size'][0] !=0) {
                 $this->load->library('upload');
@@ -404,7 +403,6 @@ class Customers extends MY_Controller
                 }
                 $data['attachment'] = json_encode($photo);
             }
-
 
         }
         elseif ($this->input->post('edit_customer')) {
