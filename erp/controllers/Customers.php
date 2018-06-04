@@ -247,7 +247,12 @@ class Customers extends MY_Controller
                 'address_1' => $this->input->post('address1'),
                 'address_2' => $this->input->post('address2'),
                 'address_3' => $this->input->post('address3'),
-                'address_4' => $this->input->post('address4')
+                'address_4' => $this->input->post('address4'),
+                'plate_number' => $this->input->post('plate_number'),
+                'plate_number_2' => $this->input->post('plate_number2'),
+                'plate_number_3' => $this->input->post('plate_number3'),
+                'plate_number_4' => $this->input->post('plate_number4'),
+                'plate_number_5' => $this->input->post('plate_number5')
             );
             
             if ($_FILES['userfile']['size'] > 0) {
@@ -368,7 +373,6 @@ class Customers extends MY_Controller
                 'plate_number_4' => $this->input->post('plate_number4'),
                 'plate_number_5' => $this->input->post('plate_number5')
             );
-            //$this->erp->print_arrays($data);
             // attachment
             if ($_FILES['userfile']['size'][0] !=0) {
                 $this->load->library('upload');
@@ -399,7 +403,6 @@ class Customers extends MY_Controller
                 }
                 $data['attachment'] = json_encode($photo);
             }
-
 
         }
         elseif ($this->input->post('edit_customer')) {
