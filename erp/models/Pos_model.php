@@ -426,7 +426,7 @@ class Pos_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
-       
+        
 		$this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -503,8 +503,10 @@ class Pos_model extends CI_Model
                     }
                 }				
 				foreach ($payments as $payment) {
-					$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-					$this->db->update('packages', array('use_quantity' => $item['quantity_balance']), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));										
+					if($payment['amount'] == 0 && $payment['pos_paid_other'] == 0){
+						$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
+						$this->db->update('packages', array('use_quantity' => $item['quantity_balance']), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+					}
 				}
                 $i++;
             }
