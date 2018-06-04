@@ -3555,10 +3555,11 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             $('#balance, .curr_balance, .currencies_payment').html('0');
         });
 
-
+		
         $(document).on('change', '.gift_card_no', function () {
 			var customer_id  = $("#poscustomer").val();            
 			var date         = $("#date").val();
+			var paid_by 	 = $('#paid_by_1').val();
 			var product_id   = [];
 			var check_package = 0;
 			var package_product_id = [];            
@@ -3568,6 +3569,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			$( ".rid" ).each(function() {
 				product_id.push($(this).val());
 			});
+			
             if (cn != '') {
                 $.ajax({
                     type: "get", async: false,
@@ -3589,40 +3591,46 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 });
             }
 			
-			$.ajax({
-                type: "get",
-                async: false,               
-                url: site.base_url + "sales/getPackageByCustomerID/" + customer_id,
-                dataType: "json",
-                success: function (data) {
-                    if(data){
-						$('#package').empty();
-                        $(data).each(function(i , result) {
-							package_product_id.push(result.product_id);
-							$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + result.expiry + ')' + '</strong></span>');
-							if(result.total_qty > 0){
-								$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
-							}
-							if(date > result.expiry){
-								check_package = 1;
-							}else{
-								
-							}
-						});
-                    }
-                }
-            });				
-			
-			$.each(product_id, function(index, value) {
-				if ($.inArray(value, package_product_id) !== -1) {
-					
-				} else {
-					check_package = 1;
+			if(paid_by == 'gift_card'){			
+				$.ajax({
+					type: "get",
+					async: false,               
+					url: site.base_url + "sales/getPackageByCustomerID/" + customer_id,
+					dataType: "json",
+					success: function (data) {
+						if(data){
+							$('#package').empty();
+							$(data).each(function(i , result) {
+								var expiry_date = result.expiry;
+								var arr_expiry_date = expiry_date.split(' ');
+								package_product_id.push(result.product_id);
+								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
+								if(result.total_qty > 0){
+									$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
+								}
+								if(date > result.expiry){
+									check_package = 1;
+								}else{
+									
+								}
+							});
+						}
+					}
+				});				
+				
+				$.each(product_id, function(index, value) {
+					if ($.inArray(value, package_product_id) !== -1) {
+						
+					} else {
+						check_package = 1;
+					}
+				});
+				
+				if(check_package == 1){
+					$("#submit-sale").prop( "disabled", true );
+				}else{
+					$("#submit-sale").prop( "disabled", false);
 				}
-			});
-			
-			if(check_package == 1){
-				$("#submit-sale").prop( "disabled", true );
 			}else{
 				$("#submit-sale").prop( "disabled", false);
 			}
