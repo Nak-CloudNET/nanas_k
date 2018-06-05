@@ -3605,7 +3605,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 							$(data).each(function(i , result) {
 								var expiry_date = result.expiry;
 								var arr_expiry_date = expiry_date.split(' ');
-								package_product_id.push(result.product_id);
+								if(result.total_qty != 0 || result.use_quantity > result.quantity){
+									package_product_id.push(result.product_id);
+								}
 								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
 								if(result.total_qty > 0){
 									$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
@@ -4970,12 +4972,17 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			$(".deposit_total_balance").text(deposit_amount);
 			if(paid_by=='gift_card'){
 				var gift_card_balance = $('#gift_card_balance').val();
-				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');				
-				if($(this).val() > parseFloat(gift_card_balance)){
-					$('#amount_1').val(parseFloat(gift_card_balance));
+				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');
+				if($('#amount_1').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance)){
+						$('#amount_1').val(parseFloat(gift_card_balance));
+					}
 				}
-				if($(this).val() > parseFloat(gift_card_balance_kh)){
-					$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
+				
+				if($('.currencies_payment').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance_kh)){
+						$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
+					}
 				}
 			}
 			//$('#paid_by_1').trigger('change');
