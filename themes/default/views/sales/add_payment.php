@@ -74,7 +74,7 @@
                                             required="required">
                                         <option value="cash"><?= lang("cash"); ?></option>
                                         <option value="CC"><?= lang("CC"); ?></option>
-                                        <option value="gift_card"><?= lang("gift_card"); ?></option>
+                                        <option value="gift_card"><?= lang("gift_cards"); ?></option>
 										<option value="deposit"><?= lang("deposit"); ?></option>
                                         <option value="Cheque"><?= lang("cheque"); ?></option>
                                         <option value="other"><?= lang("other"); ?></option>

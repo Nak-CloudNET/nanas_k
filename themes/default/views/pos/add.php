@@ -3491,14 +3491,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var total_other_paid = 0;
             $(".currencies_payment").each(function(){
                 var rate = $(this).attr('rate');
-				var paid = $(this).val()-0;
+				var paid = $(this).val()-0;				
 				if(paid != '' || Number(paid)){
-					total_other_paid += (paid/rate);
+					total_other_paid += (paid / rate);
 				}
-			});
+			});			
 			return total_other_paid;
         }
-//////////////
+
 		function grandtotalval(cls=""){
 			var gtotal = 0;
 				$("."+cls).each(function(){
@@ -3506,7 +3506,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 				});
 			return gtotal;
 		}
-		///////////////
+		
         var pi = 'amount_1', pa = 2;
         $(document).on('click', '.quick-cash', function () {
             var $quick_cash = $(this);
@@ -3697,9 +3697,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         // function calculate payment when we focus payment button.
         $(document).on('focus keyup paste', '.amount, .currencies_payment', function () {
             pi = $(this).attr('id');
-            calculateTotals();
+            //calculateTotals();
         }).on('blur', '.amount, .currencies_payment', function () {
-            calculateTotals();
+            //calculateTotals();
         });
         function calculateTotals() {
             var other_curr_amt = 0;
@@ -3711,9 +3711,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
             $(".currencies_payment").each(function(i){
                 other_curr_amt += parseFloat(($(this).val() / $(this).attr('rate')));
-                if(other_curr_amt > 0){total_paying += parseFloat(other_curr_amt);}
+                if(other_curr_amt > 0){
+					total_paying += parseFloat(other_curr_amt);
+				}
             });
-            if(other_curr_amt > 0){$('.other_cur_paid').val($(".currencies_payment").val());}
+			
+            if(other_curr_amt > 0){
+				$('.other_cur_paid').val($(".currencies_payment").val());
+			}
 
             $('#total_paying').text(formatMoney(total_paying));
             $(".curr_total_p").each(function(i){
@@ -4930,9 +4935,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var us_paid3 = $('#amount_3').val()? $('#amount_3').val()-0 : 0;
 			var us_paid4 = $('#amount_4').val()? $('#amount_4').val()-0 : 0;
 			var us_paid5 = $('#amount_5').val()? $('#amount_5').val()-0 : 0;
-			var other_paid = other_curr_paid_2_us();
+			var other_paid = other_curr_paid_2_us(); 
             var balance = total_amount - (us_paid + us_paid2 + us_paid3 + us_paid4 + us_paid5 + other_paid);
-			
 			var ch = (balance).toFixed(3);
 			var str = ch.split('.');
 			if(balance > 0){
@@ -4959,19 +4963,28 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 				$('.main_remain').text('0.00');
 				$('.main_remain_').text('0.00');
 			}
+			
 			var deposit_amount = parseFloat($(".deposit_total_amount").text());
 			var deposit_balance = parseFloat($(".deposit_total_balance").text());
 			deposit_balance = (deposit_amount - Math.abs(us_paid));
 			$(".deposit_total_balance").text(deposit_amount);
 			if(paid_by=='gift_card'){
 				var gift_card_balance = $('#gift_card_balance').val();
+				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');				
 				if($(this).val() > parseFloat(gift_card_balance)){
-					$(this).val(parseFloat(gift_card_balance));
+					$('#amount_1').val(parseFloat(gift_card_balance));
+				}
+				if($(this).val() > parseFloat(gift_card_balance_kh)){
+					$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
 				}
 			}
+			//$('#paid_by_1').trigger('change');
+		});
+		
+		$(document).on('blur','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){
 			$('#paid_by_1').trigger('change');
 		});
-
+		
 		$(document).on('change','#depreciation_type_1, #depreciation_rate_1, #depreciation_term_1',function() {
 			var p_type = $('#depreciation_type_1').val();
 			var pr_type = $('#principle_type_1').val();
