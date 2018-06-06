@@ -2557,7 +2557,7 @@ class Products extends MY_Controller
                 $photo = $this->upload->file_name;
                 $data['attachment'] = $photo;
             }
-            //$this->erp->print_arrays($data, $products);
+           
 		}
 
 		if ($this->form_validation->run() == true && $this->products_model->addMultiAdjustment($data, $products)) {
@@ -2592,27 +2592,26 @@ class Products extends MY_Controller
                     }
                 }
             }
-		    $warehouse_id = $this->session->userdata('warehouse_id');
-            $this->data['adjustment_items'] = $count_id ? json_encode($pr) : FALSE;
-            $this->data['warehouse_id'] 	= $count_id ? $stock_count->warehouse_id : FALSE;
-            $this->data['count_id'] 		= $count_id;
-            $this->data['error'] 			= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-            $this->data['warehouses'] 		= $this->site->getAllWarehouses();
+		    $warehouse_id 						= $this->session->userdata('warehouse_id');
+            $this->data['adjustment_items'] 	= $count_id ? json_encode($pr) : FALSE;
+            $this->data['warehouse_id'] 		= $count_id ? $stock_count->warehouse_id : FALSE;
+            $this->data['count_id'] 			= $count_id;
+            $this->data['error'] 				= (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['warehouses'] 			= $this->site->getAllWarehouses();
             $this->data['customers'] 			= $this->site->getCustomers();
-            $this->data['warehouses_by_user'] = $this->products_model->getAllWarehousesByUser($warehouse_id);
-            $this->data['billers'] = $this->site->getAllCompanies('biller');
+            $this->data['warehouses_by_user'] 	= $this->products_model->getAllWarehousesByUser($warehouse_id);
+            $this->data['billers'] 				= $this->site->getAllCompanies('biller');
 			if ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')){
 				$biller_id = $this->site->get_setting()->default_biller;
-				$this->data['reference'] = $this->site->getReference('qa',$biller_id);
+				$this->data['reference'] 		= $this->site->getReference('qa',$biller_id);
 			}else{
 				$biller_id = $this->session->userdata('biller_id');
-				$this->data['reference'] = $this->site->getReference('qa',$biller_id);
+				$this->data['reference'] 		= $this->site->getReference('qa',$biller_id);
 			}
 			
             $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('products'), 'page' => lang('products')), array('link' => '#', 'page' => lang('add_adjustment_multiple')));
             $meta = array('page_title' => lang('add_adjustment_multiple'), 'bc' => $bc);
             $this->page_construct('products/add_adjustment_multiple', $meta, $this->data);
-
         }
     }
 	

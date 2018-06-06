@@ -1605,7 +1605,10 @@ if ($q->num_rows() > 0) {
 										<?= form_textarea('sale_note', '', 'id="sale_note" class="form-control kb-text skip" style="height: 35px;" placeholder="' . lang('sale_note') . '" maxlength="250"'); ?>
 									</div>
 
-								<?php if(isset($suppend_name)) {  ?>
+								<?php
+									
+									if(isset($suppend_name)) {
+							   ?>
 
 									<div class="col-sm-6">
 										<?php
@@ -1616,15 +1619,17 @@ if ($q->num_rows() > 0) {
 								<?php } else{ ?>
 
 									<div class="col-sm-6">
-										<?php
-											//form_textarea('staffnote', '', 'id="staffnote" class="form-control kb-text skip" style="height: 50px;" placeholder="' . lang('staff_note') . '" maxlength="250"');
+										<?php											
 											if($suspend_sale){
-												$suspend_room[""] = "";
+												/* $suspend_room[""] = "";												
 												foreach ($room as $rooms) {
 													$suspend_room[$rooms->name] = $rooms->name;
 												}
-												echo form_dropdown('suspend_room', $suspend_room, $suspend_sale->suspend_name, 'id="suspend_room" placeholder="'.lang('suspend').'" disabled class="form-control pos-input-tip" style="width:100%;"');
-											}else{
+												echo form_dropdown('suspend_room', $suspend_room, $suspend_sale->suspend_name, 'id="hello1323213" placeholder="'.lang('suspend').'" class="form-control pos-input-tip" style="width:100%;"'); */
+												
+												echo form_dropdown('suspend_room', $suspend_sale->suspend_name, "", 'id="suspend_roomyrdy" placeholder="'.lang('suspend').'" disabled class="form-control pos-input-tip" style="width:100%;"');
+	
+											}else{												
 												$suspend_room[""] = "";
 												if (is_array($room)) {
 													foreach ($room as $rooms) {
@@ -4973,16 +4978,28 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			if(paid_by=='gift_card'){
 				var gift_card_balance = $('#gift_card_balance').val();
 				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');
-				if($('#amount_1').val() > 0){
-					if($(this).val() > parseFloat(gift_card_balance)){
-						$('#amount_1').val(parseFloat(gift_card_balance));
+				var amount_us = $('#amount_1').val();
+				var amount_kh = $('.currencies_payment').val();
+				var p_kh_rate = __getItem('exchange_kh');
+				if(amount_us > 0 && amount_kh > 0){
+					var amount_multi = parseFloat(amount_us) + ((parseFloat(amount_kh) / parseFloat(p_kh_rate)) * 1);
+					if(amount_multi > gift_card_balance){
+						alert('Amount :' + formatMoney(amount_multi) + ' is bigger than member card balance ' + formatMoney(gift_card_balance));
+						$('#amount_1').val(0);
+						$('.currencies_payment').val(0);
+						$('#paid_by_1').trigger('change');
 					}
-				}
-				
-				if($('.currencies_payment').val() > 0){
-					if($(this).val() > parseFloat(gift_card_balance_kh)){
-						$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
-					}
+				}else{					
+					if(amount_us > 0){
+						if($(this).val() > parseFloat(gift_card_balance)){
+							$('#amount_1').val(parseFloat(gift_card_balance));
+						}
+					}					
+					if(amount_kh > 0){
+						if($(this).val() > parseFloat(gift_card_balance_kh)){
+							$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
+						}
+					}					
 				}
 			}
 			//$('#paid_by_1').trigger('change');
