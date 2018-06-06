@@ -3943,9 +3943,21 @@ class Site extends CI_Model
     }
 	
 	public function suspend_room(){
-		$q = $this->db->get_where('suspended');
+        $q = $this->db->get('suspended');
         if ($q->num_rows() > 0) {
-            return $q->result();
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
+    public function suspended_bills($sid)
+    {
+        $q = $this->db->get_where('suspended_bills', array('id' => $sid), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
         }
         return FALSE;
 	}

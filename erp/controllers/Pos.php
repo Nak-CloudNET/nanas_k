@@ -1199,13 +1199,18 @@ class Pos extends MY_Controller
 				$this->data['reference'] 	= $this->site->getReference('pos',$biller_id);
 				$this->data['user_ware'] 	= $this->site->getUserWarehouses();
 			}
-            
-			$this->data['agencies'] 		= $this->site->getAllUsers();
-			$this->data['drivers'] 			= $this->site->getAllCompanies('driver');
-            $this->data['user'] 			= $this->site->getUser();
-            $this->data["tcp"] 				= $this->pos_model->products_count($this->pos_settings->default_category);
-            $this->data['products'] 		= $this->ajaxproducts($this->pos_settings->default_category);
-			$this->data['room'] 			= $this->site->suspend_room();
+
+
+            $this->data['suspended_bills'] = $this->site->suspended_bills($sid);
+            $this->data['suspend_sale'] = $suspended_sale;
+            $this->data['agencies'] = $this->site->getAllUsers();
+            $this->data['drivers'] = $this->site->getAllCompanies('driver');
+            $this->data['user'] = $this->site->getUser();
+            $this->data["tcp"] = $this->pos_model->products_count($this->pos_settings->default_category);
+            $this->data['products'] = $this->ajaxproducts($this->pos_settings->default_category);
+            $this->data['room'] = $this->site->suspend_room();
+            $this->data['rooms'] = $this->site->suspend_room();
+
 			$this->data['user_settings'] 	= $this->site->getUserSetting($this->session->userdata('user_id'));
 			$this->data['define_principle'] = $this->settings_model->getprinciple_types();
 			$this->data['queue'] 			= $this->sales_model->getLastQueue(date('Y-m-d'), $this->pos_settings->default_biller);
