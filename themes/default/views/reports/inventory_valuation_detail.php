@@ -245,7 +245,10 @@
 								$avg_cost = $pr->avg_cost;
 								$this->db->select("cost")->where("erp_products.id",$pr->product_id);
 								$cost = $this->erp->formatDecimal($this->db->get_where("erp_products", array("id"=>$product->product_id),1)->row()->cost, 4);
-								$asset_value = $cost * $qty_on_hand;
+                                $price = $this->erp->formatDecimal($this->db->get_where("erp_products", array("id" => $product->product_id), 1)->row()->price, 4);
+                                $type = $this->db->get_where("erp_products", array("id" => $product->product_id), 1)->row()->type;
+
+                                $asset_value = (($cost * $qty_on_hand) - ($price * $qty_on_hand));
 							?>
 							<tr>
                                 <td style="text-align:center !important;">

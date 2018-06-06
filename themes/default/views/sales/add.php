@@ -553,14 +553,13 @@
                                     <?php if ($Owner || $Admin || !$this->session->userdata('warehouse_id')) { ?>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <?= lang("warehouse", "slwarehouse"); ?>
                                                 <?php
                                                  $wh[''] = '';
                                                 foreach ($warehouses as $warehouse) {
                                                     $wh[$warehouse->id] = $warehouse->name;
                                                 }
                                                 echo get_dropdown_project('warehouse', 'slwarehouse', $default_warehouse[0]);
-                                                //echo form_dropdown('warehouse', $wh, (isset($_POST['warehouse']) ? $_POST['warehouse'] : $Settings->default_warehouse), 'id="slwarehouse" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("warehouse") . '" required="required" style="width:100%;" ');
+
                                                 ?>
                                             </div>
                                         </div>
@@ -574,7 +573,6 @@
                                                     $wh[$warehouse->id] = $warehouse->name;
                                                 }
                                                 echo get_dropdown_project('warehouse', 'slwarehouse', $default_warehouse[0]);
-                                                //echo form_dropdown('warehouse', '', (isset($_POST['warehouse']) ? $_POST['warehouse'] : $this->session->userdata('warehouse_id')), 'id="slwarehouse" class="form-control input-tip select" data-placeholder="' . lang("select") . ' ' . lang("warehouse") . '" required="required" style="width:100%;" ');
                                                 ?>
                                             </div>
                                         </div>

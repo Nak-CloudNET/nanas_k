@@ -744,7 +744,11 @@ if ($q->num_rows() > 0) {
                                         <div class="btn-group">
                                             <div class="btn-group btn-group-justified">
                                                 <div class="btn-group">
-                                                    <button type="button" title="Cancel Order - <?= $pos_settings->cancel_sale ?>" style="<?php echo ($layout == 6?'height:85px':'height:68px') ?>" class="btn btn-danger <?php echo ($layout == 6?'font6':'') ?>" id="reset">
+                                                    <button type="button"
+                                                            title="Cancel Order - <?= $pos_settings->cancel_sale ?>"
+                                                            style="<?php echo($layout == 6 ? 'height:85px' : 'height:74px') ?>"
+                                                            class="btn btn-danger <?php echo($layout == 6 ? 'font6' : '') ?>"
+                                                            id="reset">
 														<i class="fa fa-remove"></i> <?= lang('cancel'); ?></button>
                                                 </div>
                                             </div>
@@ -817,7 +821,10 @@ if ($q->num_rows() > 0) {
 
                     					<?php } ?>
                                         <div class="btn-group">
-                                            <button type="button" title="Payment - <?= $pos_settings->finalize_sale ?>" style="<?php echo ($layout == 6?'height:85px':'height:68px') ?>" class="btn btn-success <?php echo ($layout == 6?'font6':'') ?>" id="payment">
+                                            <button type="button" title="Payment - <?= $pos_settings->finalize_sale ?>"
+                                                    style="<?php echo($layout == 6 ? 'height:85px' : 'height:74px') ?>"
+                                                    class="btn btn-success <?php echo($layout == 6 ? 'font6' : '') ?>"
+                                                    id="payment">
                                                 <i class="fa fa-money"></i> <?= lang('payment'); ?>
                                             </button>
                                         </div>
@@ -835,6 +842,7 @@ if ($q->num_rows() > 0) {
 								<input type="hidden" name="pos_date" value="" id="pos_date">
                                 <input type="hidden" name="plate_number" id="plate_number" value=""/>
                                 <input type="hidden" name="plate_number2" id="plate_number2" value=""/>
+                                <input type="hidden" name="suspend_name2" id="suspend_name2" value=""/>
 
                                 <div id="payment-con">
                                     <?php for ($i = 1; $i <= 5; $i++) { ?>
@@ -845,7 +853,8 @@ if ($q->num_rows() > 0) {
                                         <input type="hidden" name="bank_account[]" id="bank_account_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="cc_no[]" id="cc_no_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="paying_gift_card_no[]" id="paying_gift_card_no_val_<?= $i ?>" value=""/>
-										<input type="hidden" name="paying_deposit[]" id="paying_deposit_val_<?= $i ?>" value=""/>
+                                        <input type="hidden" name="paying_deposit[]" id="paying_deposit_val_<?= $i ?>"
+                                               value=""/>
                                         <input type="hidden" name="cc_holder[]" id="cc_holder_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="cheque_no[]" id="cheque_no_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="voucher_no[]" id="voucher_no_val_<?= $i ?>" value=""/>
@@ -854,6 +863,7 @@ if ($q->num_rows() > 0) {
                                         <input type="hidden" name="cc_type[]" id="cc_type_val_<?= $i ?>" value="Visa"/>
                                         <input type="hidden" name="cc_cvv2[]" id="cc_cvv2_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="payment_note[]" id="payment_note_val_<?= $i ?>" value=""/>
+                                        <input type="hidden" name="waiting_no" id="waiting_no" value=""/>
 										<!-- Loan -->
                                     <?php }
 									?>
@@ -1605,35 +1615,36 @@ if ($q->num_rows() > 0) {
 										<?= form_textarea('sale_note', '', 'id="sale_note" class="form-control kb-text skip" style="height: 35px;" placeholder="' . lang('sale_note') . '" maxlength="250"'); ?>
 									</div>
 
-								<?php
-									
-									if(isset($suppend_name)) {
-							   ?>
+                                <?php if ($suppend_name) { ?>
 
 									<div class="col-sm-6">
 										<?php
-											echo form_dropdown('suspend_room', $suppend_name, "", 'id="suspend_room" placeholder="'.lang('suspend').'" disabled class="form-control pos-input-tip" style="width:100%;"');
+                                        echo form_dropdown('suspend_room', $waiting_no, "", 'id="suspend_room" placeholder="' . lang('suspend') . '" disabled class="form-control pos-input-tip" style="width:100%;"');
 										?>
 									</div>
 
 								<?php } else{ ?>
 
-									<div class="col-sm-6">
-										<?php											
+                                    <div class="col-sm-6">
+										<?php
+                                        //form_textarea('staffnote', '', 'id="staffnote" class="form-control kb-text skip" style="height: 50px;" placeholder="' . lang('staff_note') . '" maxlength="250"');
+
 											if($suspend_sale){
-												/* $suspend_room[""] = "";												
-												foreach ($room as $rooms) {
-													$suspend_room[$rooms->name] = $rooms->name;
-												}
-												echo form_dropdown('suspend_room', $suspend_room, $suspend_sale->suspend_name, 'id="hello1323213" placeholder="'.lang('suspend').'" class="form-control pos-input-tip" style="width:100%;"'); */
-												
-												echo form_dropdown('suspend_room', $suspend_sale->suspend_name, "", 'id="suspend_roomyrdy" placeholder="'.lang('suspend').'" disabled class="form-control pos-input-tip" style="width:100%;"');
-	
-											}else{												
-												$suspend_room[""] = "";
+                                                /*$suspend_room[""] = "";
+                                                foreach($rooms as $room){
+                                                    if($room->name == $waiting_no){
+                                                        $waiting_no = $room->name;
+                                                    }
+                                                    $suspend_room[$room->id] = $room->name;
+                                                }*/
+                                                //echo form_dropdown('suspend_room', $suspend_room, $waiting_no,'id="suspend_room" class="form-control" style="width:100%;" ');
+                                                echo form_input('suspend_room', "", '  class="form-control input-tip" id="suspend_room"');
+											}else{
+
+                                                $suspend_room[""] = "";
 												if (is_array($room)) {
-													foreach ($room as $rooms) {
-														$suspend_room[$rooms->name] = $rooms->name;
+                                                    foreach ($rooms as $room) {
+                                                        $suspend_room[$room->name] = $room->name;
 													}
 												}
 												echo form_dropdown('suspend_room', $suspend_room, "", 'id="suspend_room" placeholder="'.lang('suspend').'" class="form-control pos-input-tip" style="width:100%;"');
@@ -1643,6 +1654,10 @@ if ($q->num_rows() > 0) {
 								<?php } ?>
                             </div>
                         </div>
+                        <script>
+                            var suspend_no = __getItem('waiting_no');
+                            $('#suspend_room').val(suspend_no);
+                        </script>
 						<div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -1966,7 +1981,9 @@ if ($q->num_rows() > 0) {
                                             </div>
 										</div>
                                         <div class="col-sm-12">
-                                            <textarea name="payment_note[]" id="payment_note_1"  style="height: 60px;" class="pa form-control kb-text payment_note" placeholder="<?php echo lang('payment_note') ?>"></textarea>
+                                            <textarea name="payment_note[]" id="payment_note_1" style="height: 74px;"
+                                                      class="pa form-control kb-text payment_note"
+                                                      placeholder="<?php echo lang('payment_note') ?>"></textarea>
                                         </div>
                                     </div>
 
@@ -3165,7 +3182,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
         });
 
-		$('#saleman').change(function(){
+        $('#saleman').change(function(){
 			$('#saleman_1').val($(this).val());
 		});
 
@@ -3190,9 +3207,12 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         });
 
         <?php for($i=1; $i<=5; $i++) { ?>
+
+
         $('#paymentModal').on('change', '#amount_<?=$i?>', function (e) {
             $('#amount_val_<?=$i?>').val($(this).val());
         });
+
         $('#paymentModal').on('blur', '#amount_<?=$i?>', function (e) {
             $('#amount_val_<?=$i?>').val($(this).val());
         });
@@ -3271,8 +3291,13 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $("#plate_number").attr("value", __getItem('pnumber'));
                 var pnumber = $("#plate_number").val();
                 __setItem('pnumber', pnumber);
-			}
+            }
 
+            if (__getItem('waiting_no')) {
+                $("#waiting_no").attr("value", __getItem('waiting_no'));
+            }
+            var waiting_no = $("#suspend_name").val();
+            __setItem('waiting_no', waiting_no);
 
 			if(Owner || Admin || (GP == 1)){
 				<?php if ($sid) { ?>
@@ -4978,28 +5003,16 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			if(paid_by=='gift_card'){
 				var gift_card_balance = $('#gift_card_balance').val();
 				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');
-				var amount_us = $('#amount_1').val();
-				var amount_kh = $('.currencies_payment').val();
-				var p_kh_rate = __getItem('exchange_kh');
-				if(amount_us > 0 && amount_kh > 0){
-					var amount_multi = parseFloat(amount_us) + ((parseFloat(amount_kh) / parseFloat(p_kh_rate)) * 1);
-					if(amount_multi > gift_card_balance){
-						alert('Amount :' + formatMoney(amount_multi) + ' is bigger than member card balance ' + formatMoney(gift_card_balance));
-						$('#amount_1').val(0);
-						$('.currencies_payment').val(0);
-						$('#paid_by_1').trigger('change');
+				if($('#amount_1').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance)){
+						$('#amount_1').val(parseFloat(gift_card_balance));
 					}
-				}else{					
-					if(amount_us > 0){
-						if($(this).val() > parseFloat(gift_card_balance)){
-							$('#amount_1').val(parseFloat(gift_card_balance));
-						}
-					}					
-					if(amount_kh > 0){
-						if($(this).val() > parseFloat(gift_card_balance_kh)){
-							$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
-						}
-					}					
+				}
+				
+				if($('.currencies_payment').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance_kh)){
+						$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
+					}
 				}
 			}
 			//$('#paid_by_1').trigger('change');
@@ -6867,9 +6880,16 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 window.location.href = "<?= site_url('pos/index') ?>/" + sid;
             }
             return false;
+
+
+            $("#suspend_name2").attr("value", $('#suspend_name').val());
+            var waiting_no = $('#suspend_name2').val();
+            __setItem('waiting_no', waiting_no);
+
         });
 
-		$('.combine_table').on('click', function(e){
+
+        $('.combine_table').on('click', function(e){
 			var joined = [];
 			$('.chsuspend:checked').each(function(e) {
 				valu = $(this).val();
@@ -6897,6 +6917,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 var pnumber = $("#plate_number").val();
                 __setItem('pnumber', pnumber);
             }
+
 
             ref = $(this).val();
 			nref = $(this).attr('id');
@@ -7265,6 +7286,9 @@ $(document).ready(function(){
         event.preventDefault();
         return false;
     });
+
+    /*var waiting_no = $('#suspend_name').val();
+        __setItem('waiting_no', waiting_no);*/
 
     // Set value to localstorage for Plate Number
     $('body').on('change', '#plate_number,#plate_number_2,#plate_number_3,#plate_number_4,#plate_number_5', function (e) {
