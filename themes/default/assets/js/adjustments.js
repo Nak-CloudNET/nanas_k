@@ -1,5 +1,4 @@
-$(document).ready(function () {
-    
+$(document).ready(function () {    
 	var $customer = $('#customer');
 	$customer.change(function (e) {
         __setItem('customer', $(this).val());
@@ -262,7 +261,7 @@ function loadItems() {
             newTr.prependTo("#qaTable");
             an++;
         });
-
+		/*
         if (count > 1) {
             $('#slbiller').attr('disabled', 'disabled');
             $('#qawarehouse').attr('disabled', 'disabled');
@@ -270,7 +269,7 @@ function loadItems() {
             $('#slbiller').removeAttr('disabled');
             $('#qawarehouse').removeAttr('disabled');
         }
-
+		*/
         var col = 3;
 		 if (site.settings.product_expiry == 1) { col++; }
         var tfoot = '<tr id="tfoot" class="tfoot active"><th colspan="'+col+'">Total</th><th></th><th class="text-center">' + formatNumber(parseFloat(count) - 1) + '</th>';

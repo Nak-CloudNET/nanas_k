@@ -156,7 +156,7 @@ if ($modal) {
 
             <div class="row" id="cinfo">
                 <div class="col-sm-6 col-xs-6">
-                    <div class="row">
+                    <div class="row" style="font-weight:bold !important;">
                         <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
                             <?= lang('plate_no') ?>
                         </div>
@@ -191,7 +191,7 @@ if ($modal) {
                 </div>
 
                 <div class="col-sm-6 col-xs-6">
-                    <div class="row">
+                    <div class="row" style="font-weight:bold !important;">
                         <div class="col-sm-6 col-xs-6" style="width: 35%">
                             <?= lang('date') ?>
                         </div>

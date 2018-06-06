@@ -407,6 +407,7 @@ class Pos extends MY_Controller
         $did 				= $this->input->post('delete_id') ? $this->input->post('delete_id') : NULL;        
         $suspend 			= $this->input->post('suspend') ? TRUE : FALSE;
         $count 				= $this->input->post('count') ? $this->input->post('count') : NULL;
+        $suspend_id 				= $this->input->get('suspend_id') ? $this->input->get('suspend_id') : $sid;
 
         //validate form input
         $this->form_validation->set_rules('customer', $this->lang->line("customer"), 'trim|required');
@@ -717,15 +718,15 @@ class Pos extends MY_Controller
                 'paid'              => $paidd ? $paidd:0,
                 'created_by'        => $this->session->userdata('user_id'),
 				'suspend_note'      => $this->input->post('suppend_name') ? $this->input->post('suppend_name') : $suppend_name->suspend_name,
-                'start_date' => $sus_date,
+                'start_date' 		=> $sus_date,
 				'other_cur_paid_rate' => $cur_rate->rate,
 				'saleman_by'        => $saleman_id,
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
-                'queue' => $query,
-                'plate_number' => $sus_plate_number
+                'queue' 			=> $query,
+                'plate_number' 		=> $sus_plate_number
             );
-            
+           
 			if($_POST['paid_by'][0] == 'depreciation'){
 				$no = sizeof($_POST['no']);
 				$period = 1;
@@ -834,7 +835,7 @@ class Pos extends MY_Controller
                 $photo = $this->input->post('attachment');
                 $data['attachment'] = $photo;
             }
-            //$this->erp->print_arrays($data, $products, $payment);
+            
         }
 		
         if ($this->form_validation->run() == true ) {
@@ -1199,24 +1200,18 @@ class Pos extends MY_Controller
 				$this->data['reference'] 	= $this->site->getReference('pos',$biller_id);
 				$this->data['user_ware'] 	= $this->site->getUserWarehouses();
 			}
-
-
-            $this->data['suspended_bills'] = $this->site->suspended_bills($sid);
-            $this->data['suspend_sale'] = $suspended_sale;
-            $this->data['agencies'] = $this->site->getAllUsers();
-            $this->data['drivers'] = $this->site->getAllCompanies('driver');
-            $this->data['user'] = $this->site->getUser();
-            $this->data["tcp"] = $this->pos_model->products_count($this->pos_settings->default_category);
-            $this->data['products'] = $this->ajaxproducts($this->pos_settings->default_category);
-            $this->data['room'] = $this->site->suspend_room();
-            $this->data['rooms'] = $this->site->suspend_room();
-
+			
+            $this->data['suspend_sale']	    = $this->pos_model->getOpenBillByID($suspend_id);
+			$this->data['agencies'] 		= $this->site->getAllUsers();
+			$this->data['drivers'] 			= $this->site->getAllCompanies('driver');
+            $this->data['user'] 			= $this->site->getUser();
+            $this->data["tcp"] 				= $this->pos_model->products_count($this->pos_settings->default_category);
+            $this->data['products'] 		= $this->ajaxproducts($this->pos_settings->default_category);
+			$this->data['room'] 			= $this->site->suspend_room();
 			$this->data['user_settings'] 	= $this->site->getUserSetting($this->session->userdata('user_id'));
 			$this->data['define_principle'] = $this->settings_model->getprinciple_types();
 			$this->data['queue'] 			= $this->sales_model->getLastQueue(date('Y-m-d'), $this->pos_settings->default_biller);
-
-            $this->data['categories'] 		= $this->site->getAllCategories();
-			
+            $this->data['categories'] 		= $this->site->getAllCategories();			
             $this->data['subcategories'] 	= $this->pos_model->getSubCategoriesByCategoryID($this->pos_settings->default_category);
             $this->data['pos_settings'] 	= $this->pos_settings;
 			$this->data['exchange_rate'] 	= $this->pos_model->getExchange_rate('KHM');
