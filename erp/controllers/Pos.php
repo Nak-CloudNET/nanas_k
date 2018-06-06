@@ -2429,18 +2429,14 @@ class Pos extends MY_Controller
         $this->data['message'] = $this->session->flashdata('message');
         $this->data['rows'] = $this->pos_model->getAllInvoiceItems($sale_id);
         $inv = $this->pos_model->getInvoicePosByID($sale_id);
-        // $this->erp->print_arrays($inv);
         $biller_id = $inv->biller_id;
         $customer_id = $inv->customer_id;
         $this->data['biller'] = $this->pos_model->getCompanyByID($biller_id);
         $this->data['customer'] = $this->pos_model->getCompanyByID($customer_id);
-        // $this->erp->print_arrays($this->pos_model->getCompanyByID($customer_id));
         $this->data['payments'] = $this->pos_model->getInvoicePaymentsPOS($sale_id);
-        // $this->erp->print_arrays($this->pos_model->getInvoicePaymentsPOS($sale_id));
         $this->data['pos'] = $this->pos_model->getSetting();
         $this->data['barcode'] = $this->barcode($inv->reference_no, 'code39', 30);
         $this->data['inv'] = $inv;
-        //$this->erp->print_arrays($inv);
         $this->data['sid'] = $sale_id;
         $this->data['exchange_rate'] = $this->pos_model->getExchange_rate();
         $this->data['outexchange_rate'] = $this->pos_model->getExchange_rate('KHM_o');
