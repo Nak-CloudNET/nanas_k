@@ -3521,14 +3521,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var total_other_paid = 0;
             $(".currencies_payment").each(function(){
                 var rate = $(this).attr('rate');
-				var paid = $(this).val()-0;
+				var paid = $(this).val()-0;				
 				if(paid != '' || Number(paid)){
-					total_other_paid += (paid/rate);
+					total_other_paid += (paid / rate);
 				}
-			});
+			});			
 			return total_other_paid;
         }
-//////////////
+
 		function grandtotalval(cls=""){
 			var gtotal = 0;
 				$("."+cls).each(function(){
@@ -3536,7 +3536,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 				});
 			return gtotal;
 		}
-		///////////////
+		
         var pi = 'amount_1', pa = 2;
         $(document).on('click', '.quick-cash', function () {
             var $quick_cash = $(this);
@@ -3586,16 +3586,18 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         });
 
 		
-        $(document).on('change', '.gift_card_no', function () {
-			var customer_id  = $("#poscustomer").val();            
-			var date         = $("#date").val();
-			var paid_by 	 = $('#paid_by_1').val();
-			var product_id   = [];
-			var check_package = 0;
+        $(document).on('change', '.gift_card_no', function () {			
+			var customer_id        = $("#poscustomer").val();            
+			var date               = $("#date").val();
+			var paid_by 	       = $('#paid_by_1').val();
+			var amount 	 		   = $('#amount_1').val() ? $('#amount_1').val() : 0;
+			var amount_kh 	 	   = $('#other_cur_paid_1').val() ? $('#other_cur_paid_1').val() : 0;
+			var product_id         = [];
+			var check_package      = 0;
 			var package_product_id = [];            
-            var cn           = $(this).val() ? $(this).val() : '';
-            var payid        = $(this).attr('id'),
-                id           = payid.substr(payid.length - 1);
+            var cn                 = $(this).val() ? $(this).val() : '';
+            var payid              = $(this).attr('id'),
+                id                 = payid.substr(payid.length - 1);
 			$( ".rid" ).each(function() {
 				product_id.push($(this).val());
 			});
@@ -3621,7 +3623,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 });
             }
 			
-			if(paid_by == 'gift_card'){			
+			if(paid_by == 'gift_card'){
 				$.ajax({
 					type: "get",
 					async: false,               
@@ -3633,7 +3635,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 							$(data).each(function(i , result) {
 								var expiry_date = result.expiry;
 								var arr_expiry_date = expiry_date.split(' ');
-								package_product_id.push(result.product_id);
+								if(result.total_qty != 0 || result.use_quantity > result.quantity){
+									package_product_id.push(result.product_id);
+								}
 								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
 								if(result.total_qty > 0){
 									$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
@@ -3644,20 +3648,28 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									
 								}
 							});
+						}else{
+							check_package = 0;						
 						}
 					}
 				});				
 				
-				$.each(product_id, function(index, value) {
-					if ($.inArray(value, package_product_id) !== -1) {
-						
-					} else {
-						check_package = 1;
-					}
-				});
+				if(package_product_id != ''){
+					$.each(product_id, function(index, value) {
+						if ($.inArray(value, package_product_id) !== -1) {
+							
+						} else {
+							check_package = 1;
+						}
+					});
+				}
 				
-				if(check_package == 1){
-					$("#submit-sale").prop( "disabled", true );
+				if(amount == 0 && amount_kh == 0){
+					if(check_package == 1){
+						$("#submit-sale").prop( "disabled", true );
+					}else{
+						$("#submit-sale").prop( "disabled", false);
+					}
 				}else{
 					$("#submit-sale").prop( "disabled", false);
 				}
@@ -3717,9 +3729,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
         // function calculate payment when we focus payment button.
         $(document).on('focus keyup paste', '.amount, .currencies_payment', function () {
             pi = $(this).attr('id');
-            calculateTotals();
+            //calculateTotals();
         }).on('blur', '.amount, .currencies_payment', function () {
-            calculateTotals();
+            //calculateTotals();
         });
         function calculateTotals() {
             var other_curr_amt = 0;
@@ -3731,9 +3743,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
             $(".currencies_payment").each(function(i){
                 other_curr_amt += parseFloat(($(this).val() / $(this).attr('rate')));
-                if(other_curr_amt > 0){total_paying += parseFloat(other_curr_amt);}
+                if(other_curr_amt > 0){
+					total_paying += parseFloat(other_curr_amt);
+				}
             });
-            if(other_curr_amt > 0){$('.other_cur_paid').val($(".currencies_payment").val());}
+			
+            if(other_curr_amt > 0){
+				$('.other_cur_paid').val($(".currencies_payment").val());
+			}
 
             $('#total_paying').text(formatMoney(total_paying));
             $(".curr_total_p").each(function(i){
@@ -4928,7 +4945,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		$(document).on('click','#depreciation_print',function(){
 			var amount = $('#amount_1').val();
-			alert(amount);
 			$.ajax({
                     type: "get",
                     url: "<?= site_url('pos/getData'); ?>",
@@ -4942,9 +4958,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		});
 
-		$(document).on('keyup','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){
+		$(document).on('keyup','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){			
 			var paid_by = $('#paid_by_1').val();
-			
 			//var total_amount = $('#quick-payable').text()-0;
 			var total_amount = $('#payable_amount').val()-0;
 			var us_paid = $('#amount_1').val()-0;
@@ -4952,9 +4967,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var us_paid3 = $('#amount_3').val()? $('#amount_3').val()-0 : 0;
 			var us_paid4 = $('#amount_4').val()? $('#amount_4').val()-0 : 0;
 			var us_paid5 = $('#amount_5').val()? $('#amount_5').val()-0 : 0;
-			var other_paid = other_curr_paid_2_us();
+			var other_paid = other_curr_paid_2_us(); 
             var balance = total_amount - (us_paid + us_paid2 + us_paid3 + us_paid4 + us_paid5 + other_paid);
-			
 			var ch = (balance).toFixed(3);
 			var str = ch.split('.');
 			if(balance > 0){
@@ -4981,19 +4995,33 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 				$('.main_remain').text('0.00');
 				$('.main_remain_').text('0.00');
 			}
+			
 			var deposit_amount = parseFloat($(".deposit_total_amount").text());
 			var deposit_balance = parseFloat($(".deposit_total_balance").text());
 			deposit_balance = (deposit_amount - Math.abs(us_paid));
 			$(".deposit_total_balance").text(deposit_amount);
 			if(paid_by=='gift_card'){
 				var gift_card_balance = $('#gift_card_balance').val();
-				if($(this).val() > parseFloat(gift_card_balance)){
-					$(this).val(parseFloat(gift_card_balance));
+				var gift_card_balance_kh = $('#gift_card_balance').val() * $(this).attr('rate');
+				if($('#amount_1').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance)){
+						$('#amount_1').val(parseFloat(gift_card_balance));
+					}
+				}
+				
+				if($('.currencies_payment').val() > 0){
+					if($(this).val() > parseFloat(gift_card_balance_kh)){
+						$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
+					}
 				}
 			}
-
+			//$('#paid_by_1').trigger('change');
 		});
-
+		
+		$(document).on('blur','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){
+			$('#paid_by_1').trigger('change');
+		});
+		
 		$(document).on('change','#depreciation_type_1, #depreciation_rate_1, #depreciation_term_1',function() {
 			var p_type = $('#depreciation_type_1').val();
 			var pr_type = $('#principle_type_1').val();
@@ -6693,7 +6721,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $('.pcc_' + pa_no).hide();
 				$('.depreciation_' + pa_no).hide();
                 $('.pcash_' + pa_no).show();
-                $('#payment_note_' + pa_no).focus();
+                //$('#payment_note_' + pa_no).focus();
             } else if (p_val == 'CC' || p_val == 'stripe' || p_val == 'ppp') {
                 $('.pcheque_' + pa_no).hide();
                 $('.pvoucher_' + pa_no).hide();
@@ -6706,14 +6734,14 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $('.depreciation_' + pa_no).hide();
                 $('.pcash_' + pa_no).hide();
                 $('.pcheque_' + pa_no).show();
-                $('#cheque_no_' + pa_no).focus();
+                //$('#cheque_no_' + pa_no).focus();
                 $('.pvoucher_' + pa_no).hide();
             }else if (p_val == 'Voucher') {
                 $('.pcc_' + pa_no).hide();
                 $('.depreciation_' + pa_no).hide();
                 $('.pcash_' + pa_no).hide();
                 $('.pvoucher_' + pa_no).show();
-                $('#voucher_no_' + pa_no).focus();
+                //$('#voucher_no_' + pa_no).focus();
                 $('.pcheque_' + pa_no).hide();
             } else if(p_val == 'depreciation') {
                 $('.pcheque_' + pa_no).hide();
@@ -6732,7 +6760,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             if (p_val == 'gift_card') {
                 $('.gc_' + pa_no).show();
                 $('.ngc_' + pa_no).hide();
-                $('#gift_card_no_' + pa_no).focus();
+                //$('#gift_card_no_' + pa_no).focus();
             } else {
                 $('.ngc_' + pa_no).show();
                 $('.gc_' + pa_no).hide();

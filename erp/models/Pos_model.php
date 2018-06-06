@@ -423,10 +423,19 @@ class Pos_model extends CI_Model
         }
         return FALSE;
     }
+	
+	public function getQuantityUsePackage($customer_id, $card_id, $product_id)
+    {
+        $q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'card_id' => $card_id, 'product_id' => $product_id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
-       
+        
 		$this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
@@ -503,8 +512,12 @@ class Pos_model extends CI_Model
                     }
                 }				
 				foreach ($payments as $payment) {
-					$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-					$this->db->update('packages', array('use_quantity' => $item['quantity_balance']), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));										
+					if($payment['amount'] == 0 && $payment['pos_paid_other'] == 0){
+						$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
+						$old_use_qty = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id'])->use_quantity;
+						$update_use_qty = $item['quantity_balance'] + $old_use_qty;
+						$this->db->update('packages', array('use_quantity' => $update_use_qty), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+					}
 				}
                 $i++;
             }
