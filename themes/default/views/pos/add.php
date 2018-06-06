@@ -863,7 +863,7 @@ if ($q->num_rows() > 0) {
                                         <input type="hidden" name="cc_type[]" id="cc_type_val_<?= $i ?>" value="Visa"/>
                                         <input type="hidden" name="cc_cvv2[]" id="cc_cvv2_val_<?= $i ?>" value=""/>
                                         <input type="hidden" name="payment_note[]" id="payment_note_val_<?= $i ?>" value=""/>
-                                        <input type="hidden" name="waiting_no" id="waiting_no" value=""/>
+
 										<!-- Loan -->
                                     <?php }
 									?>
@@ -1627,8 +1627,6 @@ if ($q->num_rows() > 0) {
 
                                     <div class="col-sm-6">
 										<?php
-                                        //form_textarea('staffnote', '', 'id="staffnote" class="form-control kb-text skip" style="height: 50px;" placeholder="' . lang('staff_note') . '" maxlength="250"');
-
 											if($suspend_sale){
                                                 /*$suspend_room[""] = "";
                                                 foreach($rooms as $room){
@@ -1638,6 +1636,7 @@ if ($q->num_rows() > 0) {
                                                     $suspend_room[$room->id] = $room->name;
                                                 }*/
                                                 //echo form_dropdown('suspend_room', $suspend_room, $waiting_no,'id="suspend_room" class="form-control" style="width:100%;" ');
+
                                                 echo form_input('suspend_room', "", '  class="form-control input-tip" id="suspend_room"');
 											}else{
 
@@ -1654,10 +1653,6 @@ if ($q->num_rows() > 0) {
 								<?php } ?>
                             </div>
                         </div>
-                        <script>
-                            var suspend_no = __getItem('waiting_no');
-                            $('#suspend_room').val(suspend_no);
-                        </script>
 						<div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -3292,12 +3287,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 var pnumber = $("#plate_number").val();
                 __setItem('pnumber', pnumber);
             }
-
-            if (__getItem('waiting_no')) {
-                $("#waiting_no").attr("value", __getItem('waiting_no'));
-            }
-            var waiting_no = $("#suspend_name").val();
-            __setItem('waiting_no', waiting_no);
 
 			if(Owner || Admin || (GP == 1)){
 				<?php if ($sid) { ?>
@@ -6866,6 +6855,10 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			}
         });
 
+        $("#suspend_name2").attr("value", $('#suspend_name').val());
+        var waiting_no = $('#suspend_name2').val();
+        $('#suspend_room').val(waiting_no);
+
 		$('.sus_sale').on('click', function (e) {
             var sid = $(this).attr("id");
             if (count > 1) {
@@ -6880,11 +6873,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 window.location.href = "<?= site_url('pos/index') ?>/" + sid;
             }
             return false;
-
-
-            $("#suspend_name2").attr("value", $('#suspend_name').val());
-            var waiting_no = $('#suspend_name2').val();
-            __setItem('waiting_no', waiting_no);
 
         });
 
@@ -7286,9 +7274,6 @@ $(document).ready(function(){
         event.preventDefault();
         return false;
     });
-
-    /*var waiting_no = $('#suspend_name').val();
-        __setItem('waiting_no', waiting_no);*/
 
     // Set value to localstorage for Plate Number
     $('body').on('change', '#plate_number,#plate_number_2,#plate_number_3,#plate_number_4,#plate_number_5', function (e) {
