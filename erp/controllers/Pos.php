@@ -1761,10 +1761,10 @@ class Pos extends MY_Controller
             echo NULL;
             die();
         }
-
+		$product_type       = $this->pos_model->getProductByCode($code)->type;
         $customer           = $this->site->getCompanyByID($customer_id);
         $customer_group     = $this->site->getCustomerGroupByID($customer->customer_group_id);
-        $row                = $this->pos_model->getWHProduct($code, $warehouse_id);
+        $row                = $this->pos_model->getWHProduct($code, $warehouse_id, $product_type);
 	
 		$orderqty           = $this->pos_model->getQtyOrder($row->product_id);
 		$w_piece            = $this->sales_model->getProductVariantByOptionID($row->id);

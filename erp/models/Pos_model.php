@@ -289,16 +289,18 @@ class Pos_model extends CI_Model
         return FALSE;
     }
 
-    public function getWHProduct($code, $warehouse_id)
+    public function getWHProduct($code, $warehouse_id, $product_type)
     {
         $this->db->select('products.id,products.cost, products.code, products.name, products.type,categories.type AS cate_type,warehouses_products.product_id, warehouses_products.quantity, warehouses_products.quantity as qoh, price, tax_rate, tax_method,products.image,subcategory_id,cf1, COALESCE((SELECT GROUP_CONCAT(sp.`serial_number`) 
 					FROM erp_serial as sp
 				 WHERE sp.product_id='.$this->db->dbprefix('products').'.id
 				), "") as sep')
             ->join('categories', 'categories.id=products.category_id', 'left')
-            ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left')
-            ->where('warehouses_products.warehouse_id', $warehouse_id)
-            ->group_by('products.id');
+            ->join('warehouses_products', 'warehouses_products.product_id=products.id', 'left');
+		if($product_type == 'standard'){
+			$this->db->where('warehouses_products.warehouse_id', $warehouse_id);
+		}
+        $this->db->group_by('products.id');
         $q = $this->db->get_where("products", array('products.code' => $code));
         if ($q->num_rows() > 0) {
             return $q->row();
