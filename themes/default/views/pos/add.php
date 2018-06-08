@@ -102,9 +102,9 @@
 			margin-left: 0 !important;
 		}
 
-        .sus_sale {
+        .suspend-button, .sus_sale {
             width: 150px;
-            height: 150px;
+            height: 180px;
         }
 
 	</style>
@@ -1173,9 +1173,10 @@ if ($q->num_rows() > 0) {
 				if ($q->num_rows() > 0) {
 					foreach ($q->result() as $row) {
 						echo '<h3>'.$row->floor.'</h3>';
-						$this->db->select('erp_suspended_bills.id as ids, floor, erp_suspended.name, customer, suspend_id, count, total, erp_suspended.id as sid, erp_suspended_bills.date, erp_suspended.startdate as sus_start, erp_suspended.enddate as sus_end, erp_suspended.note as sus_note, erp_companies.name as com_name, erp_suspended.inactive as inactive');
+                        $this->db->select('erp_suspended_bills.id as ids, floor, erp_suspended.name, erp_suspended_bills.customer, suspend_id, count, total, erp_suspended.id as sid, erp_suspended_bills.date, erp_suspended.startdate as sus_start, erp_suspended.enddate as sus_end, erp_suspended.note as sus_note, erp_companies.name as com_name, erp_suspended.inactive as inactive, erp_suspended_bills.plate_number, erp_gift_cards.card_no');
 						$this->db->from('erp_suspended');
-						$this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
+                        $this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
+                        $this->db->join('erp_gift_cards', 'erp_suspended_bills.customer_id = erp_gift_cards.customer_id', 'left');
 						$this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
 						$this->db->where('floor', $row->floor);
 						$this->db->order_by('erp_suspended.id', 'asc');
@@ -1223,7 +1224,8 @@ if ($q->num_rows() > 0) {
 									if($pos_settings->show_suspend_bar == 40){
 										if($suspend->inactive == 1){
 										}else{
-											echo "<span class='".$class."' style='position:relative;display: inline-table;'>
+
+                                            echo "<span class='".$class."' style='position:relative;display: inline-table;'>
 												<a id='clear_suspend' hrefs='".base_url()."pos/delete_suspend/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;left:0;padding-left:5%;padding-right:5%;cursor:pointer;' class='btn-danger clear_suspend'><i class='fa fa-times'></i></a>
 												
 												<a href='".base_url()."pos/seperate/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;right:5%;cursor:pointer;padding-left:5%;padding-right:5%;' class='btn-primary' data-toggle='modal' data-target='#myModal'><i class='fa fa-hourglass-half'></i></a>";
@@ -1239,18 +1241,19 @@ if ($q->num_rows() > 0) {
 												</button>
 											 </span>";
 										}
-									}else{
+                                    } else {
 
 										echo "<span class='".$class."' style='position:relative;display: inline-table;'>
-											<a id='clear_suspend' hrefs='".base_url()."pos/delete_suspend/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;left:0;padding-left:5%;padding-right:5%;cursor:pointer;' class='btn-danger clear_suspend'><i class='fa fa-times'></i></a><a  href='".base_url()."pos/seperate/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;right:5%;cursor:pointer;padding-left:5%;padding-right:5%;' class='btn-primary' data-toggle='modal' data-target='#myModal'><i class='fa fa-hourglass-half'></i></a>";
+											<a id='clear_suspend' hrefs='" . base_url() . "pos/delete_suspend/" . $suspend->ids . "' style='text-decoration:none;position:absolute;bottom:3px;left:28px;padding-left:5%;padding-right:5%;cursor:pointer;width:30px;height:20px' class='btn-danger clear_suspend'><i class='fa fa-times'></i></a><a  href='" . base_url() . "pos/seperate/" . $suspend->ids . "' style='text-decoration:none;position:absolute;bottom:2%;right:1%;cursor:pointer;padding-left:5%;padding-right:5%;' class='btn-primary' data-toggle='modal' data-target='#myModal'><i class='fa fa-hourglass-half'></i></a>";
 											if($count > 0){
 												echo "<p style='text-decoration:none;position:absolute;top:0;left:0;padding:5px;' class='btn-warning clear_suspend'>".$count."</p>";
 											}
 											echo "
 											<input type='checkbox' name='chsuspend' class='chsuspend checkbox' value='". $suspend->ids ."' style='position:absolute;top:0;right:5px;'/>
 											<button style='".$font."' type=\"button\" value='" . $suspend->suspend_id . "' ".($suspens === "suspend" ? 'id="'.$suspend->ids.'"' : '' )." class='".($suspens === "suspend" ? 'btn-prni btn '.($suspend->sus_start == '0000-00-00 00:00:00'? 'btn-info': ($suspend->sus_start == ''? 'btn-info': 'btn-warning')).' sus_sale '.$room : 'btn-prni btn suspend-button' )."' >
-												<span class='wrap_suspend".($suspens === "suspend" ? $suspend->ids : '')."'>" . ($suspens === "suspend" ? "<p class='suspend-name".$suspend->ids."'>" . $suspend->name . "</p><p class='suspend-date".$suspend->ids."'>" . $suspend->date . "</p><div class='sup_number".$suspend->ids."'>" . ($suspend->com_name == "" ? $cust : $suspend->com_name) . "</div><br/>" . $suspend->total : "Number " . $i ) . " (" . $suspend->count . ")</span>
-												".$default." (".kpTime($default,$currenttime).")
+
+												<span class='wrap_suspend" . ($suspens === "suspend" ? $suspend->ids : '') . "'>" . ($suspens === "suspend" ? "<p class='suspend-name" . $suspend->ids . "'>" . $suspend->name . "</p><p class='suspend-date" . $suspend->ids . "'>" . $this->erp->hrld($suspend->date) . "</p><p class='sup_number" . $suspend->ids . "'>" . ($suspend->com_name == "" ? $cust : $suspend->com_name) . "</p><p class='suspend-pnumber" . $suspend->ids . "'>" . $suspend->plate_number . "</p><p class='suspend-card_no" . $suspend->ids . "'>" . $suspend->card_no . "</p><br/>" . $suspend->total : "Number " . $i) . " (" . $suspend->count . ")</span>
+												" . "
 											</button>
 										 </span>";
 									}
