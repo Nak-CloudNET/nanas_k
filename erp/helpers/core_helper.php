@@ -6,7 +6,12 @@ if (!function_exists('get_dropdown_project')) {
         $ci =& get_instance();
         $html = '';
 
-        $html .= lang("biller", $id);
+        if ($name == 'biller') {
+            $html .= lang("biller", $id);
+        } else {
+            $html .= lang("warehouse", $id);
+        }
+        //$html .= lang("biller", $id);
         $ci->db->select("*,IF(erp_companies.company = '',erp_companies.name,erp_companies.company) as username");
         $ci->db->where('erp_companies.group_name', 'biller');
         if ($ci->Owner || $ci->Admin || !$ci->session->userdata('biller_id')) {
@@ -26,7 +31,7 @@ if (!function_exists('get_dropdown_project')) {
 
         $html .= form_dropdown($name, $bl, (isset($_POST[$name]) ? $_POST[$name] :
             $default_value), 'id="' . $id . '" 
-                    data-placeholder="' . lang("select") . ' ' . lang("biller") .
+                    data-placeholder="' . lang("select") . ' ' . $lang .
             '" required="required" class="form-control input-tip select" style="width:100%;"');
 
 

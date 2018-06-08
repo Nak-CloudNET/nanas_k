@@ -330,11 +330,24 @@ class Companies_model extends CI_Model
 
     public function getCustomerSuggestions($term, $limit = 10)
     {
-        $this->db->select("companies.id, CONCAT(plate_number,' - ', (
-			IF((ISNULL(company) OR company = ''), name, company)
-		)) as text", FALSE);
+        $this->db->select("companies.id,
+                            CONCAT(plate_number,' - ', (
+			                    IF((ISNULL(company) OR company = ''), name, company)
+		                    )) as text", FALSE);
 		$this->db->join('gift_cards', 'gift_cards.customer_id = companies.id', 'left');
-        $this->db->where(" (erp_companies.id LIKE '%" . $term . "%' OR name LIKE '%" . $term . "%' OR company LIKE '%" . $term . "%' OR email LIKE '%" . $term . "%' OR phone LIKE '%" . $term . "%' OR code LIKE '%" . $term . "%' OR erp_gift_cards.card_no LIKE '%" . $term . "%' OR erp_companies.plate_number LIKE '%" . $term . "%' ) ");
+        $this->db->where(" (erp_companies.id LIKE '%" . $term . "%'
+                            OR name LIKE '%" . $term . "%'
+                            OR company LIKE '%" . $term . "%'
+                            OR email LIKE '%" . $term . "%'
+                            OR phone LIKE '%" . $term . "%'
+                            OR code LIKE '%" . $term . "%'
+                            OR erp_gift_cards.card_no LIKE '%" . $term . "%'
+                            OR erp_companies.plate_number LIKE '%" . $term . "%' 
+                            OR erp_companies.plate_number_2 LIKE '%" . $term . "%' 
+                            OR erp_companies.plate_number_3 LIKE '%" . $term . "%' 
+                            OR erp_companies.plate_number_4 LIKE '%" . $term . "%' 
+                            OR erp_companies.plate_number_5 LIKE '%" . $term . "%' 
+                            ) ");
 		$this->db->group_by('companies.id');
         $q = $this->db->get_where('companies', array('group_name' => 'customer'), $limit);
         if ($q->num_rows() > 0) {
