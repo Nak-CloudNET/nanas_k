@@ -55,7 +55,7 @@
                 <div class="col-md-6">
 					<?php if($setting->show_company_code == 1) { ?>
 					<div class="form-group">
-                        <?= lang("plate_number", "plate_number"); ?>
+                        <?= lang("code", "code"); ?>
                         <?php echo form_input('code', $customer->code, 'class="form-control tip" id="code"  data-bv-notempty="true"'); ?>
                     </div>
 					<?php } ?>

@@ -91,19 +91,21 @@
 
 	</script>
 	<style>
-
 		.modal-body-scroll{
 			height: 650px;
 			overflow-y: auto;
 		}
-
 		.select2-result.select2-result-unselectable.select2-disabled {
 			display: none;
 		}
-
 		.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
 			margin-left: 0 !important;
 		}
+
+        .sus_sale {
+            width: 150px;
+            height: 150px;
+        }
 
 	</style>
 </head>
