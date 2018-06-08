@@ -1627,20 +1627,9 @@ if ($q->num_rows() > 0) {
 
                                     <div class="col-sm-6">
 										<?php
-                                        //form_textarea('staffnote', '', 'id="staffnote" class="form-control kb-text skip" style="height: 50px;" placeholder="' . lang('staff_note') . '" maxlength="250"');
-
 											if($suspend_sale){
-                                                /*$suspend_room[""] = "";
-                                                foreach($rooms as $room){
-                                                    if($room->name == $waiting_no){
-                                                        $waiting_no = $room->name;
-                                                    }
-                                                    $suspend_room[$room->id] = $room->name;
-                                                }*/
-                                                //echo form_dropdown('suspend_room', $suspend_room, $waiting_no,'id="suspend_room" class="form-control" style="width:100%;" ');
-                                                echo form_input('suspend_room', "", '  class="form-control input-tip" id="suspend_room"');
+                                                echo form_input('suspend_room', $suspend_sale->suspend_name, ' disabled class="form-control input-tip" id="suspend_sale"');
 											}else{
-
                                                 $suspend_room[""] = "";
 												if (is_array($room)) {
                                                     foreach ($rooms as $room) {
@@ -4931,11 +4920,11 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		$("#depreciation_term_1").on('change', function(){
 			$("#loan_term").val($(this).val());
 		});
-
+		
 		$("#suspend_room").on('change', function(){
 			$("#suspend_room1").val($(this).val());
 		});
-
+		
 		$("#tbl_dep .note").live('change', function(){
 			var id = ($(this).attr('id'));
 			var value = $(this).val();

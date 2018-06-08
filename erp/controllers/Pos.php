@@ -1199,8 +1199,7 @@ class Pos extends MY_Controller
 				$biller_id = JSON_decode($this->session->userdata('biller_id'));
 				$this->data['reference'] 	= $this->site->getReference('pos',$biller_id);
 				$this->data['user_ware'] 	= $this->site->getUserWarehouses();
-			}
-			
+			}			
             $this->data['suspend_sale']	    = $this->pos_model->getOpenBillByID($suspend_id);
 			$this->data['agencies'] 		= $this->site->getAllUsers();
 			$this->data['drivers'] 			= $this->site->getAllCompanies('driver');
