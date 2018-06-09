@@ -22232,8 +22232,8 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('D1', lang('customer'));
                 $this->excel->getActiveSheet()->SetCellValue('E1', lang('project'));
                 $this->excel->getActiveSheet()->SetCellValue('F1', lang('quantity'));
-                $this->excel->getActiveSheet()->SetCellValue('G1', lang('cost'));
-                $this->excel->getActiveSheet()->SetCellValue('H1', lang('price'));
+            $this->excel->getActiveSheet()->SetCellValue('G1', lang('price'));
+            $this->excel->getActiveSheet()->SetCellValue('H1', lang('cost'));
                 $this->excel->getActiveSheet()->SetCellValue('I1', lang('profit'));
 				$this->excel->getActiveSheet()->getStyle('A1'. $row.':L1'.$row)->getFont()->setBold(true);
 				$this->excel->getActiveSheet()->getStyle('A1' .$row.':L1'.$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -22285,15 +22285,15 @@ class Reports extends MY_Controller
 					    
 							$row++;
 							foreach ($prod as $getpro) {
-								
+
 								$p_qty = $getpro->quantity;
 								$unit_name = $this->erp->convert_unit_2_string($getpro->product_id,$p_qty);
-								$unit_cost = $this->erp->formatMoney($getpro->unit_cost);
-								$unit_price = $this->erp->formatMoney($getpro->unit_price);
-								$profit = $unit_price - $unit_cost;
+                                $unit_cost = $getpro->unit_cost;
+                                $unit_price = $getpro->unit_price;
+                                $profit = ($getpro->unit_price * $p_qty) - ($getpro->unit_cost * $p_qty);
 								$total_quantity+=$getpro->quantity;
 								$total_cost+=$getpro->unit_cost;
-								$total_price+=$getpro->unit_price;
+                                $total_price += $getpro->unit_price * $p_qty;
 								$total_profit+=$profit;
 								
 								$this->excel->getActiveSheet()->SetCellValue('B' .$row, $this->erp->hrsd($getpro->date));
@@ -22301,10 +22301,11 @@ class Reports extends MY_Controller
 								$this->excel->getActiveSheet()->SetCellValue('D' .$row, $getpro->customer);
 								$this->excel->getActiveSheet()->SetCellValue('E' .$row, $getpro->biller_name);
 								$this->excel->getActiveSheet()->SetCellValue('F' .$row, $p_qty);
-								$this->excel->getActiveSheet()->SetCellValue('G' .$row, $unit_cost);
-								$this->excel->getActiveSheet()->SetCellValue('H' .$row, $unit_price);
-								$this->excel->getActiveSheet()->SetCellValue('I' .$row, $profit);
-								
+                                $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatMoney($total_price));
+                                $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatMoney($unit_cost));
+                                $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatMoney($profit));
+                                $this->excel->getActiveSheet()->getStyle('F' . $row . ':I' . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
 								$row++;                   
 							}
 
@@ -22313,11 +22314,11 @@ class Reports extends MY_Controller
                             $this->excel->getActiveSheet()->getStyle('A' .$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                             $this->excel->getActiveSheet()->getStyle('A'. $row.':E'. $row)->getFont()->setBold(true);
                             $this->excel->getActiveSheet()->SetCellValue('F' .$row, $total_quantity);
-                            $this->excel->getActiveSheet()->SetCellValue('G' .$row, $total_cost);
-                            $this->excel->getActiveSheet()->SetCellValue('H' .$row, $total_price);
-                            $this->excel->getActiveSheet()->SetCellValue('I' .$row, $total_profit);
+                            $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatMoney($total_price));
+                            $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatMoney($total_cost));
+                            $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatMoney($total_profit));
 							$this->excel->getActiveSheet()->getStyle('F'.$row. ':I'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-							
+                            $this->excel->getActiveSheet()->getStyle('F' . $row . ':I' . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 						   $row++;  
 
 							$total_quantity_by_warehouse += $total_quantity;
@@ -22347,14 +22348,14 @@ class Reports extends MY_Controller
                     $this->excel->getActiveSheet()->getStyle('A' .$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                     $this->excel->getActiveSheet()->getStyle('A'. $row.':E'. $row)->getFont()->setBold(true);
                     $this->excel->getActiveSheet()->SetCellValue('F' .$row, $total_quantity_by_warehouse);
-                    $this->excel->getActiveSheet()->SetCellValue('G' .$row, $total_cost_by_warehouse);
-                    $this->excel->getActiveSheet()->SetCellValue('H' .$row, $total_price_by_warehouse);
-                    $this->excel->getActiveSheet()->SetCellValue('I' .$row, $total_profit_by_warehouse);
-                    
+                    $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatMoney($total_price_by_warehouse));
+                    $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatMoney($total_cost_by_warehouse));
+                    $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatMoney($total_profit_by_warehouse));
+                    $this->excel->getActiveSheet()->getStyle('F' . $row . ':I' . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 					//$this->excel->getActiveSheet()->getStyle('I'.$row. ':K'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                     $gqty +=$total_quantity_by_warehouse;
-					$gprice +=$total_cost_by_warehouse;
-					$gcost +=$total_price_by_warehouse;
+                    $gprice += $total_price_by_warehouse;
+                    $gcost += $total_cost_by_warehouse;
 					$gprofit +=$total_profit_by_warehouse;
 
                     $row++;
@@ -22368,8 +22369,7 @@ class Reports extends MY_Controller
                 $this->excel->getActiveSheet()->SetCellValue('G' .$row, $this->erp->formatMoney($gprice));
                 $this->excel->getActiveSheet()->SetCellValue('H' .$row, $this->erp->formatMoney($gcost));
                 $this->excel->getActiveSheet()->SetCellValue('I' .$row, $this->erp->formatMoney($gprofit));
-                //$this->excel->getActiveSheet()->getStyle('I'.$row. ':I'.$row)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-     
+            $this->excel->getActiveSheet()->getStyle('F' . $row . ':I' . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                 $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
                 $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
