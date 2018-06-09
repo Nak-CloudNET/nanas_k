@@ -230,11 +230,11 @@
 													$unit_name = $this->erp->convert_unit_2_string($pr->product_id,$p_qty);
                                                     $unit_cost_amount = $pr->unit_cost * $p_qty;
                                                     $unit_price_amount = $pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty);
-                                                    $profit = ($pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty)) - ($pr->unit_cost * $p_qty);
+                                                    $profit = ($pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty)) - ($pr->unit_cost * $p_qty) - $pr->item_discount;
 													$total_quantity+=$p_qty;
 													$total_cost+=$unit_cost_amount;
 													$total_price+=$unit_price_amount;
-													$total_profit+=$profit;
+                                                    $total_profit += $pr->subtotal;
 													
 													?>
 													<tr>
@@ -262,7 +262,7 @@
 														<td class="text-right"><?= $p_qty ?> <br><?php  echo $unit_name;?></td>
                                                         <td class="text-right"><?= $this->erp->formatMoney($unit_price_amount); ?></td>
                                                         <td class="text-right"><?= $this->erp->formatMoney($unit_cost_amount); ?></td>
-                                                        <td class="text-right"><?= $this->erp->formatMoney($profit); ?></td>
+                                                        <td class="text-right"><?= $this->erp->formatMoney($pr->subtotal); ?></td>
 														
 													</tr>
 													
