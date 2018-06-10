@@ -30,11 +30,11 @@
                         <i class="icon fa fa-toggle-down"></i>
                     </a>
                 </li>
-				<li class="dropdown">
-					<a href="#" id="pdf" data-action="export_pdf"  class="tip" title="<?= lang('download_pdf') ?>">
+                <!--<li class="dropdown">
+					<a href="#" id="pdf" data-action="export_pdf"  class="tip" title="<? /*= lang('download_pdf') */ ?>">
 						<i class="icon fa fa-file-pdf-o"></i>
 					</a>
-				</li>
+				</li>-->
                 <li class="dropdown">
 						<a href="#" id="excel" data-action="export_excel"  class="tip" title="<?= lang('download_xls') ?>">
 								<i class="icon fa fa-file-excel-o"></i>
@@ -228,13 +228,13 @@
 													
 													$p_qty = $this->erp->formatDecimal($pr->option_id ? ($pr->quantity * $pr->qty_variant) : $pr->quantity);
 													$unit_name = $this->erp->convert_unit_2_string($pr->product_id,$p_qty);
-													$unit_cost_amount = $this->erp->formatMoney($pr->unit_cost * $p_qty);
-													$unit_price_amount = $this->erp->formatMoney($pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty));
-													$profit = $this->erp->formatMoney(($pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty)) - ($pr->unit_cost * $p_qty));
+                                                    $unit_cost_amount = $pr->unit_cost * $p_qty;
+                                                    $unit_price_amount = $pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty);
+                                                    $profit = ($pr->option_id ? ($pr->unit_price * $pr->quantity) : ($pr->unit_price * $p_qty)) - ($pr->unit_cost * $p_qty) - $pr->item_discount;
 													$total_quantity+=$p_qty;
 													$total_cost+=$unit_cost_amount;
 													$total_price+=$unit_price_amount;
-													$total_profit+=$profit;
+                                                    $total_profit += $pr->subtotal;
 													
 													?>
 													<tr>
@@ -260,9 +260,9 @@
 														<td><?= $pr->customer ?></td>
 														<td><?= $pr->biller_name ?></td>
 														<td class="text-right"><?= $p_qty ?> <br><?php  echo $unit_name;?></td>
-														<td class="text-right"><?= $unit_price_amount ?></td>
-														<td class="text-right"><?= $unit_cost_amount ?></td>
-														<td class="text-right"><?= $profit ?></td>
+                                                        <td class="text-right"><?= $this->erp->formatMoney($unit_price_amount); ?></td>
+                                                        <td class="text-right"><?= $this->erp->formatMoney($unit_cost_amount); ?></td>
+                                                        <td class="text-right"><?= $this->erp->formatMoney($pr->subtotal); ?></td>
 														
 													</tr>
 													
@@ -316,8 +316,12 @@
                                     style="font-weight:bold; background-color: #428BCA;color:white;text-align:right;">
                                     <span style=" font-size:17px;"><?= lang("grand_total") ?></span></td>
 								<td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'><span style=" font-size:17px;"><b><?= $this->erp->formatDecimal($gqty); ?></b></span></td>
-								<td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'><span style=" font-size:17px;"><b><?= $this->erp->formatDecimal($gcost); ?></b></span></td>
-								<td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'><span style=" font-size:17px;"><b><?= $this->erp->formatDecimal($gprice); ?></b></span></td>
+                                <td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'>
+                                    <span style=" font-size:17px;"><b><?= $this->erp->formatMoney($gcost); ?></b></span>
+                                </td>
+                                <td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'>
+                                    <span style=" font-size:17px;"><b><?= $this->erp->formatMoney($gprice); ?></b></span>
+                                </td>
 								<td class="text-right" style='background-color: #428BCA;color:white;text-align:right;'><span style=" font-size:17px;"><b><?= $this->erp->formatMoney($gprofit); ?></b></span></td>
 							</tr>
 													
