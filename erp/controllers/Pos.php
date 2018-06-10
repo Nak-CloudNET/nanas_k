@@ -1396,8 +1396,6 @@ class Pos extends MY_Controller
             $register_open_time     = $user_register ? $user_register->date : $this->session->userdata('register_open_time');
             $register_close_time    = $user_close_register ? $user_close_register->closed_at : $this->session->userdata('register_close_time');
             if ($this->Owner || $this->Admin) {
-
-                // $this->erp->print_arrays($register_open_time);
                 if($rdate){
                     $register_open_time = $rdate;
                 }
