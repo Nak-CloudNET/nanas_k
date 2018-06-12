@@ -35,12 +35,15 @@
                             <td class="text-center"><?= $this->erp->formatMoney($gift_card->amount) ?></td>
                             <td>
                                 <?php if ($packages) { ?>
-                                    <select name="package" class="form-control">
-                                        <option><?= $gift_card->package_name ?></option>
+                                    <ul style="margin-left: 20px; list-style-type: none">
+                                        <li><strong><?= $gift_card->package_name ?></strong></li>
                                         <?php foreach ($packages as $package) { ?>
-                                            <option value="<?= $package->id ?>"><?= $package->item_name ?></option>
+                                            <li style="padding-left: 20px"
+                                                value="<?= $package->id ?>"><?= $package->item_name ?>
+                                                (<?= $this->erp->formatQuantity($package->quantity); ?>)
+                                            </li>
                                         <?php } ?>
-                                    </select>
+                                    </ul>
                                 <?php } ?>
                             </td>
                             <td class="text-center">
