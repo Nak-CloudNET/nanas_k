@@ -7206,7 +7206,6 @@ public function getRielCurrency(){
 
     public function getPackagesByGiftCardID($card_id, $sale_id)
     {
-
         $this->db
             ->select("combo.name as package_name, products.name as item_name", false)
             ->from("packages")

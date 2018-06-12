@@ -8,7 +8,6 @@
         <div class="modal-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped table-condensed reports-table">
-
 					<thead>
 						<tr>
 							<th><?= lang("date"); ?></th>

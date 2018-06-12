@@ -13125,7 +13125,6 @@ class Sales extends MY_Controller
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');
 		}
-        
 
         echo $this->datatables->generate();
     }
