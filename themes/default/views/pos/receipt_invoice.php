@@ -78,9 +78,7 @@ if ($modal) {
             }
 
             #wrapper {
-                /*max-width: 480px;*/
                 width: 98% !important;
-                /*min-width: 250px;*/
                 margin: 0 auto !important;
                 padding: 0 !important;
                 font-size: 10px !important;
