@@ -104,14 +104,11 @@ if ($modal) {
             .biller {
                 margin-left: -20px !important;
             }
-
         }
     </style>
 </head>
 <body>
-
 <?php } ?>
-
 <div id="wrapper">
     <div id="receiptData">
         <div class="no-print">
