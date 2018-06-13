@@ -1906,7 +1906,6 @@ class Sales_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payment = array(), $loans = array(), $deliver_id_muti = NULL, $packages = NULL)
     {
-		
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
         }
@@ -2021,8 +2020,18 @@ class Sales_model extends CI_Model
 							'expiry' 		=> $package['expiry']
 						);
 						$this->db->insert('packages', $data_package);
-					}
-				}				
+
+                    }
+                    $package_data = array(
+                        'gift_card_id' => $package['card_id'],
+                        'date' => $data['date'],
+                        'transaction_type' => 'paid',
+                        'amount' => $data['grand_total'],
+                        'sale_id' => $sale_id,
+                        'created_by' => $data['created_by']
+                    );
+                    $this->db->insert('gift_card_logs', $package_data);
+                }
 			}
 
             if ($data['sale_status'] == 'completed') {
@@ -7162,4 +7171,61 @@ public function getRielCurrency(){
         }
         return FALSE;
     }
+
+    public function getGiftCardLogHistoryByNo($card_no)
+    {
+        $this->db
+            ->select("
+                      gift_card_logs.gift_card_id,
+                      gift_card_logs.sale_id,
+                      gift_card_logs.date,
+                      gift_cards.card_no,
+                      payments.reference_no as payment_ref,
+                      erp_sales.reference_no as sale_ref,
+                      gift_card_logs.amount,
+                      payments.type,
+                      gift_card_logs.transaction_type,
+                      products.name as package_name,
+                      erp_gift_cards.balance
+                      ", false)
+            ->from("gift_cards")
+            ->join('gift_card_logs', 'gift_cards.id = gift_card_logs.gift_card_id', 'left')
+            ->join('packages', 'gift_card_logs.sale_id = packages.sale_id', 'left')
+            ->join('products', 'packages.combo_id = products.id', 'left')
+            ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
+            ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
+            ->where('gift_cards.card_no', $card_no)
+            ->group_by('gift_card_logs.id');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getPackagesByGiftCardID($card_id, $sale_id)
+    {
+        $this->db
+            ->select("combo.name as package_name, products.name as item_name, (erp_packages.quantity - erp_packages.use_quantity) as quantity", false)
+            ->from("packages")
+            ->join('products as combo', 'packages.combo_id = combo.id', 'left')
+            ->join('products', 'packages.product_id = products.id', 'left')
+            ->where('packages.card_id', $card_id)
+            ->where('packages.sale_id', $sale_id);
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+	public function getPackagesByProductId($customer_id, $product_id){
+		$q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'product_id' => $product_id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+	}
+
 }

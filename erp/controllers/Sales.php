@@ -13125,7 +13125,6 @@ class Sales extends MY_Controller
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');
 		}
-        
 
         echo $this->datatables->generate();
     }
@@ -13317,6 +13316,7 @@ class Sales extends MY_Controller
 		
 		$this->data['card_no'] = $no;
 		$this->data['page_title'] =lang('gift_card');
+        $this->data['gift_cards'] = $this->sales_model->getGiftCardLogHistoryByNo($no);
         //$gift_card = $this->site->getGiftCardByID($no);
         //$this->data['gift_card'] = $this->site->getGiftCardHistoryByNo($no);
         //$this->data['customer'] = $this->site->getCompanyByID($gift_card->customer_id);

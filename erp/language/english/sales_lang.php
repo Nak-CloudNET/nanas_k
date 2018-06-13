@@ -453,3 +453,4 @@ $lang['customer_opening_balance'] = "Add Customer Opening Balance (A/R)";
 $lang['add_money'] = "Add Money";
 $lang['plate_number'] = "Plate Number";
 $lang['tran_type'] = "Transaction Type";
+$lang['package'] = "Package";

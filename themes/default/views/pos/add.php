@@ -1990,7 +1990,7 @@ if ($q->num_rows() > 0) {
 
                                                 <div id="gc_details_1"></div>
 												<div id="package_header"></div>
-												<div id="package"></div>
+												<div id="package_1"></div>
                                             </div>
 
 											<div class="form-group dp_1" style="display: none;">
@@ -3625,7 +3625,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					dataType: "json",
 					success: function (data) {
 						if(data){
-							$('#package').empty();
+							$('#package_'+ id).empty();
 							$(data).each(function(i , result) {
 								var expiry_date = result.expiry;
 								var arr_expiry_date = expiry_date.split(' ');
@@ -3634,7 +3634,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 								}
 								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
 								if(result.total_qty > 0){
-									$('#package').append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
+									$('#package_'+ id).append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
 								}
 								if(date > result.expiry){
 									check_package = 1;
@@ -6759,7 +6759,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $('.ngc_' + pa_no).show();
                 $('.gc_' + pa_no).hide();
                 $('#gc_details_' + pa_no).html('');
-                $('#package').html('');
+                $('#package_'+ pa_no).html('');
             }
 			if(p_val == 'deposit') {
 				$('.dp_' + pa_no).show();
