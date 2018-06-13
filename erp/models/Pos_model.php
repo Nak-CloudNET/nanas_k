@@ -437,7 +437,8 @@ class Pos_model extends CI_Model
 
     public function addSale($data = array(), $items = array(), $payments = array(), $sid = NULL, $loans = array(), $combine_table = NULL)
     {
-        $this->load->model('sales_model');
+        
+		$this->load->model('sales_model');
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
         }
@@ -513,11 +514,27 @@ class Pos_model extends CI_Model
                     }
                 }				
 				foreach ($payments as $payment) {
-					if($payment['amount'] == 0 && $payment['pos_paid_other'] == 0){
+					if($payment['paid_by'] == 'gift_card'){
 						$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-						$old_use_qty = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id'])->use_quantity;
-						$update_use_qty = $item['quantity_balance'] + $old_use_qty;
-						$this->db->update('packages', array('use_quantity' => $update_use_qty), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+						$card_log = array(
+									'gift_card_id' 		 => $card_id,
+									'date' 				 => $data['date'],
+									'transaction_type' 	 => 'paid',
+									'sale_id' 			 => $sale_id,
+									'created_by' 		 => $data['saleman_by']
+								);
+						if($payment['amount'] == 0 && $payment['pos_paid_other'] == 0){							
+							$item_package = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id']);
+							$update_use_qty = $item['quantity_balance'] + $item_package->use_quantity;
+							$this->db->update('packages', array('use_quantity' => $update_use_qty), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+							if($item['product_id'] == $item_package->product_id){				
+								$card_log['amount'] = 0;
+								$this->db->insert('gift_card_logs', $card_log);
+							}
+						}else{
+							$card_log['amount'] = $payment['amount'];
+							$this->db->insert('gift_card_logs', $card_log);							
+						}
 					}
 				}
                 $i++;
@@ -586,23 +603,7 @@ class Pos_model extends CI_Model
                                 if ($payment['paid_by'] == 'gift_card') {
                                     $gc = $this->site->getGiftCardbyNO($payment['cc_no']);
                                     $this->db->update('gift_cards', array('balance' => ($gc->balance - $payment['amount'])), array('card_no' => $payment['cc_no']));
-                                    if($this->db->affected_rows()){
-                                        //$this->increase_award_points($payment,$data['customer_id']);
-                                    }
-                                    // generate log
-
-                                    $gift_card_log = array(
-                                        'gift_card_id'      => $gc->id,
-                                        'date'              => $date = date('Y-m-d H:i:s'),
-                                        'transaction_type'  => 'paid',
-                                        'amount'            => floatval($payment['amount']),
-                                        'sale_id'           => $sale_id,
-                                        'created_by'         => $this->session->userdata('user_id')
-                                    );
-
-                                    $this->sales_model->addGiftCardLog($gift_card_log);
-                                }
-								
+                                }								
                                 unset($payment['cc_cvv2']);
                                 $this->db->insert('payments', $payment);
                                 $this->site->updateReference('sp', $payment['biller_id']);

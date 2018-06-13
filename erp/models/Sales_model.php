@@ -7220,6 +7220,12 @@ public function getRielCurrency(){
         }
         return FALSE;
     }
-
+	public function getPackagesByProductId($customer_id, $product_id){
+		$q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'product_id' => $product_id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+	}
 
 }
