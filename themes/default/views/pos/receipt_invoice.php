@@ -675,28 +675,30 @@ if ($modal) {
                         $balance_amount += $pos_paid_other_balance - $payment->amount;
                     }
 
-                    if ($balance_amount == $balance) { ?>
-                        <tr>
-                            <th colspan="<?= $colspan ?>"
-                                class="text-left"><?= lang("change_amount_us"); ?> :
-                            </th>
-                            <th><?= lang('ប្រាក់អាប់ (ដុល្លារ)') ?></th>
-                            <th class="text-right">
-                                <?php
-                                echo $this->erp->formatMoney(abs($inv->pos_balance));
-                                $total_us_b = $this->erp->formatMoney($inv->grand_total - ($pos_paid + $amount_kh_to_us));
-                                $m_us = $this->erp->fraction($total_us_b);
-                                ?>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="<?= $colspan ?>"
-                                class="text-left"><?= lang("change_amount_kh"); ?> :
-                            </th>
-                            <th><?= lang('ប្រាក់អាប់ (រៀល)') ?></th>
-                            <th class="text-right"><?= number_format(abs($inv->pos_balance * $inv->pos_paid_other_rate)) . ' ៛'; ?></th>
-                        </tr>
-                        <?php
+                    if ($balance_amount == $balance) {
+                        if ($total_us_b) { ?>
+                            <tr>
+                                <th colspan="<?= $colspan ?>"
+                                    class="text-left"><?= lang("change_amount_us"); ?> :
+                                </th>
+                                <th><?= lang('ប្រាក់អាប់ (ដុល្លារ)') ?></th>
+                                <th class="text-right">
+                                    <?php
+                                    echo $this->erp->formatMoney(abs($inv->pos_balance));
+                                    $total_us_b = $this->erp->formatMoney($inv->grand_total - ($pos_paid + $amount_kh_to_us));
+                                    $m_us = $this->erp->fraction($total_us_b);
+                                    ?>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th colspan="<?= $colspan ?>"
+                                    class="text-left"><?= lang("change_amount_kh"); ?> :
+                                </th>
+                                <th><?= lang('ប្រាក់អាប់ (រៀល)') ?></th>
+                                <th class="text-right"><?= number_format(abs($inv->pos_balance * $inv->pos_paid_other_rate)) . ' ៛'; ?></th>
+                            </tr>
+                            <?php
+                        }
                     } elseif (($inv->grand_total - ($pay + $pay_kh)) < 0) { ?>
                         <tr>
                             <th colspan="<?= $colspan ?>"
