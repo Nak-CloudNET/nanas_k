@@ -62,7 +62,6 @@ if ($modal) {
         .footer_info td, th {
             padding: 2px !important;
         }
-        
 
         @media print {
             #cinfo .col-sm-6, .col-xs-6 {
