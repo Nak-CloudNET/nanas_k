@@ -13426,7 +13426,6 @@ class Sales extends MY_Controller
                 'customer_group_name' => $customer_group_name
             );
 
-
             $sa_data = array();
             $ca_data = array();
             if ($this->input->post('staff_points')) {

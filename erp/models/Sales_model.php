@@ -7117,44 +7117,7 @@ public function getRielCurrency(){
         }
 
     }
-
-    /*
-	public function increase_award_points($data){
-
-        $limit_points = floatval($this->Settings->limit_points);
-        if($data['grand_total'] > $limit_points){
-            if($this->Settings->increament == 1){
-                $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                return true;
-            }else{
-
-                $data['grand_total'] = $data['grand_total'] - $limit_points;
-
-                $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                return true;
-            }
-        }
-
-    }
-
-    public function edit_ward_points($data){
-        $limit_points = floatval($this->Settings->limit_points);
-        if($data['grand_total'] > $limit_points){
-            if($this->restoreAwardPoint($data['customer_id'])){
-                if($this->Settings->increament == 1){
-                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                    return true;
-                }else{
-                    $data['grand_total'] = $data['grand_total'] - $limit_points;
-                    $this->erp->update_award_points($data['grand_total'], $data['customer_id'], $data['created_by'], NULL ,$data['saleman_by']);
-                    return true;
-                }
-            }
-        }else{
-            $this->restoreAwardPoint($data['customer_id']);
-        }
-    }
-    */
+    
     public function restoreAwardPoint($customer_id){
         $customer = $this->getCustomerByID($customer_id);
         if($customer){

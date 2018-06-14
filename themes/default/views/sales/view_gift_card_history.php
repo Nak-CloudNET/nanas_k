@@ -79,7 +79,6 @@
                         </tr>
                     <?php } ?>
 					</tbody>
-					
 					<tfoot class="dtFilter">
 						<tr class="active">
                             <th class="text-center"><?= lang("date"); ?></th>
