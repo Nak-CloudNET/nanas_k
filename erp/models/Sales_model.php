@@ -7186,13 +7186,17 @@ public function getRielCurrency(){
                       payments.type,
                       gift_card_logs.transaction_type,
                       products.name as package_name,
-                      erp_gift_cards.balance
+                      erp_gift_cards.balance,
+                      sale_items.product_name,
+                      sale_items.product_id as item_id,
+                      sale_items.product_code
                       ", false)
             ->from("gift_cards")
             ->join('gift_card_logs', 'gift_cards.id = gift_card_logs.gift_card_id', 'left')
             ->join('packages', 'gift_card_logs.sale_id = packages.sale_id', 'left')
             ->join('products', 'packages.combo_id = products.id', 'left')
             ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
+            ->join('sale_items', 'sales.id = sale_items.sale_id', 'left')
             ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
             ->where('gift_cards.card_no', $card_no)
             ->group_by('gift_card_logs.id');
@@ -7207,12 +7211,27 @@ public function getRielCurrency(){
     public function getPackagesByGiftCardID($card_id, $sale_id)
     {
         $this->db
-            ->select("combo.name as package_name, products.name as item_name, (erp_packages.quantity - erp_packages.use_quantity) as quantity", false)
+            ->select("combo.name as package_name, products.name as item_name, (erp_packages.quantity - erp_packages.use_quantity) as quantity, packages.product_id as combo_item_id", false)
             ->from("packages")
             ->join('products as combo', 'packages.combo_id = combo.id', 'left')
             ->join('products', 'packages.product_id = products.id', 'left')
             ->where('packages.card_id', $card_id)
             ->where('packages.sale_id', $sale_id);
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getComboItemsByProductCode($product_id)
+    {
+        $this->db
+            ->select("combo_items.*", false)
+            ->from("combo_items")
+            ->where('combo_items.item_code', $product_id)
+            ->group_by('combo_items.item_code');
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
