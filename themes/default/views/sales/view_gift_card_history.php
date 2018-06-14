@@ -19,7 +19,6 @@
                             <th><?= lang("tran_type"); ?></th>
 						</tr>
 					</thead>
-					
 					<tbody>
                     <?php
                     $balance = 0;
@@ -33,7 +32,6 @@
                                 $i = $gift_card->product_name;
                             }
                         }
-
                         ?>
                         <tr <?php if($i): ?> style="background-color:lightgoldenrodyellow;" <?php endif; ?> >
                             <td><?= $gift_card->date ?></td>
