@@ -2358,6 +2358,16 @@ if ($q->num_rows() > 0) {
 							</div>
                         </div>
 					</div>
+					
+					<div class="form-group col-sm-12">
+						<label for="gift_card" class="col-sm-4 control-label"><?= lang('gift_card') ?></label>
+						<div class="col-sm-8">
+							<div id="gift_card-div">
+							
+							</div>
+						</div>
+					</div>
+					
 					<div class="form-group col-sm-12" >
                     <table class="table table-bordered table-striped">
                         <tr>

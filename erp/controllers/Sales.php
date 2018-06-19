@@ -11610,6 +11610,7 @@ class Sales extends MY_Controller
 				$row->click_edit_count= 0;
 
                 $customer_percent = $customer_group->percent ? $customer_group->percent : 0;
+                
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                     if ($row->type == 'combo') {
@@ -11621,7 +11622,6 @@ class Sales extends MY_Controller
                     $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent);
                 }
             }
-
             echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
@@ -12022,17 +12022,21 @@ class Sales extends MY_Controller
 				$row->click_edit_count= 0;
 				
                 $combo_items = FALSE;
+				
 				$customer_percent = $customer_group->percent ? $customer_group->percent : 0;
+				$items_package = $this->sales_model->getPackagesByProductId($customer_id, $row->id);
+				
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                     if ($row->type == 'combo') {
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
                     }
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0));
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0), 'items_package' => $items_package);
                 } else {
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0));
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0), 'items_package' => $items_package);
                 }
             }
+			
             echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));

@@ -414,6 +414,7 @@ $(document).ready(function () {
 		item_id = row.attr('data-item-id');
 		item = positems[item_id];
 		var expdates = item.expdates ? item.expdates : null;
+		var items_package = item.items_package ? item.items_package : null;
 		var qty = row.children().children('.rquantity').val(),
 		product_option = row.children().children('.roption').val(),
 		qty_in_hand = row.children().children('.inhand').val(),
@@ -1230,8 +1231,7 @@ function loadItems() {
         $.each(positems, function (i, e) {
 			var item 			= this;
 			var item_id 		= site.settings.item_addition == 1 ? item.id : item.id;
-			positems[item_id] 	= item;
-
+			positems[item_id] 	= item;			
 			var item_note 		= '';
 			var product_id 		= item.row.id,
 			item_type 			= item.row.type,
