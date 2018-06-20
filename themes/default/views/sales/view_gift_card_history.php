@@ -19,32 +19,43 @@
                             <th><?= lang("tran_type"); ?></th>
 						</tr>
 					</thead>
-					
 					<tbody>
                     <?php
                     $balance = 0;
                     foreach ($gift_cards as $gift_card) {
                         $balance = $gift_card->balance;
                         $packages = $this->sales_model->getPackagesByGiftCardID($gift_card->gift_card_id, $gift_card->sale_id);
+                        $combo_items = $this->sales_model->getComboItemsByProductCode($gift_card->product_code);
+
+                        foreach ($combo_items as $combo_item) {
+                            if ($gift_card->product_code == $combo_item->item_code) {
+                                $i = $gift_card->product_name;
+                            }
+                        }
                         ?>
-                        <tr>
+                        <tr <?php if($i): ?> style="background-color:lightgoldenrodyellow;" <?php endif; ?> >
                             <td><?= $gift_card->date ?></td>
                             <td><?= $gift_card->card_no ?></td>
                             <td><?= $gift_card->payment_ref ?></td>
                             <td><?= $gift_card->sale_ref ?></td>
                             <td class="text-center"><?= $this->erp->formatMoney($gift_card->amount) ?></td>
                             <td>
-                                <?php if ($packages) { ?>
-                                    <ul style="margin-left: 20px; list-style-type: none">
-                                        <li><strong><?= $gift_card->package_name ?></strong></li>
-                                        <?php foreach ($packages as $package) { ?>
-                                            <li style="padding-left: 20px"
-                                                value="<?= $package->id ?>"><?= $package->item_name ?>
-                                                (<?= $this->erp->formatQuantity($package->quantity); ?>)
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                <?php } ?>
+                                <ul style="margin-left: 20px; list-style-type: none">
+                                    <li><strong><?= $gift_card->package_name ?></strong></li>
+                                    <?php foreach ($packages as $package) { ?>
+                                        <li style="padding-left: 20px"
+                                            value="<?= $package->id ?>"><?= $package->item_name ?>
+                                            (<?= $this->erp->formatQuantity($package->quantity); ?>)
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                                <?php
+                                foreach ($combo_items as $combo_item) {
+                                    if ($gift_card->product_code == $combo_item->item_code) {
+                                        echo '<p>'.$gift_card->product_name.'</p>';
+                                    }
+                                }
+                                ?>
                             </td>
                             <td class="text-center">
                                 <?php
@@ -66,7 +77,6 @@
                         </tr>
                     <?php } ?>
 					</tbody>
-					
 					<tfoot class="dtFilter">
 						<tr class="active">
                             <th class="text-center"><?= lang("date"); ?></th>
