@@ -7152,7 +7152,8 @@ public function getRielCurrency(){
                       erp_gift_cards.balance,
                       sale_items.product_name,
                       sale_items.product_id as item_id,
-                      sale_items.product_code
+                      sale_items.product_code,
+                      packages.expiry as expiry_date
                       ", false)
             ->from("gift_cards")
             ->join('gift_card_logs', 'gift_cards.id = gift_card_logs.gift_card_id', 'left')

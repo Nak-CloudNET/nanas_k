@@ -16,6 +16,7 @@
 							<th><?= lang("sale_ref"); ?></th>
 							<th><?= lang("amount"); ?></th>
                             <th style="width: 25%"><?= lang("package"); ?></th>
+                            <th><?= lang("expiry_date"); ?></th>
                             <th><?= lang("tran_type"); ?></th>
 						</tr>
 					</thead>
@@ -57,6 +58,7 @@
                                 }
                                 ?>
                             </td>
+                            <td><?= $this->erp->hrsd($gift_card->expiry_date) != '0000-00-00' ? $this->erp->hrsd($gift_card->expiry_date) : ''; ?></td>
                             <td class="text-center">
                                 <?php
                                 if ($gift_card->transaction_type == 'created') {
@@ -85,6 +87,7 @@
                             <th class="text-center"><?= lang("sale_ref"); ?></th>
                             <th class="text-center"><?= $this->erp->formatMoney($balance) ?></th>
                             <th class="text-center"><?= lang("package"); ?></th>
+                            <th class="text-center"><?= lang("expiry_date"); ?></th>
                             <th class="text-center"><?= lang("tran_type"); ?></th>
 						</tr>
 					</tfoot>
