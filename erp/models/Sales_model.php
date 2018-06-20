@@ -7198,17 +7198,18 @@ public function getRielCurrency(){
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
-            return $q->result();
+            
         }
         return FALSE;
     }
 	public function getPackagesByProductId($customer_id, $product_id){
-		$this->db->select('erp_packages.*, erp_products.name as package_name');
+		$this->db->select('erp_packages.*, erp_products.name as package_name, erp_gift_cards.card_no');
 		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
-		$q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'product_id' => $product_id), 1);
-        if ($q->num_rows() > 0) {
-            return $q->row();
-        }
+		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
+		$q = $this->db->get_where('packages', array('erp_packages.customer_id' => $customer_id, 'erp_packages.product_id' => $product_id));
+        if($q->num_rows()>0){
+			return $q->result();
+		}
         return FALSE;
 	}
 

@@ -502,9 +502,27 @@ $(document).ready(function () {
 				$("<option />", {value: this.id, text: fsd(this.expiry)}).appendTo(exp);
 			});
 		}
-
+		
+		if(items_package){
+			var div_package = '<input type="radio" name="not_package" value="0" style="margin: 6px 0 0 0;"> <span style="padding-left:5px !important;">Not Use</span><br/>';
+			var gift_card_div = $('#gift_card-div');
+			gift_card_div.empty();
+			$('#gift_card-div').html(div_package);
+			
+			$.each(items_package, function () {
+				gift_card_div.append($('<input type="radio" name="item_package" value="' + this.id + '"><span style="padding-left:5px !important;">' + this.package_name + ' ( ' + this.card_no + ')</span><br/>'));
+			});
+			
+			if(items_package !== null) {
+				$.each(items_package, function () {
+					$('#gift_card-div').append();
+				});
+			}
+		}else{
+			$('.main_package').css('display','none');			
+		}
+		
 		var opt = '<p style="margin: 12px 0 0 0;">n/a</p>';
-
 		if (item.options !== false) {
 			var o = 1;
 			opt = $("<select id=\"poption\" name=\"poption\" class=\"form-control select\" />");
@@ -682,7 +700,10 @@ $(document).ready(function () {
 				return false;
 			}
 		}
-
+		var radioValue = $("input[name='item_package']:checked").val();		
+		if(radioValue){
+			price = 0;
+		}
 		var price_id = $('#pgroup_price').val() ? $('#pgroup_price').val() : 0;
 
 		var piece  = $("#piece").val()-0;
