@@ -12008,6 +12008,7 @@ class Sales extends MY_Controller
 
                 $row->psoqty = $psoqty;
                 $row->real_unit_price = $row->price;
+                $row->package_price   = $row->price;
 				$row->w_piece		  = $row->cf1;
 				$row->piece			  = 0;
 				$row->is_sale_order   = 0;
@@ -12035,8 +12036,7 @@ class Sales extends MY_Controller
                 } else {
                     $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0), 'items_package' => $items_package);
                 }
-            }
-			
+            }			
             echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));

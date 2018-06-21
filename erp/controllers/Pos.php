@@ -1894,6 +1894,7 @@ class Pos extends MY_Controller
             }
 
             $row->real_unit_price   = $row->price;
+			$row->package_price     = $row->price;
 			$row->piece	            = 0;
 			$row->wpiece            = 0;
 			$row->digital_id	    = 0;
@@ -1903,6 +1904,7 @@ class Pos extends MY_Controller
 			$row->printed           = 0;
             $combo_items            = FALSE;
 			$customer_percent       = $customer_group ? $customer_group->percent : 0;
+			$items_package 			= $this->sales_model->getPackagesByProductId($customer_id, $row->id);
             if ($row->tax_rate){
                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                 if ($row->type == 'combo') {
@@ -1926,7 +1928,8 @@ class Pos extends MY_Controller
                     'all_group_prices'      => $all_group_prices,
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
-                    'makeup_cost_percent'   => $percent?$percent->percent:0
+                    'makeup_cost_percent'   => $percent?$percent->percent:0,
+                    'items_package'   		=> $items_package
                 );
            }else {
                 $pr = array(
@@ -1946,10 +1949,10 @@ class Pos extends MY_Controller
                     'all_group_prices'      => $all_group_prices,
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
-                    'makeup_cost_percent'   => $percent->percent
+                    'makeup_cost_percent'   => $percent->percent,
+					'items_package'   		=> $items_package
                 );
            }
-            //$this->erp->print_arrays($pr);
            echo json_encode($pr);
         } else {
 			
