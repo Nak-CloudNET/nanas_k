@@ -5839,6 +5839,7 @@ class Sales extends MY_Controller
                 $item_name 			= $_POST['product_name'][$r];
 				$item_peice    		= $_POST['piece'][$r];
 				$item_wpeice   		= $_POST['wpiece'][$r];
+				$package_id   		= $_POST['package_id'][$r];
 				$product_noted 		= $_POST['product_note'][$r];
 				$gift_card_id		= $_POST['customer_gift_card'][$r];
 				$package_expiry 	= isset($_POST['package_expiry_date'][$r]) && $_POST['package_expiry_date'][$r] != 'false' ? $_POST['package_expiry_date'][$r] : null;
@@ -5990,7 +5991,8 @@ class Sales extends MY_Controller
 						'expiry' 			=> $expdate,
 						'expiry_id'			=> $expire_date_id,
 						'old_sqty' 			=> $old_sqty,
-						'price_id' 			=> $item_price_id
+						'price_id' 			=> $item_price_id,
+						'package_id' 		=> $package_id
                     );
                     $total += $this->erp->formatDecimal($subtotal, 4);
                 }
@@ -6305,7 +6307,7 @@ class Sales extends MY_Controller
                 }
 				$test2 = $this->sales_model->getWP2($row->id, $item->warehouse_id);
 				$row->id 			= $item->product_id;
-                $row->delivery_id = $delivery->id;
+                $row->delivery_id 	= $delivery->id;
                 $row->code 			= $item->product_code;
                 $row->name 			= $item->product_name;
                 $row->type 			= $item->product_type;
@@ -6316,8 +6318,9 @@ class Sales extends MY_Controller
                 $row->quantity 		= $row->wh_qty;
 				$row->digital_code 	= "";
                 $row->digital_name 	= "";
-                $row->digital_id   	= "";
-
+                $row->digital_id   	= "";				
+                $row->package_price = $row->price;
+                $row->package_id 	= $item->package_id;
                 $row->oqty			  = 0;
 				$row->is_sale_order   = 0;
 				$row->old_qty_rec	  = 0;
@@ -6354,8 +6357,9 @@ class Sales extends MY_Controller
 				$row->end_date = $item->end_date;
 				$row->product_noted = $item->product_noted;
 
-                $group_prices = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
+                $group_prices     = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
 				$all_group_prices = $this->sales_model->getProductPriceGroup($row->id);
+				$items_package    = $this->sales_model->getPackagesById($item->package_id);
 				$row->quantity 			 = $test2->quantity;
 
                 if ($options) {
@@ -6408,9 +6412,9 @@ class Sales extends MY_Controller
 				$customer_percent = $customer_group->percent ? $customer_group->percent : 0;
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate); 
-                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates,'makeup_cost' => 0, 'group_prices' => $group_prices,'customer_percent' => $customer_percent, 'all_group_prices' => $all_group_prices, 'slaeid'=>$item->id, 'customer_gift_card' => $customer_gift_card);
+                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates,'makeup_cost' => 0, 'group_prices' => $group_prices,'customer_percent' => $customer_percent, 'all_group_prices' => $all_group_prices, 'slaeid'=>$item->id, 'customer_gift_card' => $customer_gift_card, 'items_package' => $items_package); 
                 } else {
-                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates,'makeup_cost' => 0, 'group_prices' => $group_prices,'customer_percent' => $customer_percent, 'all_group_prices' => $all_group_prices, 'slaeid'=>$item->id, 'customer_gift_card' => $customer_gift_card);
+                    $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates,'makeup_cost' => 0, 'group_prices' => $group_prices,'customer_percent' => $customer_percent, 'all_group_prices' => $all_group_prices, 'slaeid'=>$item->id, 'customer_gift_card' => $customer_gift_card, 'items_package' => $items_package);
                 }
                 $c++;
             }
@@ -11596,6 +11600,7 @@ class Sales extends MY_Controller
                 $row->psoqty          = $psoqty;
                 $row->oqty			  = 0;
                 $row->real_unit_price = $row->price;
+				$row->package_price   = $row->price;
 				$row->is_sale_order   = 0;
 				$row->item_load		  = 0;
 				$row->w_piece		  = $row->cf1;
@@ -11610,18 +11615,19 @@ class Sales extends MY_Controller
 				$row->click_edit_count= 0;
 
                 $customer_percent = $customer_group->percent ? $customer_group->percent : 0;
-                
+                $items_package = $this->sales_model->getPackagesByProductId($customer_id, $row->id);
+				
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                     if ($row->type == 'combo') {
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
                     }
 
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package);
                 } else {
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package);
                 }
-            }
+            }			
             echo json_encode($pr);
         } else {
             echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
@@ -12044,6 +12050,7 @@ class Sales extends MY_Controller
     }
 
     function suggestionsReturn(){
+		
         $term = $this->input->get('term', TRUE);
         $warehouse_id = $this->input->get('warehouse_id', TRUE);
         $customer_id = $this->input->get('customer_id', TRUE);

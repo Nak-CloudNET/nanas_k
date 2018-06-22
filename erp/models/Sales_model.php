@@ -7188,6 +7188,17 @@ public function getRielCurrency(){
         }
         return FALSE;
     }
+	
+	public function getPackagesById($package_id){
+		$this->db->select('erp_packages.*, erp_products.name as package_name, erp_gift_cards.card_no');
+		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
+		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
+		$q = $this->db->get_where('packages', array('erp_packages.id' => $package_id));
+        if($q->num_rows()>0){
+			return $q->result();
+		}
+        return FALSE;
+	}
 
     public function getComboItemsByProductCode($product_id)
     {
@@ -7207,6 +7218,7 @@ public function getRielCurrency(){
 		$this->db->select('erp_packages.*, erp_products.name as package_name, erp_gift_cards.card_no');
 		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
 		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
+		$this->db->having('erp_packages.quantity > erp_packages.use_quantity');
 		$q = $this->db->get_where('packages', array('erp_packages.customer_id' => $customer_id, 'erp_packages.product_id' => $product_id));
         if($q->num_rows()>0){
 			return $q->result();

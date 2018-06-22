@@ -833,18 +833,22 @@
                         </div>
                     </div>
 					
+					<div class="form-group col-sm-12 main_package">
+						<label for="package" class="col-sm-4 control-label"><?= lang('package') ?></label>
+						<div class="col-sm-8">
+							<div id="package-div">
+							
+							</div>
+						</div>
+					</div>
+					
 					<div class="form-group">
                         <label for="pnote" class="col-sm-4 control-label"><?= lang('product_note') ?></label>
 
                         <div class="col-sm-8">
-                         <!--   <input type="text" class="form-control kb-pad" id="pnote">-->
                             <textarea id="pnote"></textarea>
-
                         </div>
                     </div>
-					
-					
-					
 					
                     <table class="table table-bordered table-striped">
                         <tr>

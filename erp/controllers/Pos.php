@@ -490,6 +490,7 @@ class Pos extends MY_Controller
                 $item_discount 	= isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
 				$g_total_txt 	= $_POST['grand_total'][$r];
 				$item_price_id 	= $_POST['price_id'][$r];
+				$package_id 	= $_POST['package_id'][$r];
 				
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details 	= $item_type != 'manual' ? $this->pos_model->getProductByCode($item_code) : NULL;
@@ -598,7 +599,8 @@ class Pos extends MY_Controller
 						'product_noted' 	=> $item_note,
 						'expiry' 			=> $expdate,
 						'expiry_id' 		=> $expire_date_id,
-						'price_id' 		=> $item_price_id
+						'price_id' 			=> $item_price_id,
+						'package_id' 		=> $package_id
                     );					
                     $total += $subtotal;
 					$g_total_txt1 += $subtotal;
@@ -844,7 +846,6 @@ class Pos extends MY_Controller
                 $data['suspend_id']     = $this->input->post('suspend_id');
                 $data['suspend_name'] = $this->input->post('suspend_name');
                 $data['plate_number'] = $this->input->post('plate_number2');
-
                 $arr_suspend = $this->pos_model->suspendSale($data, $products, $did);
                 if ($arr_suspend['suppend_id'] >0) {
                     $this->session->set_userdata('remove_posls', 1);
@@ -958,6 +959,8 @@ class Pos extends MY_Controller
                     $row->price             = $this->erp->formatDecimal($item->net_unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity));
                     $row->unit_price        = $row->tax_method ? $item->unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity)+$this->erp->formatDecimal($item->item_tax/$item->quantity) : $item->unit_price+($item->item_discount/$item->quantity);
                     $row->real_unit_price   = $item->real_unit_price;
+					$row->package_price   	= $row->unit_price;
+					$row->package_id   		= $item->package_id;
                     $row->tax_rate          = $item->tax_rate_id;
                     $row->serial            = $item->serial_no;
                     $row->option            = $item->option_id;
@@ -985,17 +988,17 @@ class Pos extends MY_Controller
                             }
                         }
                     }
-
+					$items_package = $this->sales_model->getPackagesByProductId($suspended_sale->customer_id, $item->product_id);
                     $ri = $this->Settings->item_addition ? $row->id : $c;
 
                     if ($row->tax_rate) {
                         $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
-                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => $tax_rate, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0);
+                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => $tax_rate, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0, 'items_package' => $items_package);
                     } else {
-                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => false, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0);
+                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => false, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0, 'items_package' => $items_package);
                     }
                     $c++;
-                }				
+                }
 				$this->data['items']            = json_encode($pr);
                 $this->data['sid']              = $sid;
                 $this->data['suspend_sale']     = $suspended_sale;
@@ -1913,7 +1916,7 @@ class Pos extends MY_Controller
                 $pr = array(
                     'id'                    => str_replace(".", "", microtime(true)),
                     'item_id'               => $row->code,
-                    'pro_id' => $row->id,
+                    'pro_id' 				=> $row->id,
                     'label'                 => $row->name . " (" . $row->code . ")",
                     'image'                 => $row->image,
                     'cost'                  => $row->cost,

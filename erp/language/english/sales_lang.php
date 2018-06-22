@@ -70,6 +70,7 @@ $lang['payments_deleted']              		= "Payments successfully deleted";
 $lang['paid_by']                            = "Paid by";
 $lang['send_email']                         = "Send Email";
 $lang['add_gift_card']                      = "Add Member Card";
+$lang['gift_card']                      	= "Member Card";
 $lang['edit_gift_card']                     = "Edit Member Card";
 $lang['delete_gift_card']              		= "Delete Member Card";
 $lang['delete_gift_cards']             		= "Delete Member Cards";

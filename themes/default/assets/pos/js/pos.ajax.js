@@ -506,10 +506,11 @@ $(document).ready(function () {
 		}
 		
 		if(items_package){
+			$('.main_package').css('display','block');
 			var div_package = '<input type="radio" name="item_package" value="0" id="radio_not_use" style="margin: 6px 0 0 0;"> <span style="padding-left:5px !important;">Not Use</span><br/>';
-			var gift_card_div = $('#gift_card-div');
+			var gift_card_div = $('#package-div');
 			gift_card_div.empty();
-			$('#gift_card-div').html(div_package);
+			$('#package-div').html(div_package);
 			if(package_id == 0){
 				$('#radio_not_use').prop('checked', true);
 			}
@@ -523,7 +524,7 @@ $(document).ready(function () {
 			
 			if(items_package !== null) {
 				$.each(items_package, function () {
-					$('#gift_card-div').append();
+					$('#package-div').append();
 				});
 			}
 		}else{
@@ -1266,7 +1267,6 @@ function loadItems() {
 		}
 		positems = JSON.parse(__getItem('positems'));
 		var n = 1;
-		
         $.each(positems, function (i, e) {
 			var item 			= this;
 			var item_id 		= site.settings.item_addition == 1 ? item.id : item.id;
