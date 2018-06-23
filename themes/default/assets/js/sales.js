@@ -1164,8 +1164,18 @@ if (slwarehouse = __getItem('slwarehouse')) {
 				
 			});
 		}
+		if(package_id){
+			$('.package_expiry').css('display','none');
+			$('.main_gift_card').css('display','none');
+		}else{
+			$('.package_expiry').css('display','block');
+			$('.main_gift_card').css('display','block');
+		}
 		if(items_package){
 			$('.main_package').css('display','block');
+			$('.main_qty').css('display','none');
+			$('.package_expiry').css('display','none');
+			$('.main_gift_card').css('display','none');
 			var div_package = '<input type="radio" name="item_package" value="0" id="radio_not_use" style="margin: 6px 0 0 0;"> <span style="padding-left:5px !important;">Not Use</span><br/>';
 			var gift_card_div = $('#package-div');
 			gift_card_div.empty();
@@ -1187,7 +1197,8 @@ if (slwarehouse = __getItem('slwarehouse')) {
 				});
 			}
 		}else{
-			$('.main_package').css('display','none');			
+			$('.main_package').css('display','none');
+			$('.main_qty').css('display','block');
 		}
 		
 		$("#radio_not_use").change(function(){

@@ -2577,9 +2577,8 @@ class Sales_model extends CI_Model
 				$this->site->syncSalePayments($id);
             }
             $this->site->syncQuantity($id);
-
-        }
-		
+			return true;
+        }		
         return false;
     }
 
