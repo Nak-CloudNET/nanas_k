@@ -930,9 +930,10 @@ class Pos extends MY_Controller
 				}
 				
                 $inv_items = $this->pos_model->getSuspendedSaleItems($sid);
-                $c = rand(100000, 9999999);
+                $c = rand(100000, 9999999);				
                 foreach ($inv_items as $item) {
                     $row = $this->site->getProductByID($item->product_id);
+					//$this->erp->print_arrays($row);
 					$dig = $this->site->getProductByID($item->digital_id);
                     if (!$row) {
                         $row = json_decode('{}');
@@ -955,11 +956,11 @@ class Pos extends MY_Controller
                     $row->type              = $item->product_type;
                     $row->qty               = $item->quantity;
                     $row->quantity          += $item->quantity;
-                    $row->discount          = $item->discount ? $item->discount : '0';
+                    $row->discount          = $item->discount ? $item->discount : '0';					
+					$row->package_price   	= $item->real_unit_price > 0 ? $item->real_unit_price : $row->price;
                     $row->price             = $this->erp->formatDecimal($item->net_unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity));
                     $row->unit_price        = $row->tax_method ? $item->unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity)+$this->erp->formatDecimal($item->item_tax/$item->quantity) : $item->unit_price+($item->item_discount/$item->quantity);
                     $row->real_unit_price   = $item->real_unit_price;
-					$row->package_price   	= $row->unit_price;
 					$row->package_id   		= $item->package_id;
                     $row->tax_rate          = $item->tax_rate_id;
                     $row->serial            = $item->serial_no;
@@ -999,6 +1000,7 @@ class Pos extends MY_Controller
                     }
                     $c++;
                 }
+				
 				$this->data['items']            = json_encode($pr);
                 $this->data['sid']              = $sid;
                 $this->data['suspend_sale']     = $suspended_sale;
@@ -1626,6 +1628,7 @@ class Pos extends MY_Controller
             $item_id            = $_POST['product_id'][$r];
             $item_type          = $_POST['product_type'][$r];
             $item_code          = $_POST['product_code'][$r];
+            $package_id         = $_POST['package_id'][$r];
             $item_name          = $_POST['product_name'][$r];
             $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : NULL;
             $real_unit_price    = $this->erp->formatDecimal($_POST['real_unit_price'][$r]);
@@ -1715,7 +1718,8 @@ class Pos extends MY_Controller
                     'item_discount'     => $pr_item_discount,
                     'subtotal'          => $this->erp->formatDecimal($subtotal),
                     'serial_no'         => $item_serial,
-                    'real_unit_price'   => $real_unit_price
+                    'real_unit_price'   => $real_unit_price,
+                    'package_id'   		=> $package_id
                 );
 
                 $total += $item_net_price * $item_quantity;

@@ -2466,6 +2466,12 @@ class Sales_model extends CI_Model
 			}else {
 				$data['total_cost'] += $totalCostProducts->total_cost;
 			}
+			if($g['package_id'] > 0){
+				$old_item_qty = $this->site->getSaleItemBySaleIdAndProductId($id, $g['product_id'])->quantity_balance;
+				$use_item_qty = $this->site->getPackageById($g['package_id'])->use_quantity;
+				$update_use_qty =  $g['quantity_balance'] + ($use_item_qty - $old_item_qty);
+				$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $g['package_id'], 'product_id' => $g['product_id']));
+			}
 		}
 		
         if ($this->db->update('sales', $data, array('id' => $id))) {

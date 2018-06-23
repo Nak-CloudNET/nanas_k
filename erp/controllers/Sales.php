@@ -6360,8 +6360,15 @@ class Sales extends MY_Controller
                 $group_prices     = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
 				$all_group_prices = $this->sales_model->getProductPriceGroup($row->id);
 				$items_package    = $this->sales_model->getPackagesById($item->package_id);
-				$row->quantity 			 = $test2->quantity;
-
+				$row->quantity 	  = $test2->quantity;
+				if($items_package){
+					$package_balance = 0;
+					foreach($items_package as $item_package){
+						$package_balance = $item_package->quantity - $item_package->use_quantity;
+					}
+					$row->package_qty_balance  = $package_balance;
+				}
+				
                 if ($options) {
                     $option_quantity = 0;
                     foreach ($options as $option) {
@@ -6400,14 +6407,11 @@ class Sales extends MY_Controller
                 if($group_prices)
 				{
 				   $curr_by_item 	  = $this->site->getCurrencyByCode($group_prices[0]->currency_code);
-				}
-				
-				$row->price_id = $item->price_id;
-
+				}				
+				$row->price_id 		  = $item->price_id;
                 $row->item_load   	  = 1;
-
                 $row->rate_item_cur   = (isset($curr_by_item->rate)?$curr_by_item->rate:0);
-
+				
                 $ri = $this->Settings->item_addition ? $c : $c;
 				$customer_percent = $customer_group->percent ? $customer_group->percent : 0;
                 if ($row->tax_rate) {

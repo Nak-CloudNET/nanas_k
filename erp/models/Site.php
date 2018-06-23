@@ -1362,6 +1362,14 @@ class Site extends CI_Model
         return FALSE;
     }
 	
+	public function getPackageById($id) {
+        $q = $this->db->get_where('packages', array('id' => $id));
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+	
 	public function getPackageByCustomerID($id) {
 		$this->db->select('packages.quantity, packages.product_id, packages.expiry, products.code, products.name as name, products.name_kh, (erp_packages.quantity - erp_packages.use_quantity) as total_qty, prodcut_combo.name as combo_name,');
 		$this->db->join('products', 'products.id = packages.product_id', 'left');
@@ -3607,6 +3615,15 @@ class Site extends CI_Model
                  ->result();
 		return $response;	
 	}
+	
+	public function getSaleItemBySaleIdAndProductId($sale_id, $product_id)
+    {
+        $q = $this->db->get_where('sale_items', array('sale_items.sale_id' => $sale_id, 'sale_items.product_id' => $product_id));
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
 	
     public function syncPurchaseItems($data = array()) 
 	{

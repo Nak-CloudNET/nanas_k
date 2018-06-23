@@ -425,7 +425,7 @@ $(document).ready(function () {
 		var default_price = formatDecimal(row.find('.default_price').val());
 		var cost = formatDecimal(row.find('.cost').val());
 		var package_id = row.find('.package_id').val();
-		var package_price = row.find('.package_price').val();
+		var package_price = formatDecimal(row.find('.package_price').val());
 		var img_note = item.row.img_pnote ? item.row.img_pnote : null;
 		
         $(".images").html(img_note);
