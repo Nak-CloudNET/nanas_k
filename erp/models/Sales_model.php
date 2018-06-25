@@ -7224,7 +7224,7 @@ public function getRielCurrency(){
 		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
 		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
 		$this->db->having('erp_packages.quantity > erp_packages.use_quantity');
-		$q = $this->db->get_where('packages', array('erp_packages.customer_id' => $customer_id, 'erp_packages.product_id' => $product_id));
+		$q = $this->db->get_where('packages', array('erp_packages.customer_id' => $customer_id, 'erp_packages.product_id' => $product_id, 'erp_packages.expiry >=' =>  date('Y-m-d')));
         if($q->num_rows()>0){
 			return $q->result();
 		}
