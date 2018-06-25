@@ -764,7 +764,7 @@
                             <input type="text" class="form-control" id="wpiece">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group main_qty">
                         <label for="pquantity" class="col-sm-4 control-label"><?= lang('quantity') ?></label>
 
                         <div class="col-sm-8">
@@ -774,14 +774,14 @@
                         </div>
                     </div>
 					
-					<div class="form-group">
+					<div class="form-group package_expiry">
 						<label for="package_expiry" class="col-sm-4 control-label"><?= lang('package_expiry') ?></label>
 						<div class="col-sm-8">
 								<?php echo form_input('package_expiry', (isset($_POST['package_expiry']) ? $_POST['package_expiry'] : ""), 'class="form-control input-tip datetime" id="package_expiry"'); ?>
 						</div>
 					</div>
 					
-					<div class="form-group">
+					<div class="form-group main_gift_card">
 						<label for="expdates" class="col-sm-4 control-label"><?= lang('member_card_no') ?></label>
 						<div class="col-sm-8">
 							<div id="gift_card-div"></div>
@@ -833,18 +833,22 @@
                         </div>
                     </div>
 					
+					<div class="form-group col-sm-12 main_package">
+						<label for="package" class="col-sm-4 control-label"><?= lang('package') ?></label>
+						<div class="col-sm-8">
+							<div id="package-div">
+							
+							</div>
+						</div>
+					</div>
+					
 					<div class="form-group">
                         <label for="pnote" class="col-sm-4 control-label"><?= lang('product_note') ?></label>
 
                         <div class="col-sm-8">
-                         <!--   <input type="text" class="form-control kb-pad" id="pnote">-->
                             <textarea id="pnote"></textarea>
-
                         </div>
                     </div>
-					
-					
-					
 					
                     <table class="table table-bordered table-striped">
                         <tr>

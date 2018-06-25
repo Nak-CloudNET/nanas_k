@@ -1179,7 +1179,7 @@
 						</div>
 					</div>
 					
-					<div class="form-group">
+					<div class="form-group main_gift_card">
 						<label for="expdates" class="col-sm-4 control-label"><?= lang('member_card_no') ?></label>
 						<div class="col-sm-8">
 							<div id="gift_card-div"></div>

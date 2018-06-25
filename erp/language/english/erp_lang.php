@@ -988,4 +988,5 @@ $lang['product_count_list'] 				= "Product Count List";
 $lang['add_product_count'] 					= "Add Product Count";
 $lang['add_delivery'] 						= "Add Delivery";
 $lang['package_expiry'] 					= "Package Expiry";
+$lang['package'] 					        = "Package";
 $lang['member_card_no'] 					= "Member Card No";

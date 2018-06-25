@@ -1989,8 +1989,6 @@ if ($q->num_rows() > 0) {
                                                        class="pa form-control kb-pad gift_card_no"/>
 
                                                 <div id="gc_details_1"></div>
-												<div id="package_header"></div>
-												<div id="package_1"></div>
                                             </div>
 
 											<div class="form-group dp_1" style="display: none;">
@@ -2344,6 +2342,16 @@ if ($q->num_rows() > 0) {
 								<input type="hidden" class="form-control" value="" id="cost">
 							</div>
 					<?php } ?>
+					
+					<div class="form-group col-sm-12 main_package">
+						<label for="package" class="col-sm-4 control-label"><?= lang('package') ?></label>
+						<div class="col-sm-8">
+							<div id="package-div">
+							
+							</div>
+						</div>
+					</div>
+					
 					<div class="form-group col-sm-12">
                         <label for="pnote" class="col-sm-4 control-label"><?= lang('product_note') ?></label>
 
@@ -2357,16 +2365,7 @@ if ($q->num_rows() > 0) {
 								</div>
 							</div>
                         </div>
-					</div>
-					
-					<div class="form-group col-sm-12">
-						<label for="gift_card" class="col-sm-4 control-label"><?= lang('gift_card') ?></label>
-						<div class="col-sm-8">
-							<div id="gift_card-div">
-							
-							</div>
-						</div>
-					</div>
+					</div>				
 					
 					<div class="form-group col-sm-12" >
                     <table class="table table-bordered table-striped">
@@ -3594,18 +3593,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var customer_id        = $("#poscustomer").val();            
 			var date               = $("#date").val();
 			var paid_by 	       = $('#paid_by_1').val();
-			var amount 	 		   = $('#amount_1').val() ? $('#amount_1').val() : 0;
-			var amount_kh 	 	   = $('#other_cur_paid_1').val() ? $('#other_cur_paid_1').val() : 0;
-			var product_id         = [];
-			var check_package      = 0;
-			var package_product_id = [];            
             var cn                 = $(this).val() ? $(this).val() : '';
             var payid              = $(this).attr('id'),
                 id                 = payid.substr(payid.length - 1);
-			$( ".rid" ).each(function() {
-				product_id.push($(this).val());
-			});
-			
             if (cn != '') {
                 $.ajax({
                     type: "get", async: false,
@@ -3626,60 +3616,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                     }
                 });
             }
-			
-			if(paid_by == 'gift_card'){
-				$.ajax({
-					type: "get",
-					async: false,               
-					url: site.base_url + "sales/getPackageByCustomerID/" + customer_id,
-					dataType: "json",
-					success: function (data) {
-						if(data){
-							$('#package_'+ id).empty();
-							$(data).each(function(i , result) {
-								var expiry_date = result.expiry;
-								var arr_expiry_date = expiry_date.split(' ');
-								if(result.total_qty != 0 || result.use_quantity > result.quantity){
-									package_product_id.push(result.product_id);
-								}
-								$('#package_header').html('<br/><span style="padding-left:50 !important;"><strong>Package Name : ' + result.combo_name + ' (' + fsd(arr_expiry_date[0])+ ')' + '</strong></span>');
-								if(result.total_qty > 0){
-									$('#package_'+ id).append('</span> <br/><small>Product Code : ' + result.code + '<br>Product Name : ' + result.name + '<br>Quantity : ' + formatQuantity2(result.total_qty) +'<br>');							
-								}
-								if(date > result.expiry){
-									check_package = 1;
-								}else{
-									
-								}
-							});
-						}else{
-							check_package = 0;						
-						}
-					}
-				});				
-				
-				if(package_product_id != ''){
-					$.each(product_id, function(index, value) {
-						if ($.inArray(value, package_product_id) !== -1) {
-							
-						} else {
-							check_package = 1;
-						}
-					});
-				}
-				
-				if(amount == 0 && amount_kh == 0){
-					if(check_package == 1){
-						$("#submit-sale").prop( "disabled", true );
-					}else{
-						$("#submit-sale").prop( "disabled", false);
-					}
-				}else{
-					$("#submit-sale").prop( "disabled", false);
-				}
-			}else{
-				$("#submit-sale").prop( "disabled", false);
-			}
         });
 
         $(document).on('click', '.addButton', function () {
@@ -5018,13 +4954,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 						$('.currencies_payment').val(parseFloat(gift_card_balance_kh));
 					}
 				}
-			}
-			//$('#paid_by_1').trigger('change');
-		});
+			}			
+		});		
 		
-		$(document).on('blur','#amount_1, #amount_2, #amount_3, #amount_4, #amount_5, .currencies_payment', function(){
-			$('#paid_by_1').trigger('change');
-		});
 		
 		$(document).on('change','#depreciation_type_1, #depreciation_rate_1, #depreciation_term_1',function() {
 			var p_type = $('#depreciation_type_1').val();
@@ -6769,7 +6701,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 $('.ngc_' + pa_no).show();
                 $('.gc_' + pa_no).hide();
                 $('#gc_details_' + pa_no).html('');
-                $('#package_'+ pa_no).html('');
             }
 			if(p_val == 'deposit') {
 				$('.dp_' + pa_no).show();

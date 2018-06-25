@@ -490,6 +490,7 @@ class Pos extends MY_Controller
                 $item_discount 	= isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
 				$g_total_txt 	= $_POST['grand_total'][$r];
 				$item_price_id 	= $_POST['price_id'][$r];
+				$package_id 	= $_POST['package_id'][$r];
 				
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details 	= $item_type != 'manual' ? $this->pos_model->getProductByCode($item_code) : NULL;
@@ -598,7 +599,8 @@ class Pos extends MY_Controller
 						'product_noted' 	=> $item_note,
 						'expiry' 			=> $expdate,
 						'expiry_id' 		=> $expire_date_id,
-						'price_id' 		=> $item_price_id
+						'price_id' 			=> $item_price_id,
+						'package_id' 		=> $package_id
                     );					
                     $total += $subtotal;
 					$g_total_txt1 += $subtotal;
@@ -844,7 +846,6 @@ class Pos extends MY_Controller
                 $data['suspend_id']     = $this->input->post('suspend_id');
                 $data['suspend_name'] = $this->input->post('suspend_name');
                 $data['plate_number'] = $this->input->post('plate_number2');
-
                 $arr_suspend = $this->pos_model->suspendSale($data, $products, $did);
                 if ($arr_suspend['suppend_id'] >0) {
                     $this->session->set_userdata('remove_posls', 1);
@@ -929,9 +930,10 @@ class Pos extends MY_Controller
 				}
 				
                 $inv_items = $this->pos_model->getSuspendedSaleItems($sid);
-                $c = rand(100000, 9999999);
+                $c = rand(100000, 9999999);				
                 foreach ($inv_items as $item) {
                     $row = $this->site->getProductByID($item->product_id);
+					//$this->erp->print_arrays($row);
 					$dig = $this->site->getProductByID($item->digital_id);
                     if (!$row) {
                         $row = json_decode('{}');
@@ -954,10 +956,12 @@ class Pos extends MY_Controller
                     $row->type              = $item->product_type;
                     $row->qty               = $item->quantity;
                     $row->quantity          += $item->quantity;
-                    $row->discount          = $item->discount ? $item->discount : '0';
+                    $row->discount          = $item->discount ? $item->discount : '0';					
+					$row->package_price   	= $item->real_unit_price > 0 ? $item->real_unit_price : $row->price;
                     $row->price             = $this->erp->formatDecimal($item->net_unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity));
                     $row->unit_price        = $row->tax_method ? $item->unit_price+$this->erp->formatDecimal($item->item_discount/$item->quantity)+$this->erp->formatDecimal($item->item_tax/$item->quantity) : $item->unit_price+($item->item_discount/$item->quantity);
                     $row->real_unit_price   = $item->real_unit_price;
+					$row->package_id   		= $item->package_id;
                     $row->tax_rate          = $item->tax_rate_id;
                     $row->serial            = $item->serial_no;
                     $row->option            = $item->option_id;
@@ -985,17 +989,18 @@ class Pos extends MY_Controller
                             }
                         }
                     }
-
+					$items_package = $this->sales_model->getPackagesByProductId($suspended_sale->customer_id, $item->product_id);
                     $ri = $this->Settings->item_addition ? $row->id : $c;
 
                     if ($row->tax_rate) {
                         $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
-                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => $tax_rate, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0);
+                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => $tax_rate, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0, 'items_package' => $items_package);
                     } else {
-                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => false, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0);
+                        $pr[$ri] = array('id' => $c, 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'tax_rate' => false, 'image' => $row->image, 'options' => $options, 'makeup_cost' => 0, 'items_package' => $items_package);
                     }
                     $c++;
-                }				
+                }
+				
 				$this->data['items']            = json_encode($pr);
                 $this->data['sid']              = $sid;
                 $this->data['suspend_sale']     = $suspended_sale;
@@ -1623,6 +1628,7 @@ class Pos extends MY_Controller
             $item_id            = $_POST['product_id'][$r];
             $item_type          = $_POST['product_type'][$r];
             $item_code          = $_POST['product_code'][$r];
+            $package_id         = $_POST['package_id'][$r];
             $item_name          = $_POST['product_name'][$r];
             $item_option        = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : NULL;
             $real_unit_price    = $this->erp->formatDecimal($_POST['real_unit_price'][$r]);
@@ -1712,7 +1718,8 @@ class Pos extends MY_Controller
                     'item_discount'     => $pr_item_discount,
                     'subtotal'          => $this->erp->formatDecimal($subtotal),
                     'serial_no'         => $item_serial,
-                    'real_unit_price'   => $real_unit_price
+                    'real_unit_price'   => $real_unit_price,
+                    'package_id'   		=> $package_id
                 );
 
                 $total += $item_net_price * $item_quantity;
@@ -1894,6 +1901,7 @@ class Pos extends MY_Controller
             }
 
             $row->real_unit_price   = $row->price;
+			$row->package_price     = $row->price;
 			$row->piece	            = 0;
 			$row->wpiece            = 0;
 			$row->digital_id	    = 0;
@@ -1903,6 +1911,7 @@ class Pos extends MY_Controller
 			$row->printed           = 0;
             $combo_items            = FALSE;
 			$customer_percent       = $customer_group ? $customer_group->percent : 0;
+			$items_package 			= $this->sales_model->getPackagesByProductId($customer_id, $row->id);
             if ($row->tax_rate){
                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
                 if ($row->type == 'combo') {
@@ -1911,7 +1920,7 @@ class Pos extends MY_Controller
                 $pr = array(
                     'id'                    => str_replace(".", "", microtime(true)),
                     'item_id'               => $row->code,
-                    'pro_id' => $row->id,
+                    'pro_id' 				=> $row->id,
                     'label'                 => $row->name . " (" . $row->code . ")",
                     'image'                 => $row->image,
                     'cost'                  => $row->cost,
@@ -1926,7 +1935,8 @@ class Pos extends MY_Controller
                     'all_group_prices'      => $all_group_prices,
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
-                    'makeup_cost_percent'   => $percent?$percent->percent:0
+                    'makeup_cost_percent'   => $percent?$percent->percent:0,
+                    'items_package'   		=> $items_package
                 );
            }else {
                 $pr = array(
@@ -1946,10 +1956,10 @@ class Pos extends MY_Controller
                     'all_group_prices'      => $all_group_prices,
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
-                    'makeup_cost_percent'   => $percent->percent
+                    'makeup_cost_percent'   => $percent->percent,
+					'items_package'   		=> $items_package
                 );
            }
-            //$this->erp->print_arrays($pr);
            echo json_encode($pr);
         } else {
 			

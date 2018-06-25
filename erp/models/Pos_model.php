@@ -511,14 +511,14 @@ class Pos_model extends CI_Model
                             $this->db->insert('costing', $item_cost);
                         }
                     }
-                }				
-				foreach ($payments as $payment) {
-					if($payment['paid_by'] == 'gift_card'){
-						$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-						if($payment['amount'] == 0 && $payment['pos_paid_other'] == 0){							
+                }
+				if($item['package_id'] > 0){
+					foreach ($payments as $payment) {
+						if($payment['paid_by'] == 'gift_card'){
+							$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;						
 							$item_package = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id']);
 							$update_use_qty = $item['quantity_balance'] + $item_package->use_quantity;
-							$this->db->update('packages', array('use_quantity' => $update_use_qty), array('customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+							$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $item['package_id'], 'customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
 						}
 					}
 				}

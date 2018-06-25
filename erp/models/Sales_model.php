@@ -2466,6 +2466,12 @@ class Sales_model extends CI_Model
 			}else {
 				$data['total_cost'] += $totalCostProducts->total_cost;
 			}
+			if($g['package_id'] > 0){
+				$old_item_qty = $this->site->getSaleItemBySaleIdAndProductId($id, $g['product_id'])->quantity_balance;
+				$use_item_qty = $this->site->getPackageById($g['package_id'])->use_quantity;
+				$update_use_qty =  $g['quantity_balance'] + ($use_item_qty - $old_item_qty);
+				$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $g['package_id'], 'product_id' => $g['product_id']));
+			}
 		}
 		
         if ($this->db->update('sales', $data, array('id' => $id))) {
@@ -2571,9 +2577,8 @@ class Sales_model extends CI_Model
 				$this->site->syncSalePayments($id);
             }
             $this->site->syncQuantity($id);
-
-        }
-		
+			return true;
+        }		
         return false;
     }
 
@@ -7188,6 +7193,17 @@ public function getRielCurrency(){
         }
         return FALSE;
     }
+	
+	public function getPackagesById($package_id){
+		$this->db->select('erp_packages.*, erp_products.name as package_name, erp_gift_cards.card_no');
+		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
+		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
+		$q = $this->db->get_where('packages', array('erp_packages.id' => $package_id));
+        if($q->num_rows()>0){
+			return $q->result();
+		}
+        return FALSE;
+	}
 
     public function getComboItemsByProductCode($product_id)
     {
@@ -7199,17 +7215,19 @@ public function getRielCurrency(){
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
-            return $q->result();
+            
         }
         return FALSE;
     }
 	public function getPackagesByProductId($customer_id, $product_id){
-		$this->db->select('erp_packages.*, erp_products.name as package_name');
+		$this->db->select('erp_packages.*, erp_products.name as package_name, erp_gift_cards.card_no');
 		$this->db->join('products', 'products.id = packages.combo_id', 'LEFT');
-		$q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'product_id' => $product_id), 1);
-        if ($q->num_rows() > 0) {
-            return $q->row();
-        }
+		$this->db->join('gift_cards', 'gift_cards.id = packages.card_id', 'LEFT');
+		$this->db->having('erp_packages.quantity > erp_packages.use_quantity');
+		$q = $this->db->get_where('packages', array('erp_packages.customer_id' => $customer_id, 'erp_packages.product_id' => $product_id));
+        if($q->num_rows()>0){
+			return $q->result();
+		}
         return FALSE;
 	}
 
