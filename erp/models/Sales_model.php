@@ -2026,7 +2026,7 @@ class Sales_model extends CI_Model
                         'gift_card_id' => $package['card_id'],
                         'date' => $data['date'],
                         'transaction_type' => 'paid',
-                        'amount' => $data['grand_total'],
+                        'amount' => 0,
                         'sale_id' => $sale_id,
                         'created_by' => $data['created_by']
                     );

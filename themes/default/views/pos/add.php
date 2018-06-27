@@ -31,6 +31,7 @@
     function __getRandomUnique() {
 		return Math.floor(new Date().valueOf() * Math.random());
 	}
+
 	function __getItem(key) {
 		return localStorage.getItem(__c + __f + key);
 	}
@@ -3065,6 +3066,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                     url: "<?= site_url('customers/getCustomer') ?>/" + $(element).val(),
                     dataType: "json",
                     success: function (data) {
+                        console.log(data);
                         callback(data[0]);
                     }
                 });
