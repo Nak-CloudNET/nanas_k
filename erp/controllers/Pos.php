@@ -141,7 +141,7 @@ class Pos extends MY_Controller
 
        
 		
-        $detail_link        = anchor('pos/view/$1', '<i class="fa fa-file-text-o"></i> ' . lang('view_receipt'));
+        $detail_link        = anchor('pos/receipt_invoice/$1', '<i class="fa fa-file-text-o"></i> ' . lang('view_receipt'));
 		//$detail_link      = anchor('sales/invoice_st_a5/$1', '<i class="fa fa-file-text-o"></i> ' . lang('view_receipt'));
 		$payments_link      = anchor('sales/payments/$1', '<i class="fa fa-money"></i> ' . lang('view_payments'), 'data-toggle="modal" data-target="#myModal"');
         $add_payment_link = anchor('sales/add_payment/$1', '<i class="fa fa-money"></i> ' . lang('add_payment'), 'data-toggle="modal" data-target="#myModal"');

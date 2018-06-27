@@ -13131,6 +13131,7 @@ class Sales extends MY_Controller
         if ($customer) {
             $this->datatables->where('companies.id', $customer);
         }
+
         if ($plate_number) {
             $this->datatables->where("companies.plate_number LIKE '%" . $plate_number . "%'
                                       OR  companies.plate_number_2 LIKE '%" . $plate_number . "%'
@@ -13139,7 +13140,7 @@ class Sales extends MY_Controller
                                       OR  companies.plate_number_5 LIKE '%" . $plate_number . "%'
                                       ");
         }
-		
+
 		if ($this->Settings->member_card_expiry == 0) {
 			$this->datatables->unset_column('expiry');
 		}
