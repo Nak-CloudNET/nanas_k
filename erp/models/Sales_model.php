@@ -7215,7 +7215,7 @@ public function getRielCurrency(){
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
-            
+            return $q->result();
         }
         return FALSE;
     }
