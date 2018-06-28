@@ -28,29 +28,6 @@
                 <?php echo form_input('value', '', 'class="form-control" id="value" required="required"'); ?>
             </div>
 			
-            <div class="form-group">
-                <input type="checkbox" class="checkbox" name="staff_points" id="staff_points">
-                <label for="staff_points" class="padding05"><?= lang('use_staff_award_points'); ?></label>
-            </div>
-			
-            <div id="staff-con" style="display:none;">
-                <div class="form-group">
-                    <label class="control-label" for="user"><?= lang("user"); ?></label>
-                    <?php
-                    $us[""] = "";
-                    foreach ($users as $user) {
-                        $us[$user->id] = $user->first_name . " " . $user->last_name;
-                    }
-                    echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
-                    ?>
-                </div>
-                <div class="form-group well well-sm" id="sa-points-con" style="display:none;">
-                    <p class="bold"><?= lang("award_points"); ?>: <span id="staff_award_points"></span></p>
-                    <?= lang("use_points", "sa_points"); ?>
-                    <?php echo form_input('sa_points', '', 'class="form-control" id="sa_points"'); ?>
-                </div>
-            </div>
-			
             <div id="customer-con">
                 <div class="form-group">
                     <?= lang("customer", "customer"); ?>
