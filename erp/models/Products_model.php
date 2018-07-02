@@ -611,7 +611,7 @@ class Products_model extends CI_Model
     public function getProductNames($term, $warehouse_id, $limit = 100)
     {
 		$this->db->select('products.*,  COALESCE(erp_warehouses_products.quantity, 0) as qoh, units.name as unit');
-        $this->db->where("type = 'standard' AND (erp_products.name LIKE '%" . $term . "%' OR erp_products.code LIKE '%" . $term . "%' OR  concat(erp_products.name, ' (', erp_products.code, ')') LIKE '%" . $term . "%')");
+        $this->db->where("type <> 'combo' AND type <> 'digital' AND (erp_products.name LIKE '%" . $term . "%' OR erp_products.code LIKE '%" . $term . "%' OR  concat(erp_products.name, ' (', erp_products.code, ')') LIKE '%" . $term . "%')");
 		if($warehouse_id){
 			$this->db->where("warehouses_products.warehouse_id", $warehouse_id);
 		}
