@@ -7158,7 +7158,8 @@ public function getRielCurrency(){
                       sale_items.product_name,
                       sale_items.product_id as item_id,
                       sale_items.product_code,
-                      packages.expiry as expiry_date
+                      packages.expiry as expiry_date,
+                      sale_items.package_id
                       ", false)
             ->from("gift_cards")
             ->join('gift_card_logs', 'gift_cards.id = gift_card_logs.gift_card_id', 'left')
@@ -7180,7 +7181,7 @@ public function getRielCurrency(){
     public function getPackagesByGiftCardID($card_id, $sale_id)
     {
         $this->db
-            ->select("combo.name as package_name, products.name as item_name, (erp_packages.quantity - erp_packages.use_quantity) as quantity, packages.product_id as combo_item_id", false)
+            ->select("combo.name as package_name, products.name as item_name, erp_packages.quantity, packages.use_quantity, (erp_packages.quantity - erp_packages.use_quantity) as qty_balance, packages.product_id as combo_item_id", false)
             ->from("packages")
             ->join('products as combo', 'packages.combo_id = combo.id', 'left')
             ->join('products', 'packages.product_id = products.id', 'left')
@@ -7205,17 +7206,17 @@ public function getRielCurrency(){
         return FALSE;
 	}
 
-    public function getComboItemsByProductCode($product_id)
+    public function getComboItemsByProductCode($product_code)
     {
         $this->db
             ->select("combo_items.*", false)
             ->from("combo_items")
-            ->where('combo_items.item_code', $product_id)
+            ->where('combo_items.item_code', $product_code)
             ->group_by('combo_items.item_code');
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
-            
+            return $q->result();
         }
         return FALSE;
     }

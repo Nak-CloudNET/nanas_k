@@ -795,6 +795,7 @@ class Pos extends MY_Controller
                         'pos_paid_other_rate' 	=> $cur_rate->rate,
                         'bank_account' 			=> $bank_account[$r]
                     );
+                    
                 }
 
                 if($kh_paid == true){

@@ -333,7 +333,7 @@ class Companies_model extends CI_Model
         $this->db->select("companies.id,
                             CONCAT(plate_number,' - ', (
 			                    IF((ISNULL(company) OR company = ''), name, company)
-		                    )) as text", FALSE);
+		                    )) as text, companies.plate_number", FALSE);
 		$this->db->join('gift_cards', 'gift_cards.customer_id = companies.id', 'left');
         $this->db->where(" (erp_companies.id LIKE '%" . $term . "%'
                             OR name LIKE '%" . $term . "%'
