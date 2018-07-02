@@ -28,13 +28,8 @@
                         $packages = $this->sales_model->getPackagesByGiftCardID($gift_card->gift_card_id, $gift_card->sale_id);
                         $combo_items = $this->sales_model->getComboItemsByProductCode($gift_card->product_code);
 
-                        foreach ($combo_items as $combo_item) {
-                            if ($gift_card->product_code == $combo_item->item_code) {
-                                $i = $gift_card->product_name;
-                            }
-                        }
                         ?>
-                        <tr <?php if($i): ?> style="background-color:lightgoldenrodyellow;" <?php endif; ?> >
+                        <tr>
                             <td><?= $gift_card->date ?></td>
                             <td><?= $gift_card->card_no ?></td>
                             <td><?= $gift_card->payment_ref ?></td>
@@ -42,11 +37,18 @@
                             <td class="text-center"><?= $this->erp->formatMoney($gift_card->amount) ?></td>
                             <td>
                                 <ul style="margin-left: 20px; list-style-type: none">
-                                    <li><strong><?= $gift_card->package_name ?></strong></li>
+                                    <li style="font-size: 16px"><strong><u><?= $gift_card->package_name ?></u></strong>
+                                    </li>
                                     <?php foreach ($packages as $package) { ?>
-                                        <li style="padding-left: 20px"
-                                            value="<?= $package->id ?>"><?= $package->item_name ?>
-                                            (<?= $this->erp->formatQuantity($package->quantity); ?>)
+                                        <li style="padding-left: 20px;"
+                                            value="<?= $package->id ?>"><?= $package->item_name ?><br/>
+                                            <span style="padding-left: 20px; font-weight: bold">
+                                                (
+                                                Qty = <?= $this->erp->formatQuantity($package->quantity); ?> |
+                                                Qty used = <?= $this->erp->formatQuantity($package->use_quantity); ?> |
+                                                Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                                                )
+                                            </span>
                                         </li>
                                     <?php } ?>
                                 </ul>
