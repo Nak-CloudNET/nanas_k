@@ -516,9 +516,9 @@ $(document).ready(function () {
 			}
 			$.each(items_package, function () {
 				if(this.id == package_id){
-					gift_card_div.append($('<input type="radio" name="item_package" value="' + this.id + '" checked><span style="padding-left:5px !important;">' + this.package_name + ' ( ' + this.card_no + ')</span><br/>'));
+					gift_card_div.append($('<input type="radio" name="item_package" id="hidden_gift_card" value="' + this.id + '" checked><span style="padding-left:5px !important;">' + this.package_name + ' ( ' + this.card_no + ')</span><br/>'));
 				}else{
-					gift_card_div.append($('<input type="radio" name="item_package" value="' + this.id + '"><span style="padding-left:5px !important;">' + this.package_name + ' ( ' + this.card_no + ')</span><br/>'));					
+					gift_card_div.append($('<input type="radio" name="item_package" id="hidden_gift_card" value="' + this.id + '"><span style="padding-left:5px !important;">' + this.package_name + ' ( ' + this.card_no + ')</span><br/>'));					
 				}
 			});
 			
@@ -528,7 +528,7 @@ $(document).ready(function () {
 				});
 			}
 		}else{
-			$('.main_package').css('display','none');			
+			$('.main_package').css('display','none');
 		}
 		
 		var opt = '<p style="margin: 12px 0 0 0;">n/a</p>';
@@ -543,6 +543,11 @@ $(document).ready(function () {
 				o++;
 			});
 		}
+
+		$('#hidden_gift_card').click(function() {
+			var gift_card =  $('#hidden_gift_card').val();
+			__setItem('gift_card', gift_card);
+		});
 
 
 		$('#piece').val(item.row.piece);
@@ -1479,6 +1484,7 @@ function loadItems() {
 			var combo_arr = eval(combo_items);
 			var combo_ = '';
 			var i = 1;
+			
 
 			for(a in combo_arr){
 				combo_ += '<div style="border-bottom: 1px solid rgb(204, 204, 204);">#'+i+' '+ combo_arr[a]['name'] + '</div>';

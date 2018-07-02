@@ -3066,7 +3066,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                     url: "<?= site_url('customers/getCustomer') ?>/" + $(element).val(),
                     dataType: "json",
                     success: function (data) {
-                        console.log(data);
+                        
                         callback(data[0]);
                     }
                 });
@@ -3083,6 +3083,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 },
                 results: function (data, page) {
                     if (data.results != null) {
+                        $('#plate_number2').val(data.results[0].plate_number);
                         return {results: data.results};
                     } else {
                         return {results: [{id: '', text: 'No Match Found'}]};
@@ -3163,7 +3164,6 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 					$("#slref").prop('readonly', true);
 				}
 			});
-
 
             var customer_id = $("#poscustomer").val();
             $.ajax({
@@ -3286,6 +3286,9 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 		?>
 		
         $('#payment').click(function () {
+            var abc = __getItem('gift_card');
+            console.log(abc);
+
             var GP = '<?= $GP['sales-discount'];?>';
 			var Owner = '<?= $Owner?>';
 			var Admin = '<?= $Admin?>';
@@ -3596,6 +3599,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var date               = $("#date").val();
 			var paid_by 	       = $('#paid_by_1').val();
             var cn                 = $(this).val() ? $(this).val() : '';
+            console.log(cn);
             var payid              = $(this).attr('id'),
                 id                 = payid.substr(payid.length - 1);
             if (cn != '') {
@@ -6644,6 +6648,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
         $(document).on('change', '.paid_by', function () {
             var gift_card = $('.gift_card_no').val();
+
             if(gift_card){
                 $('.gift_card_no').trigger('change');
             }
