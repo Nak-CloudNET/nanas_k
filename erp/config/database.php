@@ -62,7 +62,7 @@
 
     $db['default']  = array(
         'dsn'	    => '',
-        'hostname' => 'localhost',
+        'hostname' => '192.168.1.16',
         'username' => 'root',
         'password' => '',
         'database' => 'iclouderp_v3_5_nanas_k',
