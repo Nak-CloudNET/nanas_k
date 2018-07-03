@@ -929,7 +929,13 @@ foreach ($warehouses_products as $warehouses_product) {
             $("#prTable tbody").empty();
             $("#prTable tfoot").empty();
             var total = 0;
+
             $.each(items, function () {
+                if (this.pprice > this.price) {
+                    var combo_item_price = this.pprice;
+                } else {
+                    var combo_item_price = this.price;
+                }
                 var row_no = this.id;
                 var tr_html = '';
                 total = this.price * this.qty;
@@ -937,8 +943,8 @@ foreach ($warehouses_products as $warehouses_product) {
                 tr_html = '<td><input name="combo_item_id[]" type="hidden" value="' + this.id + '"><input name="combo_item_name[]" type="hidden" value="' + this.name + '"><input name="combo_item_code[]" type="hidden" value="' + this.code + '"><span id="name_' + row_no + '">' + this.name + ' (' + this.code + ')</span></td>';
                 
                 tr_html += '<td><input class="form-control text-center qty" name="combo_item_quantity_unit[]" type="text" value="' + formatDecimal(this.qty) + '" data-id="' + row_no + '" data-item="' + this.id + '" id="quantity_' + row_no + '" onClick="this.select();"></td>';
-                
-                tr_html += '<td><input class="combo_item_price form-control text-center cb-price" name="combo_item_price[]" type="text" value="' + formatDecimal(this.price) + '" data-id="' + row_no + '" data-item="' + this.id + '" id="combo_item_price_' + row_no + '" onClick="this.select();"><input type="hidden" name="cb_cost[]" value="'+this.cost+'" class="cb-cost"><input type="hidden" name="cb_unit_cost[]" value="'+this.cost+'" class="cb-unit_cost"></td>';
+
+                tr_html += '<td><input class="combo_item_price form-control text-center cb-price" name="combo_item_price[]" type="text" value="' + formatDecimal(combo_item_price) + '" data-id="' + row_no + '" data-item="' + this.id + '" id="combo_item_price_' + row_no + '" onClick="this.select();"><input type="hidden" name="cb_cost[]" value="' + this.cost + '" class="cb-cost"><input type="hidden" name="cb_unit_cost[]" value="' + this.cost + '" class="cb-unit_cost"></td>';
                 
                 tr_html += '<td style="text-align:center;"><span class="total">'+formatDecimal(total)+'</span><input class="form-control text-center cb-total" name="combo_item_total[]" type="hidden" value="' + formatDecimal(total) + '" data-id="' + row_no + '" data-item="' + this.id + '" id="combo_item_total_' + row_no + '"><input type="hidden" name="toal_cost[]" value="" class="total-cost"></td>';
                 
