@@ -1,0 +1,9 @@
+Code,Name,Image,ac_sale,ac_cost,ac_stock,ac_stock_adj,ac_cost_variant,ac_purchase
+C0001,Asscessories,no_image.png,,,,,,
+C0002,Car Beauty,no_image.png,,,,,,
+C0003,Car Car,no_image.png,,,,,,
+C0004,Car Care,no_image.png,,,,,,
+C0005,Car Wash,no_image.png,,,,,,
+C0006,Oil,no_image.png,,,,,,
+C0007,Other,no_image.png,,,,,,
+C0008,Pack,no_image.png,,,,,,

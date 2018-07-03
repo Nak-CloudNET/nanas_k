@@ -472,8 +472,8 @@
                                                 <span class="text"> <?= lang('add_product'); ?></span>
                                             </a>
                                         </li>
-                                        <li id="products_list_convert" class="sub_navigation">
-                                            <a class="submenu" href="<?= site_url('products/list_convert'); ?>">
+                                     <!--   <li id="products_list_convert" class="sub_navigation">
+                                           <a class="submenu" href="<?= site_url('products/list_convert'); ?>">
                                                 <i class="fa fa-barcode"></i>
                                                 <span class="text"> <?= lang('list_convert'); ?></span>
                                             </a>
@@ -547,7 +547,7 @@
                                             </a>
                                         </li>-->
 
-                                        <li id="products_view_enter_using_stock" class="sub_navigation">
+                                   <!--<li id="products_view_enter_using_stock" class="sub_navigation">
                                             <a class="submenu"
                                                href="<?= site_url('products/view_enter_using_stock'); ?>">
                                                 <i class="fa fa-filter"></i>
@@ -565,7 +565,7 @@
                                                 <i class="fa fa-filter"></i>
                                                 <span class="text"> <?= lang('barcode_count_stock'); ?></span>
                                             </a>
-                                        </li>
+                                        </li>-->
 										<li id="products_list_count_stock" class="sub_navigation">
                                             <a class="submenu" href="<?= site_url('products/list_count_stock'); ?>">
                                                 <i class="fa fa-filter"></i>
@@ -1731,7 +1731,7 @@
 
 
 											<?php if ($GP['products-items_convert']) { ?>
-												<li id="products_list_convert" class="sub_navigation">
+											<!--	<li id="products_list_convert" class="sub_navigation">
 													<a class="submenu" href="<?= site_url('products/list_convert'); ?>">
 														<i class="fa fa-barcode"></i>
 														<span class="text"> <?= lang('list_convert'); ?></span>
@@ -1742,7 +1742,7 @@
 														<i class="fa fa-plus-circle"></i>
 														<span class="text"> <?= lang('add_convert'); ?></span>
 													</a>
-												</li>
+												</li>-->
 											<?php } ?>
 
 											
