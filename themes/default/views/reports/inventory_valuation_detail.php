@@ -227,8 +227,7 @@
 								}
 								else if( $pr->type == 'CONVERT') {
                                     $p_qty = $pr->quantity_balance_unit;
-								}
-								else if( $pr->type == 'SALE' || $pr->type == 'DELIVERY')
+								} else if ($pr->tran_type == 'SALE' || $pr->type == 'DELIVERY')
 								{
 									if($pr->quantity > 0) {
                                         $p_qty = (-1) * $pr->quantity_balance_unit;
@@ -239,7 +238,7 @@
                                     $p_qty = $pr->quantity_balance_unit;
 								}
 								$unit_name = $this->erp->convert_unit_2_string($pr->product_id,$p_qty);
-								$qty_on_hand += $p_qty ;
+                                $qty_on_hand += $p_qty;
 
                                 $p_cost = $this->erp->formatDecimal($pr->total_cost);
 								$avg_cost = $pr->avg_cost;

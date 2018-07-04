@@ -215,7 +215,10 @@
 								<td class="text-right"><?= $samount ? $this->erp->formatMoney($samount) : '' ?></td>
 								<td class="text-right"><?= $spaid ? $this->erp->formatMoney($spaid) : '' ?></td>
                                 <td class="text-right"><?= $samount - $spaid ? $this->erp->formatMoney($samount - $spaid) : '' ?></td>
-								<td class="text-center"><a href="<?= site_url('reports/view_saleman_report/' . $rows->id) ?>"><span class='label label-primary'><?= lang('view_report') ?></span></a></td>
+                                <td class="text-center"><a
+                                            href="<?= site_url('reports/view_saleman_item_detail/' . $rows->id) ?>"><span
+                                                class='label label-primary'><?= lang('view_report') ?></span></a></td>
+                                <!-- <td class="text-center"><a href="<?= site_url('reports/view_saleman_report/' . $rows->id) ?>"><span class='label label-primary'><?= lang('view_report') ?></span></a></td> -->
 							</tr>
 						   <?php
 							$tAmount	+= $samount;

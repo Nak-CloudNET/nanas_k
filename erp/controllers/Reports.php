@@ -6157,6 +6157,71 @@ class Reports extends MY_Controller
         $this->page_construct('reports/view_saleman_report', $meta, $this->data);
     }
 
+    function view_saleman_item_detail($user_id = NULL)
+    {
+        if (!$user_id && $_GET['d'] == null) {
+            redirect($_SERVER["HTTP_REFERER"]);
+        }
+
+        if ($this->input->post('reference_no')) {
+            $reference_no = $this->input->post('reference_no');
+            $this->data['reference_no2'] = trim($reference_no);
+        } else {
+            $start_date = null;
+            $this->data['reference_no2'] = 0;
+        }
+
+        if ($this->input->post('start_date')) {
+            $start_date = $this->erp->fld($this->input->post('start_date'));
+            $this->data['start_date2'] = trim($start_date);
+        } else {
+            $start_date = null;
+            $this->data['start_date2'] = 0;
+        }
+
+        if ($this->input->post('end_date')) {
+            $end_date = $this->erp->fld($this->input->post('end_date'));
+            $this->data['end_date2'] = trim($end_date);
+        } else {
+            $end_date = null;
+            $this->data['end_date2'] = 0;
+        }
+
+        if ($this->input->post('saleman')) {
+            $saleman = $this->input->post('saleman');
+            $this->data['saleman2'] = $saleman;
+        } else {
+            $saleman = null;
+            $this->data['saleman2'] = 0;
+        }
+
+        if ($this->input->post('sales_type')) {
+            $sales_type = $this->input->post('sales_type');
+            $this->data['sales_type2'] = $sales_type;
+        } else {
+            $sales_type = null;
+            $this->data['sales_type2'] = 0;
+        }
+
+        if ($this->input->post('issued_by')) {
+            $issued_by = $this->input->post('issued_by');
+            $this->data['issued_by2'] = $issued_by;
+        } else {
+            $issued_by = null;
+            $this->data['issued_by2'] = 0;
+        }
+
+        $this->data['error'] = validation_errors() ? validation_errors() : $this->session->flashdata('error');
+        $this->data['date'] = date('Y-m-d');
+        $this->data['user_id'] = $user_id;
+        $this->data['billers'] = $this->site->getAllCompanies('biller');
+        $this->data['salemans_data'] = $this->reports_model->getAllSalemansData();
+
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => site_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('saleman_detail_report_')));
+        $meta = array('page_title' => lang('saleman_detail_report_'), 'bc' => $bc);
+        $this->page_construct('reports/view_saleman_item_detail', $meta, $this->data);
+    }
+
     function getSalemanReportDetail($warehouse_id = NULL, $dt = NULL)
     {
         $this->erp->checkPermissions('index');

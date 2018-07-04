@@ -6224,5 +6224,59 @@ ORDER BY
         }
         return FALSE;
     }
+
+    public function getAllSalemansData($id = null, $product = null, $from_warehouse = null, $to_warehouse = null, $start_date = null, $end_date = null)
+    {
+        $this->db
+            ->select("
+        			sales.id,
+        			sales.date,
+        			sales.due_date,
+        			sales.reference_no,
+        			sales.biller,
+        			companies.name as customer,
+        			sales.note, 
+                    sales.sale_status,
+                    COALESCE(erp_sales.grand_total, 0) as grand_total,  
+                    (SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id) as return_sale, 
+                    COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+                    COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id ),0 ) as deposit, 
+                    (SELECT SUM(COALESCE(erp_payments.discount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id) as discount, 
+                    (COALESCE(erp_sales.grand_total,0)-COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0)-COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0)- COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ),0)-SUM(COALESCE(erp_payments.discount,0)) ) as balance, 
+                    payment_status")
+            ->from('sales')
+            ->join('companies', 'sales.customer_id = companies.id', 'left')
+            ->join('payments', 'payments.sale_id = sales.id', 'left')
+            ->group_by('sales.id');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getAllSalemanItemsData($sale_id)
+    {
+        $this->db->select('
+        	sale_items.*,
+        	erp_sales.customer,
+        	erp_sales.reference_no,
+        	erp_units.name as unit')
+            ->join('erp_sales', 'erp_sales.id=erp_sale_items.sale_id', 'LEFT')
+            ->join('erp_users', 'erp_users.id=erp_sales.created_by', 'LEFT')
+            ->join('erp_products', 'sale_items.product_id = erp_products.id', 'LEFT')
+            ->join('erp_units', 'products.unit = erp_units.id', 'LEFT')
+            ->order_by('quantity', 'DESC');
+
+        $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 	
 }
