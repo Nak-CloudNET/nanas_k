@@ -7140,7 +7140,7 @@ public function getRielCurrency(){
         return FALSE;
     }
 
-    public function getGiftCardLogHistoryByNo($card_no)
+    public function getGiftCardLogHistoryByNo($card_no, $customer_id = NULL)
     {
         $this->db
             ->select("
@@ -7168,8 +7168,14 @@ public function getRielCurrency(){
             ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
             ->join('sale_items', 'sales.id = sale_items.sale_id', 'left')
             ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
-            ->where('gift_cards.card_no', $card_no)
             ->group_by('gift_card_logs.id');
+
+        if ($customer_id) {
+            $this->db->where('gift_cards.customer_id', $customer_id);
+        } else {
+            $this->db->where('gift_cards.card_no', $card_no);
+
+        }
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {

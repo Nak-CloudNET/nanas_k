@@ -124,8 +124,28 @@
                             </span>
                             </td>
                         </tr>
+                    <?php }
+                    foreach ($gift_cards as $gift_card) {
+                        $packages = $this->companies_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
+
+                        ?>
+                        <tr>
+                            <td><strong><u><?= $gift_card->package_name ?></u></strong></td>
+                            <td>
+                                <?php foreach ($packages as $package) { ?>
+                                    <p style="margin: 0"><?= $package->package_item_name ?></p>
+                                    <span style="padding-left: 20px; font-weight: bold">
+                                        Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
+                                        Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?> |
+                                        Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                                    </span>
+                                <?php } ?>
+                            </td>
+                        </tr>
                     <?php } ?>
+
                     </tbody>
+
                 </table>
             </div>
             <div class="modal-footer no-print">

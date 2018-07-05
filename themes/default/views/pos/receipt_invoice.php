@@ -173,13 +173,13 @@ if ($modal) {
                             <?= lang('member') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 70%; padding-right: 0">
-                            : <?= $inv->cc_no; ?>
+                            : <?= $inv->cc_no ? $inv->cc_no : $inv->card_no; ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
                             <?= lang('r_value') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 70%; padding-right: 0">
-                            : <?= $inv->paid_by == 'gift_card' ? $this->erp->formatMoney($inv->reminded_value) : ''; ?>
+                            : <?= $inv->paid_by == 'gift_card' ? $this->erp->formatMoney($inv->reminded_value) : $this->erp->formatMoney($inv->reminded_value); ?>
                         </div>
                     </div>
                 </div>

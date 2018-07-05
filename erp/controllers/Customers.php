@@ -18,6 +18,7 @@ class Customers extends MY_Controller
         $this->lang->load('customers', $this->Settings->language);
         $this->load->library('form_validation');
         $this->load->model('companies_model');
+        $this->load->model('sales_model');
     }
 
     function index($action = NULL)
@@ -82,6 +83,8 @@ class Customers extends MY_Controller
         $this->erp->checkPermissions('index', true);
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['customer'] = $this->companies_model->getCompanyByID($id);
+        $this->data['gift_cards'] = $this->companies_model->getAllPackagesByCardNo($id);
+
         $this->load->view($this->theme.'customers/view',$this->data);
     }
 	
