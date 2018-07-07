@@ -684,6 +684,13 @@
                                                 <span class="text"> <?= lang('add_sale_return'); ?></span>
                                             </a>
                                         </li>
+
+                                        <li id="sales_coupon">
+                                            <a class="submenu" href="<?= site_url('sales/coupon'); ?>">
+                                                <i class="fa fa-heart"></i>
+                                                <span class="text"> <?= lang('coupon'); ?></span>
+                                            </a>
+                                        </li>
 										
 										
                                     </ul>

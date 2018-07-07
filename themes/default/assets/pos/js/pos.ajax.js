@@ -408,11 +408,12 @@ $(document).ready(function () {
 	/* -----------------------
 	 * Edit Row Modal Hanlder
 	 ----------------------- */
-	$(document).on('click', '.edit', function () {
+    $(document).on('click', '.edit_item', function () {
 		var row = $(this).closest('tr');
 		var row_id = row.attr('id');
 		item_id = row.attr('data-item-id');
 		item = positems[item_id];
+
 		var expdates = item.expdates ? item.expdates : null;
 		var items_package = item.items_package ? item.items_package : null;		
 		var qty = row.children().children('.rquantity').val(),
@@ -617,12 +618,38 @@ $(document).ready(function () {
 			}
 		});
 
+
 		$('#net_price').text(formatMoney(net_price));
 	    $('#pro_tax').text(formatMoney(pr_tax_val));
 		$('#prModal').appendTo("body").modal('show');
 		$("#expdate").trigger("change");
 		$('#poption').trigger("change");
 		$('#pgroup_price').trigger("change");
+
+        var today = new Date();
+        var dd = ('0' + today.getDate()).slice(-2);
+        var mm = ('0' + (today.getMonth() + 1)).slice(-2);
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        console.log(item);
+        $("#coupon").live('change', function () {
+            var coupon = $('#coupon').val();
+            $.each(item.coupons, function () {
+
+                if (today > this.expiry_date && coupon == this.code) {
+                    bootbox.alert('This coupon  ' + coupon + '  is expired!');
+                    return false;
+                } else if (this.code == coupon && this.sale_id != null) {
+                    bootbox.alert('This coupon  ' + coupon + '  is already used!');
+                    return false;
+                } else {
+                    var valid_coupon = coupon;
+                    $('#valid_coupon').val(valid_coupon);
+                }
+            });
+        });
+
 	});
 
 	$(document).on('click', '#paid-ment', function () {
@@ -695,8 +722,10 @@ $(document).ready(function () {
 	 * Edit Row Method
 	 ----------------------- */
 	$(document).on('click', '#editItem', function () {
+
 		var row = $('#' + $('#row_id').val());
 		var item_id = row.attr('data-item-id'), new_pr_tax = $('#ptax').val(), new_pr_tax_rate = {};
+
 		if (new_pr_tax) {
 			$.each(tax_rates, function () {
 				if (this.id == new_pr_tax) {
@@ -754,6 +783,16 @@ $(document).ready(function () {
             positems[item_id].group_prices[0].setting_curr = setting_rate;
             positems[item_id].group_prices[0].id = price_id;
 		}
+
+        var valid_coupon = $('#valid_coupon').val();
+        if (valid_coupon) {
+            var new_price = 0;
+            var real_unit_price = 0;
+            positems[item_id].row.price = new_price;
+            positems[item_id].row.real_unit_price = real_unit_price;
+            positems[item_id].row.coupon = valid_coupon;
+        }
+		
 		__setItem('positems', JSON.stringify(positems));
 
 		$('#prModal').modal('hide');
@@ -1270,8 +1309,10 @@ function loadItems() {
             $("#order-table-food").append(table_o);
             $("#order-table-drink").append(table_o);
 		}
+
 		positems = JSON.parse(__getItem('positems'));
-		var n = 1;
+
+        var n = 1;
         $.each(positems, function (i, e) {
 			var item 			= this;
 			var item_id 		= site.settings.item_addition == 1 ? item.id : item.id;
@@ -1281,6 +1322,7 @@ function loadItems() {
 			item_type 			= item.row.type,
 			digital_id 			= item.row.digital_id ? item.row.digital_id : '',
 			package_id 			= item.row.package_id ? item.row.package_id : '',
+                coupon_code = item.row.coupon ? item.row.coupon : '',
 			package_price 		= item.row.package_price ? item.row.package_price : 0,
 			picture 			= item.row.image,
 			item_promotion 		= item.row.promotion,
@@ -1491,7 +1533,8 @@ function loadItems() {
 				i++;
 			}
 
-			var newTr = $('<tr id="row_' + row_no + '" class="row_' + item_id + '" data-item-id="' + item_id + '"></tr>');
+
+            var newTr = $('<tr id="row_' + row_no + '" class="row_' + item_id + '" data-item-id="' + item_id + '"></tr>');
 			tr_html = '<td style="text-align:center"><span>#'+ n +'</span><input type="hidden" class="count" value="' + item_id + '"></td>';
 
 			tr_html += '<input name="price_id[]" type="hidden" id="price_id_' + row_no + '" value="' + price_id + '">';
@@ -1510,7 +1553,7 @@ function loadItems() {
 						tr_html += '<span class="showimg" style="width:350px;"><table class="table table-bordered"><tr><th>Image</th>'+(item_type == 'combo' ? '<th>Description</th>' : '')+(item_type == 'combo' ? '<th style="width:115px;">Combo Items</th>' : '')+'</tr><tr><td><a href="'+site.base_url+'assets/uploads/'+picture+'" data-toggle="lightbox"><img src="'+site.base_url+'assets/uploads/'+picture+'" alt="' +item_name+ '" style="width:200px;" class="img-thumbnail" /></a></td>'+(item_type == 'combo' ? '<td>'+item_details+'</td>' : '')+(item_type == 'combo' ? '<td><table>'+combo_+'</table></td>' : '')+'</tr></table></span>';
 					}
 				}else{
-					tr_html += '<td class="edit" style="cursor:pointer;"><ul class="enlarges"><li><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input name="package_id[]" type="hidden" class="package_id" value="' + package_id + '"><input name="package_price[]" type="hidden" class="package_price" value="' + package_price + '"><span class="sname" id="name_' + row_no + '">' + (item_promotion == 1 ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id?digital_name:item_name) +(sel_opt != '' ? ' ('+sel_opt+')' : '')+ (pn != '' ? ' [<span id="get_not">'+pn+'</span>]' : '')  +'</span>';
+                    tr_html += '<td class="edit" style="cursor:pointer;"><ul class="enlarges"><li><input name="digital_id[]" type="hidden" class="did" value="' + digital_id + '"><input name="product_id[]" type="hidden" class="rid" value="' + product_id + '"><input name="product_type[]" type="hidden" class="rtype" value="' + item_type + '"><input name="product_code[]" type="hidden" class="rcode" value="' + item_code + '"><input name="product_name[]" type="hidden" class="rname" value="' + item_name + '"><input name="product_option[]" type="hidden" class="roption" value="' + item_option + '"><input name="expdate[]" type="hidden" class="expdate" value="' + expdate + '"><input name="exp_qty" type="hidden" class="exp_qty" id="exp_qty" value="' + exp_qty + '"><input name="product_note[]" type="hidden" class="rnote" value="' + pn + '"><input name="package_id[]" type="hidden" class="package_id" value="' + package_id + '"><input name="coupon_code[]" type="hidden" class="coupon_code" value="' + coupon_code + '"><input name="package_price[]" type="hidden" class="package_price" value="' + package_price + '"><span class="sname" id="name_' + row_no + '">' + (item_promotion == 1 ? '<i class="fa fa-check-circle"></i> ' : '') + (digital_id ? digital_name : item_name) + (sel_opt != '' ? ' (' + sel_opt + ')' : '') + (pn != '' ? ' [<span id="get_not">' + pn + '</span>]' : '') + '</span>';
 					if(pos_settings.show_item_img != 0) {
 						tr_html += '<span class="showimg" style="width:350px;"><table class="table table-bordered"><tr><th>Image</th>'+(item_type == 'combo' ? '<th>Description</th>' : '')+(item_type == 'combo' ? '<th style="width:115px;">Combo Items</th>' : '')+'</tr><tr><td><a href="'+site.base_url+'assets/uploads/'+picture+'" data-toggle="lightbox"><img src="'+site.base_url+'assets/uploads/'+picture+'" alt="' +item_name+ '" style="width:200px;" class="img-thumbnail" /></a></td>'+(item_type == 'combo' ? '<td>'+item_details+'</td>' : '')+(item_type == 'combo' ? '<td><table>'+combo_+'</table></td>' : '')+'</tr></table></span>';
 					}
@@ -1528,7 +1571,7 @@ function loadItems() {
 			//tr_html += '<td class="text-center" style="background-color:#eee"><span>'+ item.row.quantity +'</span></td>';
 
 			if(pos_settings.product_unit != 1){
-				tr_html += '<i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;padding: 10px;"></i></li></ul></td>';
+                tr_html += '<i class="pull-right fa fa-edit tip pointer edit_item" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;padding: 10px;"></i></li></ul></td>';
 			}else{
 				//tr_html += '<i class="pull-right fa fa-edit tip pointer edit" id="' + row_no + '" data-item="' + item_id + '" title="Edit" style="cursor:pointer;"></i></td>';
 				tr_html += '</td>';
@@ -2227,7 +2270,11 @@ if(pos_settings.finalize_sale != '') { shortcut.add(pos_settings.finalize_sale, 
 if(pos_settings.today_sale != '') { shortcut.add(pos_settings.today_sale, function() { $("#today_sale").click(); }, { 'type':'keydown', 'propagate':false, 'target':document} ); }
 if(pos_settings.open_hold_bills != '') { shortcut.add(pos_settings.open_hold_bills, function() { $("#opened_bills").trigger('click'); }, { 'type':'keydown', 'propagate':false, 'target':document} ); }
 if(pos_settings.close_register != '') { shortcut.add(pos_settings.close_register, function() { $("#close_register").click(); }, { 'type':'keydown', 'propagate':false, 'target':document} ); }
-if(pos_settings.product_unit != '') { shortcut.add(pos_settings.product_unit, function() { $(".edit:last-child").trigger('click'); }, { 'type':'keydown', 'propagate':false, 'target':document} ); }
+if (pos_settings.product_unit != '') {
+    shortcut.add(pos_settings.product_unit, function () {
+        $(".edit_item:last-child").trigger('click');
+    }, {'type': 'keydown', 'propagate': false, 'target': document});
+}
 
 if(pos_settings.discount != '') { shortcut.add(pos_settings.discount, function() { $("#discount_shortcut:last-child").trigger('click'); }, { 'type':'keydown', 'propagate':false, 'target':document} ); }
 

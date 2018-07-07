@@ -442,7 +442,10 @@ class Pos_model extends CI_Model
             $cost = $this->site->costing($items);
         }
 
+        $coupon_code = $items[0]['coupon_code'];
+
         foreach($items as $g){
+            unset($g['coupon_code']);
             $totalCostProducts = $this->getTotalCostProducts($g['product_id'], $g['quantity']);
             $product_variants = $this->site->getProductVariant($g['option_id'], $g['product_id']);
             if($product_variants) {
@@ -473,6 +476,7 @@ class Pos_model extends CI_Model
 
             $i = 0;
             foreach ($items as $item) {
+                unset($item['coupon_code']);
                 $product            = $this->site->getProductByID($item['product_id']);
                 $item['unit_cost'] 	= $product->cost;
                 $real_qty           = $item['quantity'];
@@ -522,6 +526,11 @@ class Pos_model extends CI_Model
 						}
 					}
 				}
+
+                if ($coupon_code) {
+                    $this->db->update('coupon', array('sale_id' => $sale_id), array('code' => $coupon_code));
+                }
+
                 $i++;
             }
 

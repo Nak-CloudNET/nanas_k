@@ -11447,11 +11447,13 @@ class Sales extends MY_Controller
         $rows               = $this->sales_model->getProductNames($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category);
 		$currency 		    = $this->sales_model->getCurrency();
 		$us_currency 	    = $this->sales_model->getUSCurrency();
+        $coupons = $this->sales_model->getALLCouponData();
+
 		$expiry_status      = 0;
 		if($this->site->get_setting()->product_expiry == 1){
 			$expiry_status  = 1;
 		}
-		
+
         if ($rows) {
             foreach ($rows as $row) {
 				
@@ -11617,9 +11619,9 @@ class Sales extends MY_Controller
 				$row->old_qty_rec	  = 0;
 				$row->rate_item_cur   = (isset($curr_by_item->rate)?$curr_by_item->rate:0);
 				$row->click_edit_count= 0;
-
                 $customer_percent = $customer_group->percent ? $customer_group->percent : 0;
                 $items_package = $this->sales_model->getPackagesByProductId($customer_id, $row->id);
+                $row->coupon = '';
 				
                 if ($row->tax_rate) {
                     $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
@@ -11627,9 +11629,9 @@ class Sales extends MY_Controller
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
                     }
 
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package, 'coupons' => $coupons);
                 } else {
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'pro_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")" . " (" . $row->price . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'cost' => $row->cost, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'orderqty' => $orderqty, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'currency' => $currency, 'us_currency' => $us_currency, 'makeup_cost_percent' => $percent->percent, 'items_package' => $items_package, 'coupons' => $coupons);
                 }
             }			
             echo json_encode($pr);
@@ -11883,7 +11885,8 @@ class Sales extends MY_Controller
 		$customer_group = $this->site->getCustomerGroupByID($customer->customer_group_id);
 		$user_setting = $this->site->getUserSetting($this->session->userdata('user_id'));
         $rows = $this->sales_model->getProductNumber($sr, $warehouse_id, $user_setting->sales_standard, $user_setting->sales_combo, $user_setting->sales_digital, $user_setting->sales_service, $user_setting->sales_category, $category_id);
-		
+        $coupons = $this->sales_model->getALLCouponData();
+
 		$expiry_status = 0;
 		if($this->site->get_setting()->product_expiry == 1){
 			$expiry_status = 1;
@@ -12045,9 +12048,9 @@ class Sales extends MY_Controller
                     if ($row->type == 'combo') {
                         $combo_items = $this->sales_model->getProductComboItems($row->id, $warehouse_id);
                     }
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0), 'items_package' => $items_package);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'options' => $options, 'expdates' => $expdates, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent' => (isset($percent->percent) ? $percent->percent : 0), 'items_package' => $items_package, 'coupons' => $coupons);
                 } else {
-                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates'=>$expdates, 'group_prices'=>$group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost'=>$customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent'=>(isset($percent->percent)?$percent->percent:0), 'items_package' => $items_package);
+                    $pr[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => false, 'options' => $options, 'expdates' => $expdates, 'group_prices' => $group_prices, 'all_group_prices' => $all_group_prices, 'makeup_cost' => $customer_group->makeup_cost, 'customer_percent' => $customer_percent, 'makeup_cost_percent' => (isset($percent->percent) ? $percent->percent : 0), 'items_package' => $items_package, 'coupons' => $coupons);
                 }
             }			
             echo json_encode($pr);
@@ -19944,6 +19947,163 @@ function invoice_concrete_angkor($id=null)
             $this->data['page_title'] = lang("new_gift_card");
             $this->data['card_no'] = $gc->card_no;
             $this->load->view($this->theme . 'sales/add_amount_gift_card', $this->data);
+        }
+    }
+
+    function coupon($warehouse_id = NULL)
+    {
+
+        $this->erp->checkPermissions('index', null, 'sales');
+        $this->load->model('reports_model');
+
+        $alert_id = $this->input->get('alert_id');
+        $this->data['alert_id'] = $alert_id;
+
+        if (isset($_GET['d']) != "") {
+            $date = $_GET['d'];
+            $this->data['date'] = $date;
+        }
+
+        $biller_dataid = $this->session->userdata('biller_id');
+        $this->data['users'] = $this->reports_model->getStaff();
+        $this->data['products'] = $this->site->getProducts();
+        $this->data['warehouses'] = $this->site->getAllWarehouses();
+        $this->data['billers'] = $this->site->getAllCompanies('biller');
+        $this->data['user_billers'] = $this->sales_model->getAllCompaniesByID($biller_dataid);
+
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        if ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) {
+            $this->data['warehouses'] = $this->site->getAllWarehouses();
+            $this->data['warehouse_id'] = $warehouse_id;
+            $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
+
+        } else {
+
+            $this->data['warehouses'] = $this->products_model->getUserWarehouses();
+            if ($warehouse_id) {
+                $this->data['warehouse_id'] = $warehouse_id;
+                $this->data['warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
+            } else {
+                $this->data['warehouse_id'] = str_replace(',', '-', $this->session->userdata('warehouse_id'));
+                $this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
+            }
+        }
+        $this->data['agencies'] = $this->site->getAllUsers();
+        $this->data['areas'] = $this->site->getArea();
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('coupon')));
+        $meta = array('page_title' => lang('coupon'), 'bc' => $bc);
+        $this->page_construct('sales/coupon', $meta, $this->data);
+    }
+
+    function getCoupon()
+    {
+        $this->erp->checkPermissions('index', null, 'sales');
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("coupon.id, coupon.code, coupon.expiry_date, coupon.sale_id")
+            ->from('coupon');
+
+        echo $this->datatables->generate();
+    }
+
+    public function add_coupon()
+    {
+        $this->load->model('site');
+        $this->form_validation->set_rules('code', lang("code"), 'trim|required|is_unique[coupon.code]');
+
+        if ($this->form_validation->run() == true) {
+            $data = array(
+                'code' => $this->input->post('code'),
+                'expiry_date' => $this->erp->fld(trim($this->input->post('date')))
+            );
+
+        } elseif ($this->input->post('add_coupon')) {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('sales/coupon');
+        }
+
+        if ($this->form_validation->run() == true && $this->sales_model->addCoupon($data)) {
+            $this->session->set_flashdata('message', lang("coupon_successfully_added"));
+            redirect('sales/coupon');
+        } else {
+
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->load->view($this->theme . 'sales/add_coupon', $this->data);
+        }
+    }
+
+    function import_coupon()
+    {
+        $this->load->helper('security');
+        $this->form_validation->set_rules('userfile', lang("upload_file"), 'xss_clean');
+        $default_account = $this->settings_model->getAccountSettings();
+        if ($this->form_validation->run() == true) {
+
+            if (isset($_FILES["userfile"])) {
+
+                $this->load->library('upload');
+                $config['upload_path'] = 'files/';
+                $config['allowed_types'] = 'csv';
+                $config['max_size'] = $this->allowed_file_size;
+                $config['overwrite'] = TRUE;
+                $this->upload->initialize($config);
+
+                if (!$this->upload->do_upload()) {
+                    $error = $this->upload->display_errors();
+                    $this->session->set_flashdata('error', $error);
+                    redirect("sales/coupon");
+                }
+
+                $csv = $this->upload->file_name;
+
+                $arrResult = array();
+                $handle = fopen('files/' . $csv, "r");
+                if ($handle) {
+                    while (($row = fgetcsv($handle, 5000, ",")) !== FALSE) {
+                        $arrResult[] = $row;
+                    }
+                    fclose($handle);
+                }
+
+                $titles = array_shift($arrResult);
+                $keys = array('code', 'expiry_date');
+                $final = array();
+
+                foreach ($arrResult as $key => $value) {
+                    $final[] = array_combine($keys, $value);
+                }
+
+                $rw = 2;
+                foreach ($final as $coupon_data) {
+                    if (!$this->sales_model->getCouponCode(trim($coupon_data['code']))) {
+                        $coupon_code = trim($coupon_data['code']);
+                        $date = date_create($coupon_data['expiry_date']);
+                        $coupon_date = date_format($date, 'Y-m-d');
+
+                        $data[] = array(
+                            'code' => trim($coupon_data['code']),
+                            'expiry_date' => $coupon_date
+                        );
+
+                    } else {
+                        $this->session->set_flashdata('error', lang("check_this_coupon_code") . " (" . $coupon_data['code'] . "). " . lang("it_is_already_exist") . " " . lang("at_line_no") . " " . $rw);
+                        redirect("sales/coupon");
+                    }
+                    $rw++;
+                }
+            }
+        }
+
+        if ($this->form_validation->run() == true && $this->sales_model->addCoupons($data)) {
+            $this->session->set_flashdata('message', lang("coupon_successfully_added"));
+            redirect('sales/coupon');
+        } else {
+
+            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->load->view($this->theme . 'sales/import_coupon', $this->data);
+
         }
     }
 

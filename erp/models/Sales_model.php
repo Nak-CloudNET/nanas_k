@@ -7238,4 +7238,41 @@ public function getRielCurrency(){
         return FALSE;
 	}
 
+    public function getALLCouponData()
+    {
+        $q = $this->db->get('coupon');
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getCouponCode($code)
+    {
+        $q = $this->db->get_where('coupon', array('code' => $code), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function addCoupon($data)
+    {
+        if ($this->db->insert('coupon', $data)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // For import coupon with multiple data
+    public function addCoupons($data)
+    {
+        if ($this->db->insert_batch('coupon', $data)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -490,7 +490,8 @@ class Pos extends MY_Controller
                 $item_discount 	= isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
 				$g_total_txt 	= $_POST['grand_total'][$r];
 				$item_price_id 	= $_POST['price_id'][$r];
-				$package_id 	= $_POST['package_id'][$r];
+                $package_id = $_POST['package_id'][$r];
+                $coupon_code = $_POST['coupon_code'][$r];
 				
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details 	= $item_type != 'manual' ? $this->pos_model->getProductByCode($item_code) : NULL;
@@ -600,7 +601,8 @@ class Pos extends MY_Controller
 						'expiry' 			=> $expdate,
 						'expiry_id' 		=> $expire_date_id,
 						'price_id' 			=> $item_price_id,
-						'package_id' 		=> $package_id
+                        'package_id' => $package_id,
+                        'coupon_code' => $coupon_code
                     );					
                     $total += $subtotal;
 					$g_total_txt1 += $subtotal;
@@ -1770,10 +1772,12 @@ class Pos extends MY_Controller
         $customer           = $this->site->getCompanyByID($customer_id);
         $customer_group     = $this->site->getCustomerGroupByID($customer->customer_group_id);
         $row                = $this->pos_model->getWHProduct($code, $warehouse_id, $product_type);
-	
-		$orderqty           = $this->pos_model->getQtyOrder($row->product_id);
-		$w_piece            = $this->sales_model->getProductVariantByOptionID($row->id);
-		$group_prices       = $this->sales_model->getProductPriceGroup($row->id,$customer->price_group_id);
+
+        $orderqty = $this->pos_model->getQtyOrder($row->product_id);
+        $w_piece = $this->sales_model->getProductVariantByOptionID($row->id);
+        $group_prices = $this->sales_model->getProductPriceGroup($row->id, $customer->price_group_id);
+        $coupons = $this->sales_model->getALLCouponData();
+
         $option             = '';
 		$expiry_status      = 0;
 		if($this->site->get_setting()->product_expiry == 1){
@@ -1937,7 +1941,8 @@ class Pos extends MY_Controller
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
                     'makeup_cost_percent'   => $percent?$percent->percent:0,
-                    'items_package'   		=> $items_package
+                    'items_package' => $items_package,
+                    'coupons' => $coupons
                 );
            }else {
                 $pr = array(
@@ -1958,7 +1963,8 @@ class Pos extends MY_Controller
                     'makeup_cost'           => ($customer_group ? $customer_group->makeup_cost : 0),
                     'customer_percent'      => $customer_percent,
                     'makeup_cost_percent'   => $percent->percent,
-					'items_package'   		=> $items_package
+                    'items_package' => $items_package,
+                    'coupons' => $coupons
                 );
            }
            echo json_encode($pr);

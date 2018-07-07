@@ -2357,18 +2357,30 @@ if ($q->num_rows() > 0) {
                         <label for="pnote" class="col-sm-4 control-label"><?= lang('product_note') ?></label>
 
                         <div class="col-sm-8">
-							<div class="input-group">
-								<textarea class="form-control kb-pad" id="pnote" rows="5" cols="20" style="width: 291px; height: 35px;"></textarea>
-								<div class="input-group-addon no-print" style="padding: 2px 5px;">
-									<a href="<?= site_url('system_settings/show_note'); ?>" id="add-productnote" class="external" data-toggle="modal" data-target="#myModal">
-										<i class="fa fa-2x fa-plus-circle" id="addIcon"></i>
-									</a>
-								</div>
-							</div>
+                            <div class="input-group">
+                                <textarea class="form-control kb-pad" id="pnote" rows="5" cols="20"
+                                          style="width: 291px; height: 35px;"></textarea>
+                                <div class="input-group-addon no-print" style="padding: 2px 5px;">
+                                    <a href="<?= site_url('system_settings/show_note'); ?>" id="add-productnote"
+                                       class="external" data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-2x fa-plus-circle" id="addIcon"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-					</div>				
-					
-					<div class="form-group col-sm-12" >
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <label for="coupon" class="col-sm-4 control-label"><?= lang('coupon_qrcode') ?></label>
+
+                        <div class="col-sm-8">
+                            <input type="text" name="coupon" class="form-control kb-pad" id="coupon">
+                            <input type="hidden" name="valid_coupon" class="form-control" id="valid_coupon">
+                            <input type="hidden" name="current_coupon" class="form-control" id="current_coupon">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12" >
                     <table class="table table-bordered table-striped">
                         <tr>
                             <th style="width:25%;"><?= lang('net_unit_price'); ?></th>
@@ -4175,8 +4187,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			var interest_rate = formatDecimal($('#depreciation_rate_1').val()-0);
 			var term_ = formatDecimal($('#depreciation_term_1').val()-0);
 			var counter = 0;
-			var items = $('.edit').length;
-			$('.edit').each(function(){
+            var items = $('.edit_item').length;
+            $('.edit_item').each(function () {
 				if(counter < items-1){
 					no += 1;
 					var parent = $(this).parent().parent();
@@ -4366,8 +4378,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 											var interest_rate = Number($('#depreciation_rate_1').val()-0);
 											var term_ = Number($('#depreciation_term_1').val()-0);
 											var counter = 0;
-											var items = $('.edit').length;
-											$('.edit').each(function(){
+            var items = $('.edit_item').length;
+            $('.edit_item').each(function () {
 												if(counter < items-1){
 													no += 1;
 													var parent = $(this).parent().parent();
