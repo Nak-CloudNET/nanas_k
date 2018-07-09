@@ -20022,7 +20022,6 @@ function invoice_concrete_angkor($id=null)
 
             $params['data'] = $this->input->post('code');
             $qr_image = $params['data'] . '.png';
-            $params['data'] = $this->input->post('code');
             $params['level'] = 'H';
             $params['size'] = 8;
             $params['savename'] = "assets/uploads/" . $qr_image;
