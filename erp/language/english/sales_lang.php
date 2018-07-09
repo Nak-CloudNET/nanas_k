@@ -463,3 +463,4 @@ $lang['import_coupon'] = "Import Coupon";
 $lang['coupon_successfully_added'] = "Coupon Successfully Added";
 $lang['check_this_coupon_code'] = "Check this coupon code";
 $lang['it_is_already_exist'] = "It's already exist! ";
+$lang['print_preview_coupon'] = "Print Preview Coupon";

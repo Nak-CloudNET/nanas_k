@@ -632,7 +632,7 @@ $(document).ready(function () {
         var yyyy = today.getFullYear();
 
         today = yyyy + '-' + mm + '-' + dd;
-        console.log(item);
+
         $("#coupon").live('change', function () {
             var coupon = $('#coupon').val();
             $.each(item.coupons, function () {

@@ -1096,6 +1096,29 @@ function row_status(x) {
     }
 }
 
+function coupon_status(x) {
+    if (x == null) {
+        return '';
+    } else {
+        return '<div class="text-center"><span class="label label-success">Used</span></div>';
+    }
+}
+
+function coupon_date(d) {
+    var today = new Date();
+    var dd = ('0' + today.getDate()).slice(-2);
+    var mm = ('0' + (today.getMonth() + 1)).slice(-2);
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+    if (today > d) {
+        return '<div><span class="text-danger">' + d + '</span></div>';
+    } else {
+        return d;
+    }
+}
+
 function authorize_status(x) {
 	if(x == 'pending') {
 		return '<div class="text-center"><span class="label label-warning">'+lang['pending']+'</span></div>';

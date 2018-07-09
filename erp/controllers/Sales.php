@@ -20018,6 +20018,17 @@ function invoice_concrete_angkor($id=null)
                 'expiry_date' => $this->erp->fld(trim($this->input->post('date')))
             );
 
+            $this->load->library('ciqrcode');
+
+            $params['data'] = $this->input->post('code');
+            $qr_image = $params['data'] . '.png';
+            $params['data'] = $this->input->post('code');
+            $params['level'] = 'H';
+            $params['size'] = 8;
+            $params['savename'] = "assets/uploads/" . $qr_image;
+
+            $this->ciqrcode->generate($params);
+
         } elseif ($this->input->post('add_coupon')) {
             $this->session->set_flashdata('error', validation_errors());
             redirect('sales/coupon');
@@ -20086,6 +20097,17 @@ function invoice_concrete_angkor($id=null)
                             'expiry_date' => $coupon_date
                         );
 
+
+                        $this->load->library('ciqrcode');
+
+                        $params['data'] = trim($coupon_data['code']);
+                        $qr_image = $params['data'] . '.png';
+                        $params['level'] = 'H';
+                        $params['size'] = 8;
+                        $params['savename'] = "assets/uploads/" . $qr_image;
+
+                        $this->ciqrcode->generate($params);
+
                     } else {
                         $this->session->set_flashdata('error', lang("check_this_coupon_code") . " (" . $coupon_data['code'] . "). " . lang("it_is_already_exist") . " " . lang("at_line_no") . " " . $rw);
                         redirect("sales/coupon");
@@ -20106,6 +20128,13 @@ function invoice_concrete_angkor($id=null)
 
         }
     }
+
+    function print_preview_coupon()
+    {
+        $this->data['modal_js'] = $this->site->modal_js();
+        $this->load->view($this->theme . 'sales/print_preview_coupon', $this->data);
+    }
+
 
 
 }

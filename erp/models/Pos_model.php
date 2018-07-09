@@ -1544,6 +1544,7 @@ class Pos_model extends CI_Model
         for($i = 0 ; $i < count($items); $i++){
             unset($items[$i]['expiry']);
             unset($items[$i]['expiry_id']);
+            unset($items[$i]['coupon_code']);
         }
         if (false) {
 //        if ($did) {
