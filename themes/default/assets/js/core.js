@@ -1098,9 +1098,9 @@ function row_status(x) {
 
 function coupon_status(x) {
     if (x == null) {
-        return '';
+        return '<div class="text-center"><span class="label label-success">Available</span></div>';
     } else {
-        return '<div class="text-center"><span class="label label-success">Used</span></div>';
+        return '<div class="text-center"><span class="label label-warning">Not available!</span></div>';
     }
 }
 
