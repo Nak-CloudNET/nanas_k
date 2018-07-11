@@ -37,27 +37,25 @@ $issued_by2 = $this->input->post('issued_by');
     .ref_data {
         border-top: 5px solid #CFE8FB;
     }
-
     .table-striped > tbody .ref_data:first-child > td {
         background-color: #EDF8FF;
         border: none;
     }
-
     .table > thead:first-child > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table-striped thead tr.primary:nth-child(2n+1) th {
         border: none;
     }
-
     tfoot th {
         background-color: #428BCA;
         color: #FFFFFF;
-
     }
 
+    tfoot span {
+        font-size: 16px !important;
+    }
 </style>
 
 
 <?php
-//$this->erp->print_arrays($reference_no2);
 echo form_open('reports/saleman_item_detail_action/' . $user_id, 'id="action-form"');
 ?>
 
@@ -245,8 +243,8 @@ echo form_open('reports/saleman_item_detail_action/' . $user_id, 'id="action-for
                         $gtotal_balance = 0;
                         foreach ($salemans_data as $saleman_data) {
 
-                            $saleman_items_data = $this->reports_model->getAllSalemanItemsData($saleman_data->id);
-                            //$this->erp->print_arrays($saleman_items_data);
+                            $saleman_items_data = $this->reports_model->getAllSalemanItemsData($saleman_data->id, $category2);
+                            $si_datas = $this->reports_model->getAllSalemanItemsDataOptional($saleman_data->id, $category2);
 
                             ?>
                             <tbody>
@@ -267,8 +265,14 @@ echo form_open('reports/saleman_item_detail_action/' . $user_id, 'id="action-for
                                         <span class='label label-success'><?= ucwords($saleman_data->sale_status); ?></span>
                                     <?php } ?>
                                 </td>
+                                <?php
 
-                                <td><?= $saleman_data->grand_total; ?></td>
+                                $gtotal = 0;
+                                foreach ($si_datas as $si_data) {
+                                    $gtotal += $si_data->subtotal;
+                                }
+                                ?>
+                                <td><?= $gtotal; ?></td>
                                 <td><?= $saleman_data->return_sale; ?></td>
                                 <td><?= $saleman_data->paid; ?></td>
                                 <td><?= $saleman_data->deposit; ?></td>
@@ -330,7 +334,7 @@ echo form_open('reports/saleman_item_detail_action/' . $user_id, 'id="action-for
                                 $r++;
                             }
 
-                            $grand_total += $saleman_data->grand_total;
+                            $grand_total += $gtotal;
                             $gtotal_return += $saleman_data->return_sale;
                             $gtotal_paid += $saleman_data->paid;
                             $gtotal_deposit += $saleman_data->deposit;

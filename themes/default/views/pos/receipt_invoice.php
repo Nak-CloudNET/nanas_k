@@ -5,7 +5,7 @@ function product_name($name)
 }
 
 if ($modal) {
-    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 530px; margin: 0px auto;"><div class="modal-body" style="max-width: 530px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
+    echo '<div class="modal-dialog no-modal-header"><div class="modal-content" style="max-width: 520px; margin: 0px auto;"><div class="modal-body" style="max-width: 510px; margin: 0px auto;"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-2x">&times;</i></button>';
 } else { ?>
     <!doctype html>
 <html>
@@ -78,7 +78,9 @@ if ($modal) {
             }
 
             #wrapper {
+                /*max-width: 480px;*/
                 width: 98% !important;
+                /*min-width: 250px;*/
                 margin: 0 auto !important;
                 padding: 0 !important;
                 font-size: 10px !important;
@@ -104,11 +106,14 @@ if ($modal) {
             .biller {
                 margin-left: -20px !important;
             }
+
         }
     </style>
 </head>
 <body>
+
 <?php } ?>
+
 <div id="wrapper">
     <div id="receiptData">
         <div class="no-print">
@@ -151,19 +156,19 @@ if ($modal) {
             <div class="row" id="cinfo">
                 <div class="col-sm-6 col-xs-6">
                     <div class="row" style="font-weight:bold !important;">
-                        <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 32%; padding-right: 0">
                             <?= lang('plate_no') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
                             : <?= $inv->plate_number ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 30%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 32%; padding-right: 0">
                             <?= lang('time_in') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
                             : <?= $this->erp->hrld($inv->start_date); ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 30%">
+                        <div class="col-sm-6 col-xs-6" style="width: 32%">
                             <?= lang('customer') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 63%; padding-right: 0">
@@ -192,7 +197,7 @@ if ($modal) {
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
                             : <?= $this->erp->hrld($inv->date); ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%">
+                        <div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 0">
                             <?= lang('time_out') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
@@ -211,12 +216,12 @@ if ($modal) {
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
                             : <?= $inv->suspend_note ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 0">
+                        <!--<div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 0">
                             <?= lang('smart_point') ?>
                         </div>
                         <div class="col-sm-6 col-xs-6" style="width: 65%">
                             : <?= $inv->award_points ?>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>
@@ -589,37 +594,35 @@ if ($modal) {
                     </tr>
                     <?php
                 } else {
-                    if ($payment->pos_paid) {
-                        ?>
-                        <caption style="float: left; padding-left: 13px;">
-                            <tr>
-                                <th colspan="3">
-                                    <?php if ($payment->paid_by == 'Cheque') {
-                                        echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
-                                    } elseif ($payment->paid_by == 'CC') {
-                                        echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
-                                    } else {
-                                        echo lang('paid_by') . ' ' . lang($payment->paid_by);
-                                    } ?>
-                                </th>
-                            </tr>
-                        </caption>
+                    ?>
+                    <caption style="float: left; padding-left: 13px;">
                         <tr>
-                            <th colspan="<?= $colspan ?>" class="text-left received_amount">
-                                <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>):</span>
+                            <th colspan="3">
+                                <?php if ($payment->paid_by == 'Cheque') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cheque_no . ')');
+                                } elseif ($payment->paid_by == 'CC') {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by) . ' ' . lang('(' . $payment->cc_no . ')');
+                                } else {
+                                    echo lang('paid_by') . ' ' . lang($payment->paid_by);
+                                } ?>
                             </th>
-                            <th><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
-                            <th class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
                         </tr>
-                        <tr>
-                            <th style="padding-right: 0px;" colspan="<?= $colspan ?>" class="text-left received_amount">
-                                <span style="padding-left: 5px">Received (Riel):</span>
-                            </th>
-                            <th><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
-                            <th class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
-                        </tr>
-                        <?php
-                    }
+                    </caption>
+                    <tr>
+                        <th colspan="<?= $colspan ?>" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (<?= $default_currency->code; ?>):</span>
+                        </th>
+                        <th><?= lang('ប្រាក់ទទួល (ដុល្លារ)') ?></th>
+                        <th class="text-right"><?= $this->erp->formatMoney($payment->pos_paid); ?></th>
+                    </tr>
+                    <tr>
+                        <th style="padding-right: 0px;" colspan="<?= $colspan ?>" class="text-left received_amount">
+                            <span style="padding-left: 5px">Received (Riel):</span>
+                        </th>
+                        <th><?= lang('ប្រាក់ទទួល (រៀល)') ?></th>
+                        <th class="text-right"><?= number_format($payment->pos_paid_other) . ' ៛'; ?></th>
+                    </tr>
+                    <?php
                 }
 
                 if (count($payments) > 1) {
@@ -669,30 +672,28 @@ if ($modal) {
                         $balance_amount += $pos_paid_other_balance - $payment->amount;
                     }
 
-                    if ($balance_amount == $balance) {
-                        if ($total_us_b) { ?>
-                            <tr>
-                                <th colspan="<?= $colspan ?>"
-                                    class="text-left"><?= lang("change_amount_us"); ?> :
-                                </th>
-                                <th><?= lang('ប្រាក់អាប់ (ដុល្លារ)') ?></th>
-                                <th class="text-right">
-                                    <?php
-                                    echo $this->erp->formatMoney(abs($inv->pos_balance));
-                                    $total_us_b = $this->erp->formatMoney($inv->grand_total - ($pos_paid + $amount_kh_to_us));
-                                    $m_us = $this->erp->fraction($total_us_b);
-                                    ?>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th colspan="<?= $colspan ?>"
-                                    class="text-left"><?= lang("change_amount_kh"); ?> :
-                                </th>
-                                <th><?= lang('ប្រាក់អាប់ (រៀល)') ?></th>
-                                <th class="text-right"><?= number_format(abs($inv->pos_balance * $inv->pos_paid_other_rate)) . ' ៛'; ?></th>
-                            </tr>
-                            <?php
-                        }
+                    if ($balance_amount == $balance) { ?>
+                        <tr>
+                            <th colspan="<?= $colspan ?>"
+                                class="text-left"><?= lang("change_amount_us"); ?> :
+                            </th>
+                            <th><?= lang('ប្រាក់អាប់ (ដុល្លារ)') ?></th>
+                            <th class="text-right">
+                                <?php
+                                echo $this->erp->formatMoney(abs($inv->pos_balance));
+                                $total_us_b = $this->erp->formatMoney($inv->grand_total - ($pos_paid + $amount_kh_to_us));
+                                $m_us = $this->erp->fraction($total_us_b);
+                                ?>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="<?= $colspan ?>"
+                                class="text-left"><?= lang("change_amount_kh"); ?> :
+                            </th>
+                            <th><?= lang('ប្រាក់អាប់ (រៀល)') ?></th>
+                            <th class="text-right"><?= number_format(abs($inv->pos_balance * $inv->pos_paid_other_rate)) . ' ៛'; ?></th>
+                        </tr>
+                        <?php
                     } elseif (($inv->grand_total - ($pay + $pay_kh)) < 0) { ?>
                         <tr>
                             <th colspan="<?= $colspan ?>"
@@ -778,7 +779,7 @@ if ($modal) {
     <div class="text-center">
         <table width="100%">
             <tr>
-                <td style="padding-top:10px;padding-left:20px;"><?= $biller->invoice_footer; ?></td>
+                <td style="padding-top:10px;padding-left:20px;"><?= nl2br($biller->invoice_footer); ?></td>
             </tr>
             <tr>
                 <td class="text-center" style="padding-top: 10px;">~ ~ ~ <b>CloudNet</b> &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:12px;">www.cloudnet.com.kh</span> ~ ~ ~</td>

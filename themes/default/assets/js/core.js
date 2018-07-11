@@ -1119,6 +1119,15 @@ function coupon_date(d) {
     }
 }
 
+function card_no(card) {
+    var card_no = card.split('_');
+    if (card == card_no[0]) {
+        return '';
+    } else {
+        return card_no[0];
+    }
+}
+
 function authorize_status(x) {
 	if(x == 'pending') {
 		return '<div class="text-center"><span class="label label-warning">'+lang['pending']+'</span></div>';

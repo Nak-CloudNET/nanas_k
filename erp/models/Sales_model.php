@@ -359,10 +359,14 @@ class Sales_model extends CI_Model
         }
         return false;
     }
-	public function getCusDetail($customer_id){		
-		$this->db->select('companies.credit_limited,IFNULL(sum(erp_sales.grand_total - erp_sales.paid), 0) AS balance');
-		$this->db->join('sales', 'sales.customer_id = companies.id', 'INNER');
-		$this->db->where('companies.id = '.$customer_id.' and (sales.payment_status = "due" or sales.payment_status = "partial" ) ');
+
+    public function getCusDetail($customer_id)
+    {
+        $this->db->select('companies.credit_limited,IFNULL(sum(erp_sales.grand_total - erp_sales.paid), 0) AS balance, gift_cards.value as card_amount');
+        $this->db->join('sales', 'sales.customer_id = companies.id', 'left');
+        $this->db->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left');
+        $this->db->where('companies.id = ' . $customer_id);
+        //$this->db->where('companies.id = '.$customer_id.' OR (sales.payment_status = "due" or sales.payment_status = "partial" ) ');
 		$result = $this->db->get('companies')->row();
 		return $result;
 	}

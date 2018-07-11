@@ -75,23 +75,24 @@ class Companies_model extends CI_Model
         }
         return FALSE;
     }
+
 	public function getGroupAreas(){
 		$this->db->select('areas_g_code,areas_group');
 		return $this->db->get('erp_group_areas')->result();
 	}
+
     public function getCompanyByID($id)
     {
-        $this->db->select('companies.*, group_areas.areas_group');
+        $this->db->select('companies.*, group_areas.areas_group, gift_cards.value as card_amount');
 		$this->db->join('group_areas','group_areas.areas_g_code = companies.group_areas_id', 'left');
+        $this->db->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left');
 
-        $q = $this->db->get_where('companies', array('id' => $id), 1);
+        $q = $this->db->get_where('companies', array('erp_companies.id' => $id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
         return FALSE;
     }
-	
-	//socheat
 
 	public function getCustomer_history($id)
     {
@@ -332,7 +333,7 @@ class Companies_model extends CI_Model
     public function getCustomerSuggestions($term, $limit = 10)
     {
         $this->db->select("companies.id,
-		                    CONCAT_WS(' | ', plate_number, IF((ISNULL(company) OR company = ''), name, company), card_no) as text,
+		                    CONCAT_WS(' | ', plate_number, IF((ISNULL(name) OR name = ''), company, name), card_no) as text,
 		                    companies.plate_number
 		                    ", FALSE);
 		$this->db->join('gift_cards', 'gift_cards.customer_id = companies.id', 'left');

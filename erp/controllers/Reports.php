@@ -29028,7 +29028,14 @@ class Reports extends MY_Controller
 
                     foreach ($salemans_data as $key => $saleman_data) {
 
-                        $saleman_items_data = $this->reports_model->getAllSalemanItemsDataForExport($saleman_data->id);
+                        $saleman_items_data = $this->reports_model->getAllSalemanItemsDataForExport($saleman_data->id, $category);
+                        $si_datas = $this->reports_model->getAllSalemanItemsDataOptionalForExport($saleman_data->id, $category);
+
+
+                        $gtotal = 0;
+                        foreach ($si_datas as $si_data) {
+                            $gtotal += $si_data->subtotal;
+                        }
 
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($saleman_data->date));
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $this->erp->hrld($saleman_data->due_date));
@@ -29037,7 +29044,7 @@ class Reports extends MY_Controller
                         $this->excel->getActiveSheet()->SetCellValue('E' . $row, $saleman_data->customer);
                         $this->excel->getActiveSheet()->SetCellValue('F' . $row, $saleman_data->note);
                         $this->excel->getActiveSheet()->SetCellValue('G' . $row, $saleman_data->sale_status);
-                        $this->excel->getActiveSheet()->SetCellValue('H' . $row, $saleman_data->grand_total);
+                        $this->excel->getActiveSheet()->SetCellValue('H' . $row, $gtotal);
                         $this->excel->getActiveSheet()->SetCellValue('I' . $row, $saleman_data->return_sale);
                         $this->excel->getActiveSheet()->SetCellValue('J' . $row, $saleman_data->paid);
                         $this->excel->getActiveSheet()->SetCellValue('K' . $row, $saleman_data->deposit);
@@ -29117,7 +29124,7 @@ class Reports extends MY_Controller
                             $row++;
                             $r++;
                         }
-                        $grand_total += $saleman_data->grand_total;
+                        $grand_total += $gtotal;
                         $gtotal_return += $saleman_data->return_sale;
                         $gtotal_paid += $saleman_data->paid;
                         $gtotal_deposit += $saleman_data->deposit;
@@ -29154,6 +29161,7 @@ class Reports extends MY_Controller
                 );
 
                 $this->excel->getActiveSheet()->getStyle('A' . $row . ':N' . $row)->applyFromArray($styleArray);
+                $this->excel->getActiveSheet()->getStyle('A' . $row . ':N' . $row)->getFont()->setSize(12);
 
                 $row++;
 

@@ -137,6 +137,8 @@ class Pos_model extends CI_Model
                 $this->db->where("products.category_id NOT IN (" . $sales_category . ") ");
             }
         }
+
+        //$this->db->where('category_id', $this->pos_settings->default_category);
         $this->db->where('inactived', 0);
         $this->db->order_by("name", "asc");
         $query = $this->db->get("products");

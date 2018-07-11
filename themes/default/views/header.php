@@ -695,8 +695,8 @@
 										
                                     </ul>
                                 </li>
-																
-                                <li class="mm_quotes">
+
+                                    <!-- <li class="mm_quotes">
                                     <a class="dropmenu" href="#">
                                         <i class="fa fa-heart-o"></i>
                                         <span class="text"> <?= lang('manage_quotes'); ?> </span>
@@ -716,7 +716,7 @@
                                             </a>
                                         </li>
                                     </ul>
-                                </li>
+                                </li> -->
 
                                 <li class="mm_purchases mm_purchases_request">
                                     <a class="dropmenu" href="#">
@@ -725,7 +725,7 @@
                                     </span> <span class="chevron closed"></span>
                                     </a>
                                     <ul>
-                                       <li id="purchases_request_index">
+                                        <!-- <li id="purchases_request_index">
                                             <a class="submenu" href="<?= site_url('purchases_request'); ?>">
                                                 <i class="fa fa-star"></i>
                                                 <span class="text"> <?= lang('list_purchase_request'); ?></span>
@@ -736,7 +736,7 @@
                                                 <i class="fa fa-plus-circle"></i>
                                                 <span class="text"> <?= lang('add_purchase_request'); ?></span>
                                             </a>
-                                       </li>
+                                       </li> -->
                                        <li id="purchases_purchase_order">
                                             <a class="submenu" href="<?= site_url('purchases/purchase_order'); ?>">
                                                 <i class="fa fa-star"></i>
@@ -837,7 +837,7 @@
                                     </ul>
                                 </li>
 
-                                <li class="mm_account">
+                                    <!-- <li class="mm_account">
                                     <a class="dropmenu" href="#">
                                         <i class="fa fa-book"></i>
                                         <span class="text"> <?= lang('manage_accounts') ?></span>
@@ -880,7 +880,7 @@
                                                 <i class="fa fa-list"></i><span class="text"> <?= lang('account_payable_list'); ?></span>
                                             </a>
                                         </li>
-										<li id="account_list_ap_aging">
+                                										<li id="account_list_ap_aging">
                                             <a class="submenu" href="<?= site_url('account/list_ap_aging'); ?>">
                                                 <i class="fa fa-list"></i><span class="text"> <?= lang('list_ap_aging'); ?></span>
                                             </a>
@@ -905,47 +905,45 @@
                                                 <i class="fa fa-plus-circle"></i><span class="text"> <?= lang('add_ac_head'); ?></span>
                                             </a>
                                         </li>
-                                        <!--
-										<li id="account_budget">
+                                        <li id="account_budget">
                                             <a class="submenu" href="<? /*= site_url('#'); */ ?>" data-toggle="modal" data-target="#myModal">
                                                 <i class="fa fa-plus-circle"></i><span class="text"> <? /*= lang('list_budget'); */ ?></span>
                                             </a>
                                         </li>
-										<li id="account_budget_add">
+                                										<li id="account_budget_add">
                                             <a class="submenu" href="<? /*= site_url('#'); */ ?>" data-toggle="modal" data-target="#myModal">
                                                 <i class="fa fa-plus-circle"></i><span class="text"> <? /*= lang('add_budget'); */ ?></span>
                                             </a>
                                         </li>
-										<li id="account_deposits">
+                                										<li id="account_deposits">
                                             <a class="submenu" href="<? /*= site_url('account/deposits'); */ ?>">
                                                 <i class="fa fa-list"></i><span class="text"> <? /*= lang('list_customer_deposit'); */ ?></span>
                                             </a>
                                         </li>
-										<li id="account_deposits">
+                                										<li id="account_deposits">
                                             <a class="submenu" href="<? /*= site_url('quotes/add_deposit'); */ ?>" data-toggle="modal" data-target="#myModal" id="add">
                                                 <i class="fa fa-plus-circle"></i><span class="text"> <? /*= lang('add_customer_deposit'); */ ?></span>
                                             </a>
                                         </li> 
-										<li id="suppliers_deposits">
+                                										<li id="suppliers_deposits">
                                             <a class="submenu" href="<? /*= site_url('suppliers/deposits'); */ ?>">
                                                 <i class="fa fa-list"></i><span class="text"> <? /*= lang('list_supplier_deposit'); */ ?></span>
                                             </a>
                                         </li>
-										<li id="suppliers_add_deposits">
+                                										<li id="suppliers_add_deposits">
                                             <a class="submenu" href="<? /*= site_url('suppliers/add_deposit'); */ ?>" data-toggle="modal" data-target="#myModal" id="add">
                                                 <i class="fa fa-plus-circle"></i><span class="text"> <? /*= lang('add_supplier_deposit'); */ ?></span>
                                             </a>
                                         </li>
-                                        -->
-										<?php if ($Owner) { ?>
-										<li id="account_settings">
-											<a href="<?= site_url('account/settings') ?>">
-												<i class="fa fa-cog"></i><span class="text"> <?= lang('account_settings'); ?></span>
-											</a>
+                                										<?php if ($Owner) { ?>
+                                										<li id="account_settings">
+                                											<a href="<?= site_url('account/settings') ?>">
+                                												<i class="fa fa-cog"></i><span class="text"> <?= lang('account_settings'); ?></span>
+                                											</a>
                                         </li> 
-										<?php }?>
+                                										<?php } ?>
                                     </ul> 
-                                </li>
+                                </li> -->
 
 								<!--<li class="mm_taxes">
                                     <a class="dropmenu" href="#">
@@ -1659,32 +1657,32 @@
 														<span class="chevron closed"></span>
 													</a>
 													<ul>
-														<li id="reports_ledger">
-															<a href="<?= site_url('reports/ledger') ?>">
-																<i class="fa fa-book"></i><span class="text"> <?= lang('ledger'); ?></span>
-															</a>
-														</li>
-														<li id="reports_trial_balance">
-															<a href="<?= site_url('reports/trial_balance') ?>">
-																<i class="fa fa-bars"></i><span class="text"> <?= lang('trial_balance'); ?></span>
-															</a>
-														</li>
-														<li id="reports_balance_sheet">
-															<a href="<?= site_url('reports/balance_sheet') ?>">
-																<i class="fa fa-balance-scale"></i><span class="text"> <?= lang('balance_sheet'); ?></span>
-															</a>
-														</li>
-														<li id="reports_balance_sheet_details">
-															<a href="<?= site_url('reports/balance_sheet_details') ?>">
-																<i class="fa fa-balance-scale"></i><span class="text"> <?= lang('balance_sheet_details'); ?></span>
-															</a>
-														</li>																
+                                                        <!-- <li id="reports_ledger">
+																														<a href="<?= site_url('reports/ledger') ?>">
+																															<i class="fa fa-book"></i><span class="text"> <?= lang('ledger'); ?></span>
+																														</a>
+																													</li>
+																													<li id="reports_trial_balance">
+																														<a href="<?= site_url('reports/trial_balance') ?>">
+																															<i class="fa fa-bars"></i><span class="text"> <?= lang('trial_balance'); ?></span>
+																														</a>
+																													</li>
+																													<li id="reports_balance_sheet">
+																														<a href="<?= site_url('reports/balance_sheet') ?>">
+																															<i class="fa fa-balance-scale"></i><span class="text"> <?= lang('balance_sheet'); ?></span>
+																														</a>
+																													</li>
+																													<li id="reports_balance_sheet_details">
+																														<a href="<?= site_url('reports/balance_sheet_details') ?>">
+																															<i class="fa fa-balance-scale"></i><span class="text"> <?= lang('balance_sheet_details'); ?></span>
+																														</a>
+																													</li>	 -->															
 														<li id="reports_income_statement">
 															<a href="<?= site_url('reports/income_statement') ?>">
 																<i class="fa fa-money"></i><span class="text"> <?= lang('income_statement'); ?></span>
 															</a>
-														</li>														
-														<li id="reports_income_statement_detail">
+														</li>
+                                                        <!-- <li id="reports_income_statement_detail">
 															<a href="<?= site_url('reports/income_statement_detail') ?>">
 																<i class="fa fa-money"></i><span class="text"> <?= lang('income_statement_detail'); ?></span>
 															</a>
@@ -1693,17 +1691,17 @@
 															<a href="<?= site_url('reports/income_statement_by_customer') ?>">
 																<i class="fa fa-money"></i><span class="text"> <?= lang('income_statement_by_customer'); ?></span>
 															</a>
-														</li>
+														</li> -->
                                                         <!--<li id="reports_income_by_project">
 															<a href="<?= site_url('reports/income_statement_by_project')?>">
 																<i class="fa fa-money"></i><span class="text">​ <?= lang('income_statement_by_project');?></span>
 															</a>
 														</li>-->
-														<li id="reports_cash_book_report" <?=($this->uri->segment(2) === 'cash_books' ? 'class="active"' : '')?> >
+                                                        <!-- <li id="reports_cash_book_report" <?= ($this->uri->segment(2) === 'cash_books' ? 'class="active"' : '') ?> >
 															<a href="<?= site_url('reports/cash_books') ?>">
 																<i class="fa fa-money"></i><span class="text"> <?= lang('cash_book'); ?></span>
 															</a>
-														</li>
+														</li> -->
 													</ul>
 												</li>
 												
@@ -2000,8 +1998,8 @@
 									</ul>
 								</li>
 							<?php } ?>
-											
-							<?php if ($GP['quotes-index']) { ?>
+
+                                    <!-- <?php if ($GP['quotes-index']) { ?>
 								<li class="mm_quotes">
 									<a class="dropmenu" href="#">
 										<i class="fa fa-heart-o"></i>
@@ -2024,7 +2022,7 @@
 										<?php } ?>
 									</ul>
 								</li>
-							<?php } ?>
+							<?php } ?> -->
 
 							<?php if ($GP['purchases-index'] || $GP['purchases_order-index'] || $GP['purchase_request-index'] || $GP['purchases-expenses'] || $GP['purchases-return_list'] || $GP['purchases-return_list'] || $GP['purchases-supplier_balance']) { ?>
 								<li class="mm_purchases mm_purchases_request">
@@ -2034,7 +2032,7 @@
 										</span> <span class="chevron closed"></span>
 									</a>
 									<ul>
-										<?php if ($GP['purchase_request-index']) { ?>
+                                        <!-- <?php if ($GP['purchase_request-index']) { ?>
 										<li id="purchases_request_index">
 											<a class="submenu" href="<?= site_url('purchases_request'); ?>">
 												<i class="fa fa-star"></i>
@@ -2049,7 +2047,7 @@
 													<span class="text"> <?= lang('add_purchase_request'); ?></span>
 												</a>
 											</li>
-										<?php } ?>
+										<?php } ?> -->
 										<?php if ($GP['purchases_order-index']){ ?>
 										<li id="purchases_purchase_order">
 											<a class="submenu" href="<?= site_url('purchases/purchase_order'); ?>">
@@ -2184,8 +2182,8 @@
 								</li>
 							<?php } ?>
 																				
-							<?php if ($GP['accounts-index'] || $GP['account-list_receivable'] || $GP['account-list_ar_aging'] || $GP['account-ar_by_customer'] || $GP['account-bill_receipt'] || $GP['account-list_payable'] || $GP['account-list_ap_aging'] || $GP['account-ap_by_supplier'] || $GP['account-bill_payable'] || $GP['account-list_ac_head'] || $GP['account-list_customer_deposit'] || $GP['account-list_supplier_deposit'] || $GP['account_setting']) { ?>											
-								<li class="mm_account">
+							<?php if ($GP['accounts-index'] || $GP['account-list_receivable'] || $GP['account-list_ar_aging'] || $GP['account-ar_by_customer'] || $GP['account-bill_receipt'] || $GP['account-list_payable'] || $GP['account-list_ap_aging'] || $GP['account-ap_by_supplier'] || $GP['account-bill_payable'] || $GP['account-list_ac_head'] || $GP['account-list_customer_deposit'] || $GP['account-list_supplier_deposit'] || $GP['account_setting']) { ?>
+                                        <!-- <li class="mm_account">
 									<a class="dropmenu" href="#">
 										<i class="fa fa-book"></i>
 										<span class="text"> <?= lang('manage_accounts') ?></span>
@@ -2280,7 +2278,7 @@
 											</li>
 										<?php } ?>
 										
-										<!-- <?php if ($GP['account-list_customer_deposit']) { ?>
+										<?php if ($GP['account-list_customer_deposit']) { ?>
 											<li id="account_deposits">
 												<a class="submenu" href="<?= site_url('account/deposits'); ?>">
 													<i class="fa fa-list"></i><span class="text"> <?= lang('list_customer_deposit'); ?></span>
@@ -2307,7 +2305,7 @@
 													<i class="fa fa-plus-circle"></i><span class="text"> <?= lang('add_supplier_deposit'); ?></span>
 												</a>
 											</li>
-										<?php } ?> -->
+										<?php } ?>
 										<?php if ($GP['account_setting']) { ?>
 											<li id="account_settings">
 												<a href="<?= site_url('account/settings') ?>">
@@ -2317,7 +2315,7 @@
 										<?php } ?>
 										
 									</ul>
-								</li>
+								</li> -->
 							<?php } ?>
 												<!--
 												<li class="mm_taxes">
@@ -2932,7 +2930,7 @@
 												<span class="chevron closed"></span>
 											</a>
 											<ul>
-												<?php if($GP['account_report-ledger']){ ?>
+                                                <!-- <?php if ($GP['account_report-ledger']) { ?>
 												<li id="reports_ledger">
 													<a href="<?= site_url('reports/ledger') ?>">
 														<i class="fa fa-book"></i><span class="text"> <?= lang('ledger'); ?></span>
@@ -2959,7 +2957,7 @@
 														<i class="fa fa-balance-scale"></i><span class="text"> <?= lang('balance_sheet_details'); ?></span>
 													</a>
 												</li>
-												<?php } ?>
+												<?php } ?> -->
 												<?php if($GP['account_report-income_statement']){ ?>
 												<li id="reports_income_statement">
 													<a href="<?= site_url('reports/income_statement') ?>">
@@ -2967,7 +2965,7 @@
 													</a>
 												</li>
 												<?php } ?>
-												<?php if($GP['account_report-income_statement_detail']){ ?>
+                                                <!-- <?php if ($GP['account_report-income_statement_detail']) { ?>
 												<li id="reports_income_statement_detail">
 													<a href="<?= site_url('reports/income_statement_detail') ?>">
 														<i class="fa fa-money"></i><span class="text"> <?= lang('income_statement_detail'); ?></span>
@@ -2980,7 +2978,7 @@
 														<i class="fa fa-money"></i><span class="text"> <?= lang('cash_book'); ?></span>
 													</a>
 												</li>
-												<?php } ?>
+												<?php } ?> -->
 											</ul>
 											
 										</li>

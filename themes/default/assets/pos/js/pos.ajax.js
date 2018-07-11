@@ -639,13 +639,16 @@ $(document).ready(function () {
 
                 if (today > this.expiry_date && coupon == this.code) {
                     bootbox.alert('This coupon  ' + coupon + '  is expired!');
+                    $('#editItem').attr('disabled', true);
                     return false;
                 } else if (this.code == coupon && this.sale_id != null) {
                     bootbox.alert('This coupon  ' + coupon + '  is already used!');
+                    $('#editItem').attr('disabled', true);
                     return false;
                 } else {
                     var valid_coupon = coupon;
                     $('#valid_coupon').val(valid_coupon);
+                    $('#editItem').attr('disabled', false);
                 }
             });
         });
@@ -761,7 +764,8 @@ $(document).ready(function () {
 		var piece  = $("#piece").val()-0;
 		var wpiece = $("#wpiece").val()-0;
 		var img_pnote = $('.images').html();
-		positems[item_id].row.img_pnote = img_pnote ? img_pnote : null;
+
+        positems[item_id].row.img_pnote = img_pnote ? img_pnote : null;
 		positems[item_id].row.package_id = radio_package_id;
 		positems[item_id].row.piece = piece;
 		positems[item_id].row.wpiece = wpiece;

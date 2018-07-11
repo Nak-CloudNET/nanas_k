@@ -81,7 +81,7 @@ echo form_open('sales/print_preview_coupon', 'id="action-form"');
                         <li>
                             <a href="<?php echo site_url('sales/print_preview_coupon'); ?>" data-toggle="modal"
                                data-target="#myModal">
-                                <i class="fa fa-plus"></i> <?= lang('print_preview_coupon') ?>
+                                <i class="fa fa-print"></i> <?= lang('print_preview_coupon') ?>
                             </a>
                         </li>
                     </ul>

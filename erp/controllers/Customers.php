@@ -692,7 +692,7 @@ class Customers extends MY_Controller
     function getCustomer($id = NULL)
     {
 		$row = $this->companies_model->getCompanyByID($id);
-        echo json_encode(array(array('id' => $row->id, 'text' => ($row->company == '' ? $row->code . '-' . $row->name : $row->code . ' - ' . $row->company), 'plate_number' => $row->plate_number)));
+        echo json_encode(array(array('id' => $row->id, 'text' => ($row->company == '' ? $row->code . '-' . $row->name : $row->code . ' - ' . $row->company), 'plate_number' => $row->plate_number, 'card_amount' => $row->card_amount)));
     }
 
     function get_award_points($id = NULL)

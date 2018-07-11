@@ -13,6 +13,7 @@ $(document).ready(function (e) {
 			success: function(data){
 				$('#credit_limit').val(data.credit_limited);
 				$('#cust_balance').val(data.balance);
+                $('#card_amount').val(data.card_amount);
 				
 				__setItem('credit_limit', data.credit_limited);
 				__setItem('cust_balance', data.balance);
@@ -34,6 +35,7 @@ $(document).ready(function (e) {
                     url: site.base_url+"customers/getCustomer/" + $(element).val(),
                     dataType: "json",
                     success: function (data) {
+                        $('#card_amount').val(data[0].card_amount);
                         callback(data[0]);
                     }
                 });
@@ -2576,8 +2578,14 @@ function loadItems() {
 			}
 			$('#slcustomer').select2("readonly", true);
 			$('#slwarehouse').select2("readonly", true);
-			
-		}
+
+        }
+        var card_amount = $('#card_amount').val();
+        if (gtotal > card_amount) {
+            $('#before_sub').attr('disabled', true);
+        } else {
+            $('#before_sub').attr('disabled', false);
+        }
 		//audio_success.play();
 	}
 }

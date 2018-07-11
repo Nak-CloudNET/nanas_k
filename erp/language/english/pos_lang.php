@@ -380,6 +380,7 @@ $lang['plate_no'] = "Plate No.";
 $lang['member'] = "Member";
 $lang['r_value'] = "R. Value";
 $lang['coupon_qrcode'] = "Coupon QR-Code";
+$lang['plate_number'] = "Plate Number";
 
 
 // Please help tidy the code :-)

@@ -78,7 +78,8 @@ class Pos extends MY_Controller
 		$this->data['table'] = $warehouse_id;
 		$this->data['warehouse_id'] = $warehouse_id;
 		$this->load->view('default/views/pos/view_list', $this->data);
-	} 
+    }
+
     function getSales($warehouse_id = NULL)
     {
         $this->erp->checkPermissions('index');
@@ -174,45 +175,53 @@ class Pos extends MY_Controller
         $this->load->library('datatables');
 		
 		$exchange_rate = $this->pos_model->getExchange_rate();
-		
-        if ($warehouse_id) {		
+
+        if ($warehouse_id) {
 			$this->datatables
-                ->select($this->db->dbprefix('sales').".id as id, 
-				".$this->db->dbprefix('sales').".date,
-				".$this->db->dbprefix('payments').".date as pdate,
-				".$this->db->dbprefix('sales').".reference_no, biller.company, ".$this->db->dbprefix('sales').".customer, 
-										sale_status, ".$this->db->dbprefix('sales').".grand_total,  
-										COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-										COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
-										COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
-										COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-										(" . $this->db->dbprefix('sales') . ".grand_total - COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
-										sales.payment_status")
+                ->select($this->db->dbprefix('sales') . ".id as id,
+                    sales.date,
+                    payments.date as pdate,
+                    companies.name as customer,
+                    CONCAT_WS('<br />', erp_companies.plate_number, erp_companies.plate_number_2, erp_companies.plate_number_3, erp_companies.plate_number_4, erp_companies.plate_number_5) as plate_number,
+                    CONCAT_WS('_', erp_gift_cards.card_no, erp_sales.customer_id) as card_no,
+                    biller.company, " . $this->db->dbprefix('sales') . ".customer, 
+					sale_status, " . $this->db->dbprefix('sales') . ".grand_total,  
+					COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
+					COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+					COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
+					COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
+					(" . $this->db->dbprefix('sales') . ".grand_total - COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
+					sales.payment_status")
                 ->from('sales')
                 ->join('companies', 'companies.id = sales.customer_id', 'left')
 				->join('companies as erp_biller', 'biller.id = sales.biller_id', 'inner')
 				->join('payments', 'payments.sale_id=sales.id', 'left')
+                ->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left')
                 ->where_in('sales.warehouse_id', $warehouse_id)
                 ->where_in('erp_sales.biller_id', JSON_decode($this->session->userdata('biller_id')))
                 ->group_by('sales.id');
         } else {
             $this->datatables
-                ->select($this->db->dbprefix('sales').".id as id, 
-				".$this->db->dbprefix('sales').".date,
-				".$this->db->dbprefix('payments').".date as pdate,
-				".$this->db->dbprefix('sales').".reference_no, biller.company, ".$this->db->dbprefix('sales').".customer, 
-										sale_status, ".$this->db->dbprefix('sales').".grand_total,  
-										COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
-										COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
-										COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
-										COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
-										(" . $this->db->dbprefix('sales') . ".grand_total - COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
-										sales.payment_status")
+                ->select($this->db->dbprefix('sales') . ".id as id,
+                    sales.date,
+                    payments.date as pdate,
+                    companies.name as customer,
+                    CONCAT_WS('<br />', erp_companies.plate_number, erp_companies.plate_number_2, erp_companies.plate_number_3, erp_companies.plate_number_4, erp_companies.plate_number_5) as plate_number,
+                    CONCAT_WS('_', erp_gift_cards.card_no, erp_sales.customer_id) as card_no,
+                    biller.company, 
+					sale_status, " . $this->db->dbprefix('sales') . ".grand_total,  
+					COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
+					COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
+					COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
+					COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, 
+					(" . $this->db->dbprefix('sales') . ".grand_total - COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, 
+					sales.payment_status")
                 ->from('sales')
 				->join('payments', 'payments.sale_id=sales.id', 'left')
 				->join('erp_return_sales', 'erp_return_sales.sale_id = sales.id', 'left')
                 ->join('companies', 'companies.id=sales.customer_id', 'left')
 				->join('companies as erp_biller', 'biller.id = sales.biller_id', 'inner')
+                ->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left')
                 ->group_by('sales.id');
         }
 		
@@ -2086,10 +2095,9 @@ class Pos extends MY_Controller
         $this->erp->checkPermissions('index');
         if ($this->input->get('category_id')) {
             $category_id    = $this->input->get('category_id');
-        }
-        /*else {
+        } else {
             $category_id    = $this->pos_settings->default_category;
-        }*/
+        }
         if ($this->input->get('subcategory_id')) {
             $subcategory_id = $this->input->get('subcategory_id');
         } else {

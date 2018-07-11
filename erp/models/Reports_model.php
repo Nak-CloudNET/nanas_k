@@ -6285,7 +6285,7 @@ ORDER BY
         return FALSE;
     }
 
-    public function getAllSalemanItemsData($sale_id)
+    public function getAllSalemanItemsData($sale_id, $category = NULL)
     {
         $this->db->select('
         	sale_items.*,
@@ -6298,12 +6298,40 @@ ORDER BY
             ->join('erp_units', 'products.unit = erp_units.id', 'LEFT')
             ->order_by('quantity', 'DESC');
 
+        if ($category) {
+            $this->db->where('erp_products.category_id', $category);
+        }
+
         $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
             }
             return $data;
+        }
+        return FALSE;
+    }
+
+    public function getAllSalemanItemsDataOptional($sale_id, $category = NULL)
+    {
+        $this->db->select('
+        	sale_items.*,
+        	erp_sales.customer,
+        	erp_sales.reference_no,
+        	erp_units.name as unit')
+            ->join('erp_sales', 'erp_sales.id=erp_sale_items.sale_id', 'LEFT')
+            ->join('erp_users', 'erp_users.id=erp_sales.created_by', 'LEFT')
+            ->join('erp_products', 'sale_items.product_id = erp_products.id', 'LEFT')
+            ->join('erp_units', 'products.unit = erp_units.id', 'LEFT')
+            ->order_by('quantity', 'DESC');
+
+        if ($category) {
+            $this->db->where('erp_products.category_id', $category);
+        }
+
+        $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
+        if ($q->num_rows() > 0) {
+            return $q->result();
         }
         return FALSE;
     }
@@ -6364,7 +6392,7 @@ ORDER BY
         return FALSE;
     }
 
-    public function getAllSalemanItemsDataForExport($sale_id)
+    public function getAllSalemanItemsDataForExport($sale_id, $category = null)
     {
         $this->db->select('
         	sale_items.*,
@@ -6377,12 +6405,40 @@ ORDER BY
             ->join('erp_units', 'products.unit = erp_units.id', 'LEFT')
             ->order_by('quantity', 'DESC');
 
+        if ($category) {
+            $this->db->where('products.category_id', $category);
+        }
+
         $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
             }
             return $data;
+        }
+        return FALSE;
+    }
+
+    public function getAllSalemanItemsDataOptionalForExport($sale_id, $category = NULL)
+    {
+        $this->db->select('
+        	sale_items.*,
+        	erp_sales.customer,
+        	erp_sales.reference_no,
+        	erp_units.name as unit')
+            ->join('erp_sales', 'erp_sales.id=erp_sale_items.sale_id', 'LEFT')
+            ->join('erp_users', 'erp_users.id=erp_sales.created_by', 'LEFT')
+            ->join('erp_products', 'sale_items.product_id = erp_products.id', 'LEFT')
+            ->join('erp_units', 'products.unit = erp_units.id', 'LEFT')
+            ->order_by('quantity', 'DESC');
+
+        if ($category) {
+            $this->db->where('erp_products.category_id', $category);
+        }
+
+        $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id));
+        if ($q->num_rows() > 0) {
+            return $q->result();
         }
         return FALSE;
     }

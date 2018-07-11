@@ -41,7 +41,9 @@
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
+
             'sAjaxSource': '<?= site_url('pos/getSales'. ($warehouse_id ? '/' . $warehouse_id : '')).'/?v=1'.$v?>',
+
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?= $this->security->get_csrf_token_name() ?>",
@@ -68,33 +70,34 @@
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
-            }, {"mRender": fld}, {"mRender": fld}, null, null, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
+            }, {"mRender": fld}, {"mRender": fld}, null, null, {"mRender": card_no}, null, {"mRender": row_status}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": currencyFormat}, {"mRender": row_status}, {"bSortable": false}],
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0, paid = 0, balance = 0, tReturn = 0, tDeposit = 0, tDiscount = 0;
                 for (var i = 0; i < aaData.length; i++) {
-                    gtotal += parseFloat(aaData[aiDisplay[i]][7]);
-                    tReturn += parseFloat(aaData[aiDisplay[i]][8]);
-                    paid += parseFloat(aaData[aiDisplay[i]][9]);
-                    tDeposit += parseFloat(aaData[aiDisplay[i]][10]);
-                    tDiscount += parseFloat(aaData[aiDisplay[i]][11]);
-                    balance += parseFloat(aaData[aiDisplay[i]][12]);
+                    gtotal += parseFloat(aaData[aiDisplay[i]][8]);
+                    tReturn += parseFloat(aaData[aiDisplay[i]][9]);
+                    paid += parseFloat(aaData[aiDisplay[i]][10]);
+                    tDeposit += parseFloat(aaData[aiDisplay[i]][11]);
+                    tDiscount += parseFloat(aaData[aiDisplay[i]][12]);
+                    balance += parseFloat(aaData[aiDisplay[i]][13]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[7].innerHTML = currencyFormat(parseFloat(gtotal));
-                nCells[8].innerHTML = currencyFormat(parseFloat(tReturn));
-                nCells[9].innerHTML = currencyFormat(parseFloat(paid));
-                nCells[10].innerHTML = currencyFormat(parseFloat(tDeposit));
-                nCells[11].innerHTML = currencyFormat(parseFloat(tDiscount));
-                nCells[12].innerHTML = currencyFormat(parseFloat(balance));
+                nCells[8].innerHTML = currencyFormat(parseFloat(gtotal));
+                nCells[9].innerHTML = currencyFormat(parseFloat(tReturn));
+                nCells[10].innerHTML = currencyFormat(parseFloat(paid));
+                nCells[11].innerHTML = currencyFormat(parseFloat(tDeposit));
+                nCells[12].innerHTML = currencyFormat(parseFloat(tDiscount));
+                nCells[13].innerHTML = currencyFormat(parseFloat(balance));
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
             {column_number: 2, filter_default_label: "[<?=lang('last_payments_date');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('reference_no');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('project');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text"},
-            {column_number: 6, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text"},
-            {column_number: 13, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
+            {column_number: 3, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('card_no');?>]", filter_type: "text"},
+            {column_number: 6, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text"},
+            {column_number: 7, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text"},
+            {column_number: 14, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
         ], "footer");
 
         $(document).on('click', '.email_receipt', function () {
@@ -105,16 +108,25 @@
                 $.ajax({
                     type: "post",
                     url: "<?= site_url('pos/email_receipt') ?>/" + sid,
-                    data: { <?= $this->security->get_csrf_token_name(); ?>: "<?= $this->security->get_csrf_hash(); ?>", email: email, id: sid },
-                    dataType: "json",
-                        success: function (data) {
+                    data: {; <?= $this->security->get_csrf_token_name(); ?>:
+                "<?= $this->security->get_csrf_hash(); ?>", email;
+            :
+                email, id;
+            :
+                sid
+            },
+                "json",
+                    success;
+            :
+
+                function (data) {
                         bootbox.alert(data.msg);
                     },
                     error: function () {
                         bootbox.alert('<?= lang('ajax_request_failed'); ?>');
                         return false;
                     }
-                });
+            })
             }
         });
     });
@@ -171,7 +183,7 @@
         <?php } else { ?>
             <h2 class="blue">
                 <i class="fa-fw fa fa-barcode"></i>
-                <?= lang('sales') . ' (' . lang('all_warehouses') . ')'; ?>
+                <?= lang('pos_sales') . ' (' . lang('all_warehouses') . ')'; ?>
             </h2>
         <?php } ?>
 		<div class="box-icon">
@@ -245,7 +257,7 @@
     </div>
     <?= form_close()?>
 
-    <div class="box-content">
+    <div class="box-content" style="overflow-x: scroll;">
         <div class="row">
             <div class="col-lg-12">
                 <p class="introtext"><?= lang('list_results'); ?></p>
@@ -373,11 +385,11 @@
                                 <input class="checkbox checkft" type="checkbox" name="check"/>
                             </th>
                             <th><?= lang("date"); ?></th>
-                            <!--<th><?= lang("suspend"); ?></th>-->
 							<th><?= lang("last_payments_date"); ?></th>
-                            <th><?= lang("reference_no"); ?></th>
-                            <th><?= lang("biller"); ?></th>
                             <th><?= lang("customer"); ?></th>
+                            <th><?= lang("plate_number"); ?></th>
+                            <th><?= lang("card_no"); ?></th>
+                            <th><?= lang("biller"); ?></th>
 							<th><?= lang("sale_status"); ?></th>
                             <th><?= lang("grand_total"); ?></th>
                             <th><?= lang("returned"); ?></th>
@@ -391,7 +403,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="10" class="dataTables_empty"><?= lang("loading_data"); ?></td>
+                            <td colspan="11" class="dataTables_empty"><?= lang("loading_data"); ?></td>
                         </tr>
                         </tbody>
                         <tfoot class="dtFilter">
@@ -399,6 +411,7 @@
                             <th style="min-width:30px; width: 30px; text-align: center;">
                                 <input class="checkbox checkft" type="checkbox" name="check"/>
                             </th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

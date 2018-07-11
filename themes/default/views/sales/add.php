@@ -548,7 +548,7 @@
 									<?php if($setting->credit_limit == 1) {?>
 										<input type="hidden" id="credit_limit"/>
 										<input type="hidden" id="cust_balance"/>
-										<input type="hidden" id="hide_grand"/>
+                                        <input type="hidden" id="hide_grand"/>
 									<?php }?>
                                     <?php if ($Owner || $Admin || !$this->session->userdata('warehouse_id')) { ?>
                                         <div class="col-md-4">
@@ -1253,6 +1253,7 @@
                     <input type="hidden" id="old_qty" value=""/>
                     <input type="hidden" id="old_price" value=""/>
                     <input type="hidden" id="row_id" value=""/>
+                    <input type="hidden" id="card_amount" value=""/>
                 </form>
             </div>
             <div class="modal-footer">
