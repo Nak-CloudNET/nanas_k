@@ -2007,7 +2007,7 @@ class Sales_model extends CI_Model
                 }
 
             }
-			
+
 			foreach($packages as $package){
 				if ($package['product_type'] == 'combo') {
 					$combo = $this->site->getProductComboItems($package['product_id']);
