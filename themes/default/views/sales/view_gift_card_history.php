@@ -25,7 +25,6 @@
                     $balance = 0;
                     foreach ($gift_cards as $gift_card) {
                         $balance = $gift_card->balance;
-                        $packages = $this->sales_model->getPackagesByGiftCardID($gift_card->gift_card_id, $gift_card->sale_id);
                         $combo_items = $this->sales_model->getComboItemsByProductCode($gift_card->product_code);
 
                         ?>
@@ -36,23 +35,32 @@
                             <td><?= $gift_card->sale_ref ?></td>
                             <td class="text-center"><?= $this->erp->formatMoney($gift_card->amount) ?></td>
                             <td>
-                                <ul style="margin-left: 20px; list-style-type: none">
-                                    <li style="font-size: 16px"><strong><u><?= $gift_card->package_name ?></u></strong>
-                                    </li>
-                                    <?php foreach ($packages as $package) { ?>
-                                        <li style="padding-left: 20px;"
-                                            value="<?= $package->id ?>"><?= $package->item_name ?><br/>
-                                            <span style="padding-left: 20px; font-weight: bold">
-                                                (
-                                                Qty = <?= $this->erp->formatQuantity($package->quantity); ?> |
-                                                Qty used = <?= $this->erp->formatQuantity($package->use_quantity); ?> |
-                                                Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
-                                                )
-                                            </span>
-                                        </li>
-                                    <?php } ?>
-                                </ul>
                                 <?php
+
+                                if ($gift_card->payment_ref && $gift_card->amount > 0) {
+                                    foreach ($gcards as $gcard) {
+                                        $packages = $this->sales_model->getPackagesByCardIDAndSaleID($gcard->package_id, $gcard->sale_id);
+                                        ?>
+                                        <dl style="margin-left: 10px; margin-bottom: 10px">
+                                            <dt style="font-size: 16px">
+                                                <strong><u><?= $gcard->package_name ?></u></strong></dt>
+                                            <?php foreach ($packages as $package) { ?>
+                                                <dd style="padding-left: 20px;" value="<?= $package->id ?>">
+                                                    <?= $package->package_item_name ?><br/>
+                                                    <span style="font-weight: bold">
+                                                    (
+                                                    Qty = <?= $this->erp->formatQuantity($package->quantity); ?> |
+                                                    Qty used = <?= $this->erp->formatQuantity($package->use_quantity); ?>
+                                                        |
+                                                    Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                                                        )
+                                                </span>
+                                                </dd>
+                                            <?php } ?>
+                                        </dl>
+                                    <?php }
+                                }
+
                                 foreach ($combo_items as $combo_item) {
                                     if ($gift_card->product_code == $combo_item->item_code) {
                                         echo '<p>'.$gift_card->product_name.'</p>';

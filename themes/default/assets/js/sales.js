@@ -2582,6 +2582,7 @@ function loadItems() {
         }
         var card_amount = $('#card_amount').val();
         if (gtotal > card_amount) {
+            bootbox.alert('Total amount (' + formatMoney(gtotal) + ') is greater than Card amount (' + formatMoney(card_amount) + ')!');
             $('#before_sub').attr('disabled', true);
         } else {
             $('#before_sub').attr('disabled', false);

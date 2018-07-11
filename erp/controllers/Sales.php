@@ -4414,7 +4414,8 @@ class Sales extends MY_Controller
 
 			$invoice_view = $this->Settings->invoice_view;
 			if($invoice_view == 0){
-                redirect("sales/print_st_invoice/" . $s->row()->id);
+                redirect("sales");
+                //redirect("sales/print_st_invoice/" . $s->row()->id);
 			}
 			else if($invoice_view == 1){
 				redirect("sales/invoice/".$s->row()->id);
@@ -13335,13 +13336,11 @@ class Sales extends MY_Controller
 		
 		$this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		
 		$this->data['card_no'] = $no;
 		$this->data['page_title'] =lang('gift_card');
         $this->data['gift_cards'] = $this->sales_model->getGiftCardLogHistoryByNo($no);
-        //$gift_card = $this->site->getGiftCardByID($no);
-        //$this->data['gift_card'] = $this->site->getGiftCardHistoryByNo($no);
-        //$this->data['customer'] = $this->site->getCompanyByID($gift_card->customer_id);
+        $this->data['gcards'] = $this->sales_model->getAllPackagesByCardNo($no);
+
         $this->load->view($this->theme . 'sales/view_gift_card_history', $this->data);
     }
 	

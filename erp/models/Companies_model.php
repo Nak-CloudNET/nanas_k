@@ -795,7 +795,7 @@ class Companies_model extends CI_Model
         return false;
     }
 
-    public function getAllPackagesByCardNo($customer_id = NULL)
+    public function getAllPackagesByCusID($customer_id = NULL)
     {
         $this->db
             ->select("products.id as package_id, packages.sale_id, products.name as package_name")

@@ -7144,7 +7144,7 @@ public function getRielCurrency(){
         return FALSE;
     }
 
-    public function getGiftCardLogHistoryByNo($card_no, $customer_id = NULL)
+    public function getGiftCardLogHistoryByNo($card_no)
     {
         $this->db
             ->select("
@@ -7172,14 +7172,44 @@ public function getRielCurrency(){
             ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
             ->join('sale_items', 'sales.id = sale_items.sale_id', 'left')
             ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
+            ->where('gift_cards.card_no', $card_no)
             ->group_by('gift_card_logs.id');
 
-        if ($customer_id) {
-            $this->db->where('gift_cards.customer_id', $customer_id);
-        } else {
-            $this->db->where('gift_cards.card_no', $card_no);
-
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
         }
+        return FALSE;
+    }
+
+    public function getAllPackagesByCardNo($card_no)
+    {
+        $this->db
+            ->select("products.id as package_id, packages.sale_id, products.name as package_name")
+            ->from("gift_cards")
+            ->join('packages', 'gift_cards.id = packages.card_id', 'left')
+            ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
+            ->join('products', 'combo_items.product_id = products.id', 'left')
+            ->where('gift_cards.card_no', $card_no)
+            ->group_by('products.id')
+            ->order_by('packages.id', 'asc');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getPackagesByCardIDAndSaleID($package_id, $sale_id)
+    {
+        $this->db
+            ->select("products.name as package_item_name, packages.quantity as qty, packages.use_quantity as qty_used, (erp_packages.quantity - erp_packages.use_quantity) as qty_balance")
+            ->from("packages")
+            ->join('products', 'packages.product_id = products.id', 'left')
+            ->where('packages.combo_id', $package_id)
+            ->where('packages.sale_id', $sale_id)
+            ->group_by('products.id');
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
