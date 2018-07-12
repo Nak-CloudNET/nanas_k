@@ -19625,10 +19625,14 @@ class Reports extends MY_Controller
             erp_sales.customer,
             erp_sales.customer_id,
             erp_sales.created_by,
-            erp_sales.pos
+            erp_sales.pos,
+            erp_companies.plate_number,
+            erp_gift_cards.card_no
             FROM
             `erp_sales`
             INNER JOIN erp_sale_items ON erp_sales.id = erp_sale_items.sale_id
+            LEFT JOIN erp_companies ON erp_sales.customer_id = erp_companies.id
+            LEFT JOIN erp_gift_cards ON erp_sales.customer_id = erp_gift_cards.customer_id
             WHERE erp_sales.opening_ar = 0
             GROUP BY
             erp_sales.id,reference_no";
@@ -19653,10 +19657,14 @@ class Reports extends MY_Controller
             erp_return_sales.customer,
             erp_return_sales.customer_id,
             erp_return_sales.created_by,
-            0 as pos
+            0 as pos,
+            erp_companies.plate_number,
+            erp_gift_cards.card_no
             FROM
             erp_return_sales
             INNER JOIN erp_return_items ON erp_return_sales.id = erp_return_items.return_id
+            LEFT JOIN erp_companies ON erp_return_sales.customer_id = erp_companies.id
+            LEFT JOIN erp_gift_cards ON erp_return_sales.customer_id = erp_gift_cards.customer_id
             GROUP BY
             erp_return_sales.id,reference_no";  
 
@@ -19705,7 +19713,7 @@ class Reports extends MY_Controller
 						LEFT JOIN `erp_product_variants` ON `erp_sale_items`.`option_id` = `erp_product_variants`.`id`
                         WHERE erp_sale_items.return_id={$sale->id} GROUP BY id")->result();
 
-                    $this->excel->getActiveSheet()->SetCellValue('A' . $row,$sale->reference_no.">>".$sale->customer.">>".date('d/M/Y h:i A', strtotime($sale->date)));
+                    $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sale->customer . " >> " . $sale->plate_number . " >> " . $sale->card_no . " >> " . date('d/M/Y h:i A', strtotime($sale->date)));
                     $this->excel->getActiveSheet()->mergeCells('A'.$row.':L'.$row);
                     $this->excel->getActiveSheet()->getStyle('A'. $row.':L'.$row)->getFont()->setBold(true);
                     $row++;
@@ -23372,14 +23380,6 @@ class Reports extends MY_Controller
 		$post = $this->input->post();
 		$datt = $this->reports_model->getLastDate("sales", "date");
         $str    = '';
-
-		if ($post['reference_no']) {
-            $reference_no 				= $post['reference_no'];
-            $this->data['reference_no'] = $post['reference_no'];
-			$str .="&reference_no=".$reference_no;
-        }else{
-			$reference_no = null;
-        }
 		
 		if ($post['customer']) {
             $customer 				= $post['customer'];
@@ -23387,7 +23387,23 @@ class Reports extends MY_Controller
 			$str .="&customer=".$customer;
         }else{
 			$customer = null;
-        } 
+        }
+
+        if ($post['plate_number']) {
+            $plate_number = $post['plate_number'];
+            $this->data['plate_number'] = $post['plate_number'];
+            $str .= "&plate_number=" . $plate_number;
+        } else {
+            $plate_number = null;
+        }
+
+        if ($post['card_no']) {
+            $card_no = $post['card_no'];
+            $this->data['card_no'] = $post['card_no'];
+            $str .= "&card_no=" . $card_no;
+        } else {
+            $card_no = null;
+        }
 		
 		if ($post['biller']) {
             $biller 				= $post['biller'];
@@ -23413,7 +23429,6 @@ class Reports extends MY_Controller
             $start_date = date('d/m/Y');
             $this->data['start_date'] = $start_date;
         }
-//        $this->erp->print_arrays($start_date);
 		
 		if ($post['end_date']) {
             $end_date 				= $post['end_date'];
@@ -23475,10 +23490,10 @@ class Reports extends MY_Controller
 		}else{
 			$this->data['billers'] = $this->site->getAllCompanies('biller');
 		}
-		
-		if(isset($this->data['reference_no']) && $this->data['reference_no'] !=''){
-			$this->db->where("reference_no", $this->data['reference_no']);
-		}
+
+        /*if(isset($this->data['plate_number']) && $this->data['plate_number'] !=''){
+            $this->db->where("plate_number", $this->data['plate_number']);
+        }*/
 
 		if($customer){
             $this->db->where("customer_id", $customer);
@@ -23565,10 +23580,14 @@ class Reports extends MY_Controller
 					erp_sales.customer,
 					erp_sales.customer_id,
 					erp_sales.created_by,
-					erp_sales.pos
+					erp_sales.pos,
+                    erp_companies.plate_number,
+                    erp_gift_cards.card_no
 				FROM
 					`erp_sales`
-				INNER JOIN erp_sale_items ON erp_sales.id = erp_sale_items.sale_id
+                INNER JOIN erp_sale_items ON erp_sales.id = erp_sale_items.sale_id
+                LEFT JOIN erp_companies ON erp_sales.customer_id = erp_companies.id
+				LEFT JOIN erp_gift_cards ON erp_sales.customer_id = erp_gift_cards.customer_id
 				WHERE erp_sales.opening_ar = 0
 				GROUP BY
 					erp_sales.id,reference_no";
@@ -23593,23 +23612,31 @@ class Reports extends MY_Controller
 					erp_return_sales.customer,
 					erp_return_sales.customer_id,
 					erp_return_sales.created_by,
-					0 as pos
+					0 as pos,
+                    erp_companies.plate_number,
+                    erp_gift_cards.card_no
 				FROM
 					erp_return_sales
 				INNER JOIN erp_return_items ON erp_return_sales.id = erp_return_items.return_id
+                LEFT JOIN erp_companies ON erp_return_sales.customer_id = erp_companies.id
+                LEFT JOIN erp_gift_cards ON erp_return_sales.customer_id = erp_gift_cards.customer_id
 				GROUP BY
 					erp_return_sales.id,reference_no";	
 			
         $sql3 = "";
 		$sqls = "";
-		
-		if($reference_no){
-            $sql3 .= " AND reference_no = '{$this->data['reference_no']}'";
-			$sqls .= " AND reference_no = '{$this->data['reference_no']}'";
-		}
-		if($customer){
+
+        if ($customer) {
             $sql3 .= " AND customer_id = '{$this->data['customer']}'";
-			$sqls .= " AND customer_id = '{$this->data['customer']}'";
+            $sqls .= " AND customer_id = '{$this->data['customer']}'";
+        }
+        if ($plate_number) {
+            $sql3 .= " AND plate_number = '{$this->data['plate_number']}'";
+            $sqls .= " AND plate_number = '{$this->data['plate_number']}'";
+        }
+        if ($card_no) {
+            $sql3 .= " AND card_no = '{$this->data['card_no']}'";
+            $sqls .= " AND card_no = '{$this->data['card_no']}'";
 		}
 		if($biller){
             $sql3 .= " AND biller_id = '{$this->data['biller']}'";

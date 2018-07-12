@@ -1,12 +1,15 @@
 <?php
 
 	$v = "";
-	
-	if ($this->input->post('reference_no')) {
-		$v .= "&reference_no=" . $this->input->post('reference_no');
-	}
-	if ($this->input->post('customer')) {
-		$v .= "&customer=" . $this->input->post('customer');
+
+if ($this->input->post('customer')) {
+    $v .= "&customer=" . $this->input->post('customer');
+}
+if ($this->input->post('plate_number')) {
+    $v .= "&plate_number=" . $this->input->post('plate_number');
+}
+if ($this->input->post('card_no')) {
+    $v .= "&card_no=" . $this->input->post('card_no');
 	}
 	if ($this->input->post('biller')) {
 		$v .= "&biller=" . $this->input->post('biller');
@@ -82,6 +85,12 @@
     });
 </script>
 
+<style>
+    .left span {
+        font-size: 16px;
+    }
+</style>
+
 <?php
     echo form_open('reports/salesDetail_actions', 'id="action-form"');
 ?>
@@ -130,12 +139,6 @@
 
                     <?php echo form_open("reports/sales_detail"); ?>
                     <div class="row">
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="control-label" for="reference_no"><?= lang("reference_no"); ?></label>
-                                <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : ""), 'class="form-control tip" id="reference_no"'); ?>
-                            </div>
-                        </div>
                        <?php if($this->session->userdata('view_right')==0){?>
                         <div class="col-sm-3" style="display:none">
                             <div class="form-group">
@@ -164,10 +167,23 @@
                             </div>
                         </div>    
 					   <?php } ?>
+
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label" for="customer"><?= lang("customer"); ?></label>
                                 <?php echo form_input('customer', (isset($_POST['customer']) ? $_POST['customer'] : ""), 'class="form-control" id="customer" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("customer") . '"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label" for="plate_number"><?= lang("plate_number"); ?></label>
+                                <?php echo form_input('plate_number', (isset($_POST['plate_number']) ? $_POST['plate_number'] : ""), 'class="form-control tip" id="plate_number"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label" for="card_no"><?= lang("card_no"); ?></label>
+                                <?php echo form_input('card_no', (isset($_POST['card_no']) ? $_POST['card_no'] : ""), 'class="form-control tip" id="card_no"'); ?>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -290,9 +306,9 @@
 							$g_total_shipping = 0;
 							$g_total_tax =0;
 							$grand_totals = 0;
-							if(count($sales) > 0){
-								foreach($sales as $key => $sale){
-								//$this->erp->print_arrays( $sale);
+
+                        if (count($sales) > 0) {
+                            foreach ($sales as $key => $sale) {
 								$table_return_items = "erp_return_items"; 
 								$table_sale_items 	= "erp_sale_items";
 								
@@ -355,8 +371,12 @@
 									<td><input type="checkbox" class="checkbox multi-select input-xs" name='val[]' value="<?php echo $sale->id ?>" /></td>
                                     <td colspan="<?= $col; ?>" style="font-size:18px;" class="left">
 										<b style="<?php if($sale->type == 2){ echo "color:red"; } ?>">
-											<?= $sale->reference_no; ?> <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-											<?= $sale->customer ?> <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                            <span class="text-success"><?= $sale->customer ? strtoupper($sale->customer) : 'NO NAME' ?></span>
+                                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                            <span style="color: #f3a811"><?= $sale->plate_number ? $sale->plate_number : 'NO CAR'; ?></span>
+                                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                            <span class="text-danger"><?= $sale->card_no ? $sale->card_no : 'NO CARD'; ?></span>
+                                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
 											<?= date('d/M/Y h:i A',strtotime($sale->date)); ?>
 											
 										</b>

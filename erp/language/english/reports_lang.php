@@ -264,3 +264,5 @@ $lang['invoice_reference']	        = "Invoice Reference";
 $lang['product_value']	            = "Product Value";
 $lang['no_product_grossmargin_report_selected']	   = "No Product Grossmargin Report Selected!";
 $lang['no_product_value_report_selected']	       = "No Product Value Report Selected!";
+$lang['plate_number'] = "Plate number";
+$lang['card_no'] = "Card No";
