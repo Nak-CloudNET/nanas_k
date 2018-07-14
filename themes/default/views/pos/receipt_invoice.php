@@ -230,6 +230,7 @@ if ($modal) {
         <div style="clear:both;"></div>
 
         <?php
+
         $total_disc = 0;
         if (is_array($rows)) {
             foreach ($rows as $d) {
