@@ -1026,7 +1026,23 @@ class Pos_model extends CI_Model
 
     public function getInvoicePosByID($id)
     {
-        $this->db->select('sales.*, users.username,erp_tax_rates.name AS tax,erp_payments.paid_by,erp_users.phone,erp_payments.cheque_no,erp_payments.cc_no,erp_payments.cc_type,erp_warehouses.name AS ware, erp_payments.pos_balance, erp_payments.pos_paid_other_rate,user2.username AS customer_name, erp_gift_cards.balance as reminded_value, erp_companies.award_points, erp_gift_cards.card_no');
+        $this->db->select('sales.*,
+        users.username,
+        erp_tax_rates.name AS tax,
+        erp_payments.paid_by,
+        erp_users.phone,
+        erp_payments.cheque_no,
+        erp_payments.cc_no,
+        erp_payments.cc_type,
+        erp_warehouses.name AS ware,
+        erp_payments.pos_balance,
+        erp_payments.pos_paid_other_rate,
+        user2.username AS customer_name,
+        erp_gift_cards.balance as reminded_value,
+        erp_companies.award_points,
+        erp_gift_cards.card_no,
+        erp_coupon.code as coupon
+        ');
 
         $this->db->join('users','users.id = sales.created_by', 'left');
         $this->db->join('erp_tax_rates','erp_sales.order_tax_id = erp_tax_rates.id', 'left');
@@ -1035,6 +1051,7 @@ class Pos_model extends CI_Model
         $this->db->join('erp_users AS user2','erp_sales.customer_id = user2.id', 'left');
         $this->db->join('erp_gift_cards', 'erp_sales.customer_id = erp_gift_cards.customer_id', 'left');
         $this->db->join('erp_companies', 'erp_sales.customer_id = erp_companies.id', 'left');
+        $this->db->join('erp_coupon', 'erp_sales.id = erp_coupon.sale_id', 'left');
         $this->db->from('sales');
         $this->db->where(array('sales.id' => $id),1);
 
