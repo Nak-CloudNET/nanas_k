@@ -3791,7 +3791,16 @@ ORDER BY
 					)";
 			$gl_trant="COALESCE((SELECT sum(erp_gl_trans.amount) from erp_gl_trans where sectionid=50 AND erp_gl_trans.sale_id=erp_sales.id group by erp_gl_trans.sale_id),0)";
 		$this->db
-				->select("erp_sales.id, date, erp_sales.reference_no,suspend_note ,biller, customer, grand_total, paid, (grand_total-paid) as balance,
+            ->select("
+					erp_sales.id,
+					erp_sales.date,
+					companies.name as customer,
+                    CONCAT_WS('<br>', erp_companies.plate_number, erp_companies.plate_number_2, erp_companies.plate_number_3, erp_companies.plate_number_4, erp_companies.plate_number_5) as plate_number,
+                    gift_cards.card_no,
+					biller,
+					grand_total,
+					paid,
+					(grand_total-paid) as balance,
                     ".$p_cost." AS total_cost,(SELECT SUM(erp_gl_trans.amount) from erp_gl_trans where sectionid=50 AND erp_gl_trans.sale_id =erp_sales.id group by erp_gl_trans.sale_id)as amount,
                     COALESCE (
                         COALESCE (
@@ -3807,6 +3816,7 @@ ORDER BY
 					->join('companies', 'companies.id=sales.customer_id','left')
 					->join('erp_gl_trans','erp_gl_trans.sale_id=erp_sales.id','left')             
 					->join('customer_groups','customer_groups.id=companies.customer_group_id','left')
+            ->join('gift_cards', 'sales.customer_id = gift_cards.customer_id', 'left')
 				->where('erp_sales.id', $id)
 				->group_by('sales.id');
 		$q = $this->db->get();

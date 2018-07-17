@@ -4705,6 +4705,7 @@ class Reports extends MY_Controller
         }
         return false;
     }
+
     function sales_profit($biller_id = NULL,$warehouse_id = NULL)
     {
         $this->erp->checkPermissions('sale_profit',NULL,'sale_report');
@@ -4788,6 +4789,16 @@ class Reports extends MY_Controller
         } else {
             $customer = NULL;
         }
+        if ($this->input->get('plate_number')) {
+            $plate_number = $this->input->get('plate_number');
+        } else {
+            $plate_number = NULL;
+        }
+        if ($this->input->get('card_no')) {
+            $card_no = $this->input->get('card_no');
+        } else {
+            $card_no = NULL;
+        }
         if ($this->input->get('biller')) {
             $biller = $this->input->get('biller');
         } else {
@@ -4802,12 +4813,6 @@ class Reports extends MY_Controller
             $types = $this->input->get('types');
         } else {
             $types = NULL;
-        }
-        if ($this->input->get('reference_no')) {
-            $reference_no = $this->input->get('reference_no');
-            // $this->erp->print_arrays($reference_no);exit();
-        } else {
-            $reference_no = NULL;
         }
 		if($this->input->get("customer_group")){
 		   $customer_group = $this->input->get("customer_group");
@@ -5075,7 +5080,15 @@ class Reports extends MY_Controller
             $this->load->library('datatables');
 
 				$this->datatables
-					->select("erp_sales.id, date, erp_sales.reference_no,suspend_note ,biller, customer, grand_total, paid, (grand_total-paid) as balance,
+                    ->select("erp_sales.id,
+                        sales.date,
+                        companies.name as customer,
+                        CONCAT_WS('<br>', erp_companies.plate_number, erp_companies.plate_number_2, erp_companies.plate_number_3, erp_companies.plate_number_4, erp_companies.plate_number_5) as plate_number,
+                        gift_cards.card_no,
+                        biller,
+                        grand_total,
+                        paid,
+                        (grand_total-paid) as balance,
                     ".$p_cost." AS total_cost,(SELECT SUM(erp_gl_trans.amount) from erp_gl_trans where sectionid=50 AND erp_gl_trans.sale_id =erp_sales.id group by erp_gl_trans.sale_id)as amount,
                     COALESCE (
                         COALESCE (
@@ -5089,8 +5102,10 @@ class Reports extends MY_Controller
 					->join('sale_items', 'sale_items.sale_id=sales.id', 'inner')
 					->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
 					->join('companies', 'companies.id=sales.customer_id','left')
-					->join('erp_gl_trans','erp_gl_trans.sale_id=erp_sales.id','left')             
-					->join('customer_groups','customer_groups.id=companies.customer_group_id','left');
+					->join('erp_gl_trans','erp_gl_trans.sale_id=erp_sales.id','left')
+                    ->join('customer_groups', 'customer_groups.id=companies.customer_group_id', 'left')
+                    ->join('gift_cards', 'sales.customer_id = gift_cards.customer_id', 'left');
+
 				    if(!$this->Owner && !$this->Admin){
 						$warehouse_id = $this->session->userdata('warehouse_id');
                         $biller_ids   = $this->session->userdata('biller_id');
@@ -5123,6 +5138,18 @@ class Reports extends MY_Controller
             if ($customer) {
                 $this->datatables->where('sales.customer_id', $customer);
             }
+            if ($plate_number) {
+                $this->datatables->where("companies.plate_number LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_2 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_3 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_4 LIKE '%" . $plate_number . "%'
+                                      OR  companies.plate_number_5 LIKE '%" . $plate_number . "%'
+                                      ");
+            }
+            if ($card_no) {
+                $this->datatables->where('gift_cards.card_no', $card_no);
+            }
+            
             if($customer_group){
 			   $this->datatables->where('companies.customer_group_id', $customer_group);                
             }
@@ -5131,9 +5158,6 @@ class Reports extends MY_Controller
             }
 			if ($types) {
                 $this->db->where('sales.pos', $types);
-            }
-            if ($reference_no) {
-                $this->datatables->like('sales.reference_no', $reference_no, 'both');
             }
             if ($start_date) {
                 $this->datatables->where('date_format('.$this->db->dbprefix('sales').'.date,"%Y-%m-%d") BETWEEN "' . $start_date . '" and "' . $end_date . '"');
@@ -18998,10 +19022,10 @@ class Reports extends MY_Controller
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('sale_profit_report'));
                     $this->excel->getActiveSheet()->SetCellValue('A1', lang('date'));
-                    $this->excel->getActiveSheet()->SetCellValue('B1', lang('reference_no'));
-					$this->excel->getActiveSheet()->SetCellValue('C1', lang('suspend'));
-                    $this->excel->getActiveSheet()->SetCellValue('D1', lang('biller'));
-					$this->excel->getActiveSheet()->SetCellValue('E1', lang('customer'));
+                    $this->excel->getActiveSheet()->SetCellValue('B1', lang('customer'));
+                    $this->excel->getActiveSheet()->SetCellValue('C1', lang('plate_number'));
+                    $this->excel->getActiveSheet()->SetCellValue('D1', lang('card_no'));
+                    $this->excel->getActiveSheet()->SetCellValue('E1', lang('biller'));
 					$this->excel->getActiveSheet()->SetCellValue('F1', lang('grand_total'));
 					$this->excel->getActiveSheet()->SetCellValue('G1', lang('paid'));
 					$this->excel->getActiveSheet()->SetCellValue('H1', lang('balance'));
@@ -19039,10 +19063,10 @@ class Reports extends MY_Controller
                         $sum_profit += $sc->profit;
 
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $sc->date);
-                        $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->reference_no." ");
-						$this->excel->getActiveSheet()->SetCellValue('C' . $row, $sc->suspend_note);
-                        $this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->biller);
-						$this->excel->getActiveSheet()->SetCellValue('E' . $row, $sc->customer);
+                        $this->excel->getActiveSheet()->SetCellValue('B' . $row, $sc->customer . " ");
+                        $this->excel->getActiveSheet()->SetCellValue('C' . $row, strip_tags($sc->plate_number) . " ");
+                        $this->excel->getActiveSheet()->SetCellValue('D' . $row, $sc->card_no . " ");
+                        $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sc->biller);
                         $this->excel->getActiveSheet()->SetCellValue('F' . $row, $sc->grand_total);
 						$this->excel->getActiveSheet()->SetCellValue('G' . $row, $sc->paid);
 						$this->excel->getActiveSheet()->SetCellValue('H' . $row, $sc->balance);
@@ -19063,9 +19087,9 @@ class Reports extends MY_Controller
                         $row++;
                     }
                     $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
-                    $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-                    $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
-                    $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+                    $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                    $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+                    $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                     $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
                     $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(10);

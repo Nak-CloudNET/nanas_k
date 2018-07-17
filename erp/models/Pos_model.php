@@ -131,7 +131,7 @@ class Pos_model extends CI_Model
                 $this->db->where("products.category_id", $category_id);
             }
             if($sales_service != ""){
-                $this->db->where("products.type <> 'service' ");
+                //$this->db->where("products.type <> 'service' ");
             }
             if ($sales_category != "") {
                 $this->db->where("products.category_id NOT IN (" . $sales_category . ") ");

@@ -19950,7 +19950,7 @@ function invoice_concrete_angkor($id=null)
         }
     }
 
-    function coupon($warehouse_id = NULL)
+    function coupon($pdf = NULL)
     {
 
         $this->erp->checkPermissions('index', null, 'sales');
@@ -19988,6 +19988,7 @@ function invoice_concrete_angkor($id=null)
                 $this->data['warehouse'] = $this->session->userdata('warehouse_id') ? $this->products_model->getUserWarehouses() : NULL;
             }
         }
+
         $this->data['agencies'] = $this->site->getAllUsers();
         $this->data['areas'] = $this->site->getArea();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('coupon')));
@@ -20128,10 +20129,15 @@ function invoice_concrete_angkor($id=null)
         }
     }
 
-    function print_preview_coupon()
+    function print_preview_coupon($pdf = null)
     {
-        $this->data['modal_js'] = $this->site->modal_js();
-        $this->load->view($this->theme . 'sales/print_preview_coupon', $this->data);
+        if ($pdf) {
+            $html = $this->load->view($this->theme . 'sales/print_preview_coupon', $this->data, true);
+            $name = lang("print_preview_coupon") . "_" . date('Y_m_d_H_i_s') . ".pdf";
+            $html = str_replace('<p class="introtext">' . lang("print_preview_coupon") . '</p>', '', $html);
+            $this->erp->generate_pdf($html, $name, null, null, 2, null, 2, 'L');
+        }
+        $this->load->view($this->theme . 'sales/print_preview_coupon');
     }
 
 

@@ -2,11 +2,14 @@
 
 $v = "";
 
-if ($this->input->post('reference_no')) {
-    $v .= "&reference_no=" . $this->input->post('reference_no');
-}
 if ($this->input->post('customer')) {
     $v .= "&customer=" . $this->input->post('customer');
+}
+if ($this->input->post('plate_number')) {
+    $v .= "&plate_number=" . $this->input->post('plate_number');
+}
+if ($this->input->post('card_no')) {
+    $v .= "&card_no=" . $this->input->post('card_no');
 }
 if ($this->input->post('biller')) {
     $v .= "&biller=" . $this->input->post('biller');
@@ -84,10 +87,10 @@ if (isset($biller_id)) {
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
-            {column_number: 2, filter_default_label: "[<?=lang('reference_no');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('suspend');?>]", filter_type: "text", data: []},
-			{column_number: 4, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
+            {column_number: 2, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
+            {column_number: 3, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('card_no');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
             {column_number: 12, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
         ], "footer");
     });
@@ -212,8 +215,21 @@ if (isset($biller_id)) {
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label" for="reference_no"><?= lang("reference_no"); ?></label>
-                                <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : ""), 'class="form-control tip" id="reference_no"'); ?>
+                                <label class="control-label" for="customer"><?= lang("customer"); ?></label>
+                                <?php echo form_input('customer', (isset($_POST['customer']) ? $_POST['customer'] : ""), 'class="form-control" id="customer" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("customer") . '"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="plate_number"><?= lang("plate_number"); ?></label>
+                                <?php echo form_input('plate_number', (isset($_POST['plate_number']) ? $_POST['plate_number'] : ""), 'class="form-control tip" id="plate_number" placeholder="Plate number"'); ?>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="card_no"><?= lang("card_no"); ?></label>
+                                <?php echo form_input('card_no', (isset($_POST['card_no']) ? $_POST['card_no'] : ""), 'class="form-control tip" id="card_no" placeholder="Card no"'); ?>
 
                             </div>
                         </div>
@@ -228,12 +244,6 @@ if (isset($biller_id)) {
                                 }
                                 echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
                                 ?>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="customer"><?= lang("customer"); ?></label>
-                                <?php echo form_input('customer', (isset($_POST['customer']) ? $_POST['customer'] : ""), 'class="form-control" id="customer" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("customer") . '"'); ?>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -312,10 +322,10 @@ if (isset($biller_id)) {
                                 <input class="checkbox checkth" type="checkbox" name="check"/>
                             </th>
                             <th><?= lang("date"); ?></th>
-                            <th><?= lang("reference_no"); ?></th>
-							<th><?= lang("suspend"); ?></th>
-                            <th><?= lang("biller"); ?></th>
                             <th><?= lang("customer"); ?></th>
+                            <th><?= lang("plate_number"); ?></th>
+                            <th><?= lang("card_no"); ?></th>
+                            <th><?= lang("biller"); ?></th>
                             <th><?= lang("grand_total"); ?></th>
                             <th><?= lang("paid"); ?></th>
                             <th><?= lang("balance"); ?></th>
