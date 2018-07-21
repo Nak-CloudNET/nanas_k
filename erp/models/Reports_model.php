@@ -3752,7 +3752,8 @@ ORDER BY
         }
         return false;
     }
-	public function getProfitByID($id){
+
+    public function getProfitByID($id){
 		$p_cost = "COALESCE (
 						(
 							SELECT

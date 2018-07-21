@@ -49,8 +49,8 @@
                                                     <?= $package->package_item_name ?><br/>
                                                     <span style="font-weight: bold">
                                                     (
-                                                    Qty = <?= $this->erp->formatQuantity($package->quantity); ?> |
-                                                    Qty used = <?= $this->erp->formatQuantity($package->use_quantity); ?>
+                                                    Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
+                                                    Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?>
                                                         |
                                                     Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
                                                         )

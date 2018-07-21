@@ -1305,7 +1305,7 @@ if ($q->num_rows() > 0) {
 						$this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
 						$this->db->where('floor', $row->floor);
 						$this->db->where_in('erp_suspended.warehouse_id',$warehouses);
-						$this->db->order_by('name', 'asc');
+                        $this->db->order_by('erp_suspended.id', 'asc');
 						$query = $this->db->get();
 
 						$this->db->select('*');

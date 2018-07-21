@@ -119,7 +119,7 @@ class Pos_model extends CI_Model
         }
         if(!$this->Owner and !$this->Admin){
             if($sales_standard != ""){
-                $this->db->where("products.type <> 'standard' ");
+                //$this->db->where("products.type <> 'standard' ");
             }
             if($sales_combo != ""){
                 $this->db->where("products.type <> 'combo' ");

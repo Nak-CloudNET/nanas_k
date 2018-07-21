@@ -206,7 +206,7 @@ class Pos extends MY_Controller
                     sales.date,
                     payments.date as pdate,
                     companies.name as customer,
-                    CONCAT_WS('<br />', erp_companies.plate_number, erp_companies.plate_number_2, erp_companies.plate_number_3, erp_companies.plate_number_4, erp_companies.plate_number_5) as plate_number,
+                    erp_sales.plate_number,
                     CONCAT_WS('_', erp_gift_cards.card_no, erp_sales.customer_id) as card_no,
                     biller.company, 
 					sale_status, " . $this->db->dbprefix('sales') . ".grand_total,  
