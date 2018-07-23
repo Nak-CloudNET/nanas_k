@@ -751,7 +751,7 @@ if ($modal) {
         <?php
         foreach ($gift_cards as $gift_card) {
             $packages = $this->pos_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
-
+            if ($gift_card->quantity != $gift_card->use_quantity) {
             ?>
             <h4 style="margin-bottom: 5px; margin-top: 20px;"><strong><u><?= $gift_card->package_name ?></u></strong>
             </h4>
@@ -767,7 +767,9 @@ if ($modal) {
                     <?php } ?>
                     )</span>
             <?php } ?>
-        <?php } ?>
+            <?php }
+        }
+        ?>
 
         <div style="width:100%;text-align:left;margin-top:10px;display:none">
             ពិន្ទុចាស់ - Old Point &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <b></b><br/>
