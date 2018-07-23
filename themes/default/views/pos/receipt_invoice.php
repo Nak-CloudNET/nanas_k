@@ -744,11 +744,30 @@ if ($modal) {
                 }
 
             }
-
             ?>
 
         </table>
+        <hr>
+        <?php
+        foreach ($gift_cards as $gift_card) {
+            $packages = $this->pos_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
 
+            ?>
+            <h4 style="margin-bottom: 5px; margin-top: 20px;"><strong><u><?= $gift_card->package_name ?></u></strong>
+            </h4>
+            <?php foreach ($packages as $package) { ?>
+                <p style="margin: 0; padding-left: 20px; font-size: 14px;"><?= $package->package_item_name ?></p>
+                <span style="padding-left: 20px; font-weight: bold">(
+                    <?php if ($package->qty == '500') { ?>
+                        Unlimited
+                    <?php } else { ?>
+                        Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
+                        Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?> |
+                        Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                    <?php } ?>
+                    )</span>
+            <?php } ?>
+        <?php } ?>
 
         <div style="width:100%;text-align:left;margin-top:10px;display:none">
             ពិន្ទុចាស់ - Old Point &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <b></b><br/>
@@ -782,9 +801,9 @@ if ($modal) {
             <tr>
                 <td style="padding-top:10px;padding-left:20px;"><?= nl2br($biller->invoice_footer); ?></td>
             </tr>
-            <tr>
+            <!--<tr>
                 <td class="text-center" style="padding-top: 10px;">~ ~ ~ <b>CloudNet</b> &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:12px;">www.cloudnet.com.kh</span> ~ ~ ~</td>
-            </tr>
+            </tr>-->
 
         </table>
     </div>

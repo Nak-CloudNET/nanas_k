@@ -2394,6 +2394,8 @@ class Pos extends MY_Controller
         $inv = $this->pos_model->getInvoicePosByID($sale_id);
         $biller_id = $inv->biller_id;
         $customer_id = $inv->customer_id;
+        $this->data['gift_cards'] = $this->pos_model->getAllPackagesByCusID($customer_id);
+
         $this->data['biller'] = $this->pos_model->getCompanyByID($biller_id);
         $this->data['customer'] = $this->pos_model->getCompanyByID($customer_id);
         $this->data['payments'] = $this->pos_model->getInvoicePaymentsPOS($sale_id);
@@ -2407,6 +2409,7 @@ class Pos extends MY_Controller
         $this->data['exchange_rate_kh_c'] = $this->pos_model->getExchange_rate('KHM');
         $this->data['modal'] = $modal;
         $this->data['page_title'] = $this->lang->line("invoice");
+
         $this->load->view($this->theme . 'pos/receipt_invoice', $this->data);
     }
 	

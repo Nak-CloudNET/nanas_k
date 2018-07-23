@@ -2231,7 +2231,42 @@ class Pos_model extends CI_Model
                 return true;
             }
         }
+    }
 
+    public function getAllPackagesByCusID($customer_id = NULL)
+    {
+        $this->db
+            ->select("products.id as package_id, packages.sale_id, products.name as package_name")
+            ->from("gift_cards")
+            ->join('packages', 'gift_cards.id = packages.card_id', 'left')
+            ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
+            ->join('products', 'combo_items.product_id = products.id', 'left')
+            ->where('gift_cards.customer_id', $customer_id)
+            ->group_by('products.id')
+            ->order_by('packages.id', 'asc');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getPackagesByGiftCardID($package_id, $sale_id)
+    {
+        $this->db
+            ->select("products.name as package_item_name, packages.quantity as qty, packages.use_quantity as qty_used, (erp_packages.quantity - erp_packages.use_quantity) as qty_balance")
+            ->from("packages")
+            ->join('products', 'packages.product_id = products.id', 'left')
+            ->where('packages.combo_id', $package_id)
+            ->where('packages.sale_id', $sale_id)
+            ->group_by('products.id');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
     }
 
 
