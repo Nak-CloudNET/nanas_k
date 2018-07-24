@@ -750,12 +750,20 @@ if ($modal) {
         <hr>
         <?php
         foreach ($gift_cards as $gift_card) {
+            $qty = 0;
+            $qty_used = 0;
             $packages = $this->pos_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
-            if ($gift_card->quantity != $gift_card->use_quantity) {
-            ?>
+            foreach ($packages as $package) {
+                $qty += $package->qty;
+                $qty_used += $package->qty_used;
+            }
+
+            if ($qty != $qty_used) {
+                ?>
             <h4 style="margin-bottom: 5px; margin-top: 20px;"><strong><u><?= $gift_card->package_name ?></u></strong>
             </h4>
-            <?php foreach ($packages as $package) { ?>
+                <?php foreach ($packages as $package) {
+                    ?>
                 <p style="margin: 0; padding-left: 20px; font-size: 14px;"><?= $package->package_item_name ?></p>
                 <span style="padding-left: 20px; font-weight: bold">(
                     <?php if ($package->qty == '500') { ?>
@@ -766,8 +774,8 @@ if ($modal) {
                         Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
                     <?php } ?>
                     )</span>
-            <?php } ?>
             <?php }
+            }
         }
         ?>
 
