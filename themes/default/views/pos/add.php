@@ -92,20 +92,33 @@
 
 	</script>
 	<style>
-		.modal-body-scroll{
-			height: 650px;
-			overflow-y: auto;
-		}
-		.select2-result.select2-result-unselectable.select2-disabled {
-			display: none;
-		}
-		.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
-			margin-left: 0 !important;
-		}
+        #box-item {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .modal-body-scroll {
+            height: 650px;
+            overflow-y: auto;
+        }
+
+        .select2-result.select2-result-unselectable.select2-disabled {
+            display: none;
+        }
+
+        .btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+            margin-left: 0 !important;
+        }
 
         .suspend-button, .sus_sale {
             width: 150px;
             height: 180px;
+        }
+
+        .product img {
+            width: 60px !important;
+            height: 60px !important
         }
 
 	</style>
@@ -1299,20 +1312,22 @@ if ($q->num_rows() > 0) {
 				if ($q->num_rows() > 0) {
 					foreach ($q->result() as $row) {
 						echo '<h3>'.$row->floor.'</h3>';
-						$this->db->select('erp_suspended_bills.id as ids, floor, erp_suspended.name, customer, suspend_id, count, total, erp_suspended.id as sid, erp_suspended_bills.date, erp_suspended.startdate as sus_start, erp_suspended.enddate as sus_end, erp_suspended.note as sus_note, erp_companies.name as com_name, erp_suspended.inactive as inactive');
-						$this->db->from('erp_suspended');
-						$this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
-						$this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
-						$this->db->where('floor', $row->floor);
-						$this->db->where_in('erp_suspended.warehouse_id',$warehouses);
+
+                        $this->db->select('erp_suspended_bills.id as ids, floor, erp_suspended.name, erp_suspended_bills.customer, suspend_id, count, total, erp_suspended.id as sid, erp_suspended_bills.date, erp_suspended.startdate as sus_start, erp_suspended.enddate as sus_end, erp_suspended.note as sus_note, erp_companies.name as com_name, erp_suspended.inactive as inactive, erp_suspended_bills.plate_number, erp_gift_cards.card_no');
+                        $this->db->from('erp_suspended');
+                        $this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id', 'left');
+                        $this->db->join('erp_gift_cards', 'erp_suspended_bills.customer_id = erp_gift_cards.customer_id', 'left');
+                        $this->db->join('erp_companies', 'erp_companies.id = erp_suspended.customer_id', 'left');
+                        $this->db->where('floor', $row->floor);
+                        $this->db->where_in('erp_suspended.warehouse_id', $warehouses);
                         $this->db->order_by('erp_suspended.id', 'asc');
-						$query = $this->db->get();
+                        $query = $this->db->get();
 
-						$this->db->select('*');
-						$this->db->from('erp_suspended');
-						$this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id');
+                        $this->db->select('*');
+                        $this->db->from('erp_suspended');
+                        $this->db->join('erp_suspended_bills', 'erp_suspended_bills.suspend_id = erp_suspended.id');
+                        $data = $this->db->get();
 
-						$data = $this->db->get();
 						if($data->num_rows() > 0){
 							$j=0;
 							foreach($data->result() as $data_){
@@ -1365,18 +1380,19 @@ if ($q->num_rows() > 0) {
 										}
 									}else{
 
-										echo "<span style='position:relative;display: inline-table;'>
-											<a id='clear_suspend' hrefs='".base_url()."pos/delete_suspend/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;left:0;padding-left:5%;padding-right:5%;cursor:pointer;' class='btn-danger clear_suspend'><i class='fa fa-times'></i></a><a  href='".base_url()."pos/seperate/".$suspend->ids."' style='text-decoration:none;position:absolute;bottom:-5%;right:5%;cursor:pointer;padding-left:5%;padding-right:5%;' class='btn-primary' data-toggle='modal' data-target='#myModal'><i class='fa fa-hourglass-half'></i></a>";
-											if($count > 0){
-												echo "<p style='text-decoration:none;position:absolute;top:0;left:0;padding:5px;' class='btn-warning clear_suspend'>".$count."</p>";
-											}
-											echo "
-											<input type='checkbox' name='chsuspend' class='chsuspend checkbox' value='". $suspend->ids ."' style='position:absolute;top:0;right:5px;'/>
-											<button type=\"button\" value='" . $suspend->suspend_id . "' ".($suspens === "suspend" ? 'id="'.$suspend->ids.'"' : '' )." class='".($suspens === "suspend" ? 'btn-prni btn '.($suspend->sus_start == '0000-00-00 00:00:00'? 'btn-info': ($suspend->sus_start == ''? 'btn-info': 'btn-warning')).' sus_sale' : 'btn-prni btn suspend-button' )."' >
-												<span class='wrap_suspend".($suspens === "suspend" ? $suspend->ids : '')."'>" . ($suspens === "suspend" ? "<p class='suspend-name".$suspend->ids."'>" . $suspend->name . "</p><div class='sup_number".$suspend->ids."'>" . ($suspend->com_name == "" ? $cust : $suspend->com_name) . "</div><br/>" . $suspend->total : "Number " . $i ) . " (" . $suspend->count . ")</span>
-												".$default." (".kpTime($default,$currenttime).")
-											</button>
-										 </span>";
+                                        echo "<span class='" . $class . "' style='position:relative;display: inline-table;'>
+                                            <a id='clear_suspend' hrefs='" . base_url() . "pos/delete_suspend/" . $suspend->ids . "' style='text-decoration:none;position:absolute;bottom:3px;left:28px;padding-left:5%;padding-right:5%;cursor:pointer;width:30px;height:20px' class='btn-danger clear_suspend'><i class='fa fa-times'></i></a><a  href='" . base_url() . "pos/seperate/" . $suspend->ids . "' style='text-decoration:none;position:absolute;bottom:2%;right:1%;cursor:pointer;padding-left:5%;padding-right:5%;' class='btn-primary' data-toggle='modal' data-target='#myModal'><i class='fa fa-hourglass-half'></i></a>";
+                                        if ($count > 0) {
+                                            echo "<p style='text-decoration:none;position:absolute;top:0;left:0;padding:5px;' class='btn-warning clear_suspend'>" . $count . "</p>";
+                                        }
+                                        echo "
+                                            <input type='checkbox' name='chsuspend' class='chsuspend checkbox' value='" . $suspend->ids . "' style='position:absolute;top:0;right:5px;'/>
+                                            <button style='" . $font . "' type=\"button\" value='" . $suspend->suspend_id . "' " . ($suspens === "suspend" ? 'id="' . $suspend->ids . '"' : '') . " class='" . ($suspens === "suspend" ? 'btn-prni btn ' . ($suspend->sus_start == '0000-00-00 00:00:00' ? 'btn-info' : ($suspend->sus_start == '' ? 'btn-info' : 'btn-warning')) . ' sus_sale ' . $room : 'btn-prni btn suspend-button') . "' >
+
+                                                <span class='wrap_suspend" . ($suspens === "suspend" ? $suspend->ids : '') . "'>" . ($suspens === "suspend" ? "<p class='suspend-name" . $suspend->ids . "'>" . $suspend->name . "</p><p class='suspend-date" . $suspend->ids . "'>" . $this->erp->hrld($suspend->date) . "</p><p class='sup_number" . $suspend->ids . "'>" . ($suspend->com_name == "" ? $cust : $suspend->com_name) . "</p><p class='suspend-pnumber" . $suspend->ids . "'>" . $suspend->plate_number . "</p><p class='suspend-card_no" . $suspend->ids . "'>" . $suspend->card_no . "</p><br/>" . $suspend->total : "Number " . $i) . " (" . $suspend->count . ")</span>
+                                                " . "
+                                            </button>
+                                         </span>";
 									}
 								}elseif($suspend->sus_start <= date('Y-m-d H:i:s') and $suspend->sus_end >= date('Y-m-d H:i:s')){
 										$default=date("H:i",strtotime($suspend->sus_start));$currenttime=date("H:i");
@@ -1431,7 +1447,7 @@ if ($q->num_rows() > 0) {
 			}
 			if(($this->Owner || $this->Admin)){
 				foreach ($categories as $category) {
-					echo "<button id=\"category-" . $category->id . "\" type=\"button\" value='" . $category->id . "' class=\"btn-prni category ".$class." \" ><img src=\"assets/uploads/thumbs/" . ($category->image ? $category->image : 'no_image.png') . "\" style='width:" . $width . "px;height:" . $height . "px;' class='img-rounded img-thumbnail' /><span style='".$font."'>" . $category->name . "</span></button>";  
+                    echo "<button id=\"category-" . $category->id . "\" type=\"button\" value='" . $category->id . "' class=\"btn-prni category " . $class . " \" ><img src=\"assets/uploads/thumbs/" . ($category->image ? $category->image : 'no_image.png') . "\" style='width:" . $width . "px;height:" . $height . "px;' class='img-rounded img-thumbnail' /><span style='" . $font . "'>" . $category->name . "</span></button>";
 				}
 			}else{
 				foreach ($categories as $category) {
@@ -3838,7 +3854,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 							var total    = data['sub_total'];
 							/* zz */
 
-							var item ='<button id="'+code+'" type="button" value="'+code+'" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="'+title+'"><img src="'+image+'" alt="'+title+'" style="width: 60px; height: 60px;" class="img-rounded"/><span>'+title+'</span></button>';
+                            var item = '<button id="' + code + '" type="button" value="' + code + '" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="' + title + '"><img src="' + image + '" alt="' + title + '" class="img-rounded"/><span>' + title + '</span></button>';
 
 						$('#product-sale-view').prepend(item);
 							/*var suspend_html ='<button id="p' + item_id + ' ' +code+'" type="button" value="'+code+'" title="'+title+' ('+ui.item.row.code+')" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="'+title+'"><img src="'+image+'" alt="'+title+'" style="width: 60px; height: 60px;" class="img-rounded"/><span>'+title.substring(0,15)+'...('+formatMoney(ui.item.row.price)+')</span></button>';
@@ -3969,7 +3985,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									}
                                 });
 
-								var item ='<button id="'+code+'" type="button" value="'+code+'" title="'+title+'" class="btn-prni btn-default product pos-tip edit" data-container="body" data-original-title="'+title+'"><img src="'+image+'" alt="'+title+'" style="width: 60px; height: 60px;" class="img-rounded"/><span>Qty :<i class="qty">'+(arr_qty)+'</i> ($ '+item_price+') '+title+'</span></button>';
+                                var item = '<button id="' + code + '" type="button" value="' + code + '" title="' + title + '" class="btn-prni btn-default product pos-tip edit" data-container="body" data-original-title="' + title + '"><img src="' + image + '" alt="' + title + '" class="img-rounded"/><span>Qty :<i class="qty">' + (arr_qty) + '</i> ($ ' + item_price + ') ' + title + '</span></button>';
 
 								var suspend_html = '<p> '+ table_no +'</p>';
 									suspend_html += '<div class="sup_number'+susp_id+'">('+(item_row+1)+')</div>';
@@ -6434,7 +6450,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 							var title = data['row']['name'];
 							var code = data['row']['code'];
 							var total = data['sub_total'];
-							var item ='<button id="'+code+'" type="button" value="'+code+'" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="'+title+'"><img src="'+image+'" alt="'+title+'" style="width: 60px; height: 60px;" class="img-rounded"/><span>'+title+'</span></button>';
+                            var item = '<button id="' + code + '" type="button" value="' + code + '" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="' + title + '"><img src="' + image + '" alt="' + title + '" class="img-rounded"/><span>' + title + '</span></button>';
 							var suspend_html = '<p> '+ table_no +'</p>';
 								suspend_html += '<div class="sup_number'+susp_id+'">('+(item_row+1)+')</div>';
 								suspend_html += '<br/>'+formatMoney(total);
@@ -6489,7 +6505,7 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 									var title = items['row']['name'];
 									var code = items['row']['code'];
 									var total = items['sub_total'];
-									var item ='<button id="'+code+'" type="button" value="'+code+'" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="'+title+'"><img src="'+image+'" alt="'+title+'" style="width: 60px; height: 60px;" class="img-rounded"/><span>'+title+'</span></button>';
+                                    var item = '<button id="' + code + '" type="button" value="' + code + '" title="" class="btn-prni btn-default product pos-tip" data-container="body" data-original-title="' + title + '"><img src="' + image + '" alt="' + title + '" class="img-rounded"/><span>' + title + '</span></button>';
 									var suspend_html = '<p> '+ table_no +'</p>';
 										suspend_html += '<div class="sup_number'+susp_id+'">('+(item_row+1)+')</div>';
 										suspend_html += '<br/>'+formatMoney(total);

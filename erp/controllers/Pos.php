@@ -2147,7 +2147,7 @@ class Pos extends MY_Controller
                     $font   = 'font-size:20px;';
 				}
 
-                $prods .= "<button id=\"product-" . $category_id . $count . "\" type=\"button\" value='" . $product->code . "' title=\"" . $product->name . "\" class=\"btn-prni btn-" . $this->pos_settings->product_button_color . " product pos-tip " .$class. " \" data-container=\"body\"><img src=\"" . base_url() . "assets/uploads/thumbs/" . $product->image . "\" alt=\"" . $product->name .'<br>' . "\" style='width:" . $width . "px;height:" . $height . "px;' class='img-rounded' /><p style='margin: 0; ".$font." '>" . character_limiter($product->code, 40) . "</p><p style='margin: 0; ".$font." '>". character_limiter($product->name, 40) ."</p></button>";
+                $prods .= "<button id=\"product-" . $category_id . $count . "\" type=\"button\" value='" . $product->code . "' title=\"" . $product->name . "\" class=\"btn-prni btn-" . $this->pos_settings->product_button_color . " product pos-tip " . $class . " \" data-container=\"body\"><img src=\"" . base_url() . "assets/uploads/thumbs/" . $product->image . "\" alt=\"" . $product->name . "\" class='img-rounded' /><p style='margin: 0; " . $font . " '>" . character_limiter($product->code, 40) . "</p><p style='margin: 0; " . $font . " '>" . character_limiter($product->name, 40) . "</p></button>";
                 $pro++;
             }
         }
