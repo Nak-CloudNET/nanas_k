@@ -41,22 +41,12 @@ class Sales_model extends CI_Model
 				}
 				
 			}else{
-				
-				if($standard != ""){
-					$this->db->where("products.type <> 'standard' ");
-				}
-				if($combo != ""){
-                    //$this->db->where("products.type <> 'combo' ");
-				}
 				if($digital != ""){
 					$this->db->where("products.type <> 'digital' ");
 				}
                 if ($category_id != "") {
                     $this->db->where("products.category_id", $category_id);
                 }
-				if($service != ""){
-                    //$this->db->where("products.type <> 'service' ");
-				}
                 if ($user_category != "") {
                     $this->db->where("products.category_id NOT IN (" . $user_category . ") ");
 				}
@@ -81,9 +71,6 @@ class Sales_model extends CI_Model
 				if($digital != ""){
 					$this->db->where("products.type <> 'digital' ");
 				}
-				if($service != ""){
-                    //$this->db->where("products.type <> 'service' ");
-				}
                 if ($category_id != "") {
                     $this->db->where("products.category_id", $category_id);
                 }
@@ -91,18 +78,9 @@ class Sales_model extends CI_Model
                     $this->db->where("products.category_id NOT IN (" . $user_category . ") ");
 				}
 			}else{
-				if($standard != ""){
-					$this->db->where("products.type <> 'standard' ");
-				}
-				if($combo != ""){
-					$this->db->where("products.type <> 'combo' ");
-				}
 				if($digital != ""){
 					$this->db->where("products.type <> 'digital' ");
 				}
-				if($service != ""){
-                    //$this->db->where("products.type <> 'service' ");
-                }
                 if ($category_id != "") {
                     $this->db->where("products.category_id", $category_id);
                 }
@@ -266,17 +244,8 @@ class Sales_model extends CI_Model
                     $this->db->where("products.category_id", $category_id);
                 }
 			}else{
-				if($standard != ""){
-					$this->db->where("products.type <> 'standard' ");
-				}
-				if($combo != ""){
-					$this->db->where("products.type <> 'combo' ");
-				}
 				if($digital != ""){
 					$this->db->where("products.type <> 'digital' ");
-				}
-				if($service != ""){
-                    //$this->db->where("products.type <> 'service' ");
 				}
 				if ($category_id != "") {
                     $this->db->where("products.category_id", $category_id);
@@ -305,17 +274,8 @@ class Sales_model extends CI_Model
                     $this->db->where("products.category_id", $category_id);
                 }
 			}else{
-				if($standard != ""){
-					$this->db->where("products.type <> 'standard' ");
-				}
-				if($combo != ""){
-					$this->db->where("products.type <> 'combo' ");
-				}
 				if($digital != ""){
 					$this->db->where("products.type <> 'digital' ");
-				}
-				if($service != ""){
-                    //$this->db->where("products.type <> 'service' ");
 				}
 				if ($category_id != "") {
                     $this->db->where("products.category_id", $category_id);

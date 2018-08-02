@@ -1754,7 +1754,8 @@ if ($q->num_rows() > 0) {
 							<!-- <div class="col-md-12 col-sm-9" style="padding:0;"> -->
 							<div style="padding:0;">
 								<div class="font16">
-									<table class="table table-bordered table-condensed table-striped" style="font-size: 1.2em; font-weight: bold; margin-bottom: 0;">
+                                    <table class="table table-bordered table-condensed table-striped" id="ptable"
+                                           style="font-size: 1.2em; font-weight: bold; margin-bottom: 0;">
 										<tbody>
 											<tr>
 												<th width="30%" style="text-align:left;font-size:16px !important;"><?= lang("currency"); ?></th>
@@ -3204,13 +3205,23 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                     if(data){
                         var tpayable = $('#payable_amount').val();
                         if (tpayable > 0 && data.balance <= 0) {
-                            $('.paid_by').val('cash');
+
                         } else {
                             $('.paid_by').val('gift_card');
                             $('.paid_by').trigger('change');
                             $('.gift_card_no').val(data.card_no);
                             $('.gift_card_no').trigger('change');
                         }
+
+                        /*var tpayable = $('#payable_amount').val();
+                        if (tpayable > 0 && data.balance <= 0) {
+                            $('.paid_by').val('cash');
+                        } else {
+                            $('.paid_by').val('gift_card');
+                            $('.paid_by').trigger('change');
+                            $('.gift_card_no').val(data.card_no);
+                            $('.gift_card_no').trigger('change');
+                        }*/
                         
                     }
 
