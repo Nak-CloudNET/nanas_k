@@ -791,6 +791,7 @@ if ($q->num_rows() > 0) {
                                     	</div>
                                         	<?php } ?>
                                          <input type="hidden" class="reference_nob" name="reference_nob" id="reference_nob" value="<?= $reference ? $reference : '' ?>"/>
+                                            <input type="hidden" class="gift_card_balance" value="">
                                             <!-- <div class="btn-group">
                                             <div class="btn-group btn-group-justified">
                                                 <div class="btn-group">
@@ -2004,7 +2005,6 @@ if ($q->num_rows() > 0) {
                                                 <?= lang("gift_card_no", "gift_card_no_1"); ?>
                                                 <input name="paying_gift_card_no[]" type="text" id="gift_card_no_1"
                                                        class="pa form-control kb-pad gift_card_no"/>
-
                                                 <div id="gc_details_1"></div>
                                             </div>
 
@@ -3202,10 +3202,16 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 dataType: "json",
                 success: function (data) {
                     if(data){
-                        $('.paid_by').val('gift_card');
-                        $('.paid_by').trigger('change');
-                        $('.gift_card_no').val(data.card_no);
-                        $('.gift_card_no').trigger('change');
+                        var tpayable = $('#payable_amount').val();
+                        if (tpayable > 0 && data.balance <= 0) {
+                            $('.paid_by').val('cash');
+                        } else {
+                            $('.paid_by').val('gift_card');
+                            $('.paid_by').trigger('change');
+                            $('.gift_card_no').val(data.card_no);
+                            $('.gift_card_no').trigger('change');
+                        }
+                        
                     }
 
                 }
@@ -3312,11 +3318,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 
 		<?php }
 		?>
-		
-        $('#payment').click(function () {
-            var abc = __getItem('gift_card');
-            console.log(abc);
 
+        $('#payment').click(function () {
             var GP = '<?= $GP['sales-discount'];?>';
 			var Owner = '<?= $Owner?>';
 			var Admin = '<?= $Admin?>';
@@ -3621,13 +3624,12 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
             $('#balance, .curr_balance, .currencies_payment').html('0');
         });
 
-		
-        $(document).on('change', '.gift_card_no', function () {			
+
+        $(document).on('change', '.gift_card_no', function () {
 			var customer_id        = $("#poscustomer").val();            
 			var date               = $("#date").val();
 			var paid_by 	       = $('#paid_by_1').val();
             var cn                 = $(this).val() ? $(this).val() : '';
-            console.log(cn);
             var payid              = $(this).attr('id'),
                 id                 = payid.substr(payid.length - 1);
             if (cn != '') {
