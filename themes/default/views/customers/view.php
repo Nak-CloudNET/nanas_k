@@ -130,7 +130,9 @@
 
                         ?>
                         <tr>
-                            <td><strong><u><?= $gift_card->package_name ?></u></strong></td>
+                            <td>
+                                <strong><u><?= $gift_card->package_size . ' (' . substr($gift_card->package_name, -1) . ')' ?></u></strong>
+                            </td>
                             <td>
                                 <?php foreach ($packages as $package) { ?>
                                     <p style="margin: 0"><?= $package->package_item_name ?></p>

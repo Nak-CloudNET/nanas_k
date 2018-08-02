@@ -43,7 +43,9 @@
                                         ?>
                                         <dl style="margin-left: 10px; margin-bottom: 10px">
                                             <dt style="font-size: 16px">
-                                                <strong><u><?= $gcard->package_name ?></u></strong></dt>
+                                                <strong><u><?= $gcard->package_size . ' (' . substr($gcard->package_name, -1) . ')' ?></u></strong>
+                                            </dt>
+                                            <!-- <strong><u><?= $gcard->package_name ?></u></strong></dt> -->
                                             <?php foreach ($packages as $package) { ?>
                                                 <dd style="padding-left: 20px;" value="<?= $package->id ?>">
                                                     <?= $package->package_item_name ?><br/>
