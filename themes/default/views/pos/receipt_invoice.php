@@ -760,7 +760,8 @@ if ($modal) {
 
             if ($qty != $qty_used) {
                 ?>
-            <h4 style="margin-bottom: 5px; margin-top: 20px;"><strong><u><?= $gift_card->package_name ?></u></strong>
+                <h4 style="margin-bottom: 5px; margin-top: 20px;">
+                    <strong><u><?= $gift_card->package_size . ' (' . substr($gift_card->package_name, -1) . ')' ?></u></strong>
             </h4>
                 <?php foreach ($packages as $package) {
                     ?>
