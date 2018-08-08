@@ -1743,7 +1743,8 @@ if ($q->num_rows() > 0) {
                                     <!--<?= form_textarea('staffnote', '', 'id="staffnote" class="form-control kb-text skip" style="height: 35px;" placeholder="' . lang('staff_note') . '" maxlength="250"'); ?>-->
                                 </div>
                                 <div class="col-sm-6">
-									<button type="button" class="btn btn-primary col-md-12 addButton">
+                                    <button type="button" class="btn btn-primary col-md-12 addButton"
+                                            id="addMorePayment">
 										<i class="fa fa-plus"></i> <?= lang('add_more_payments') ?>
 									</button>
                                 </div>
@@ -3203,15 +3204,11 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
                 dataType: "json",
                 success: function (data) {
                     if(data){
-                        var tpayable = $('#payable_amount').val();
-                        if (tpayable > 0 && data.balance <= 0) {
-
-                        } else {
-                            $('.paid_by').val('gift_card');
-                            $('.paid_by').trigger('change');
-                            $('.gift_card_no').val(data.card_no);
-                            $('.gift_card_no').trigger('change');
-                        }
+                        $('.paid_by').val('gift_card');
+                        $('.paid_by').trigger('change');
+                        $('.gift_card_no').val(data.card_no);
+                        $('.gift_card_no').trigger('change');
+                        
 
                         /*var tpayable = $('#payable_amount').val();
                         if (tpayable > 0 && data.balance <= 0) {
@@ -3324,8 +3321,12 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			$('#depreciation_term_val_<?=$m?>').val($(this).val());
 		});
 		$('#paymentModal').on('change', '#depreciation_type_<?=$m?>', function (e) {
-			$('#depreciation_type_val_<?=$i?>').val($(this).val());
-		});
+            $('#depreciation_type_val_<?=$i?>').val($(this).val());
+        });
+
+        /*$('#payment').on('click', function (event) {
+            $("#addMorePayment").trigger("click");
+        });*/
 
 		<?php }
 		?>
@@ -6774,11 +6775,24 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			deposit_balance = (deposit_amount - Math.abs(amount_txt));
 
 			if(deposit_balance > deposit_amount || deposit_balance < 0 || deposit_amount == 0){
-				bootbox.alert('Your Deposit Limited: ' + deposit_amount);
-				$('#amount_1').val(deposit_amount);
-				$(".deposit_total_balance").text(deposit_amount - $('#amount_1').val()-0);
-				return false;
-			}
+                bootbox.alert('Your Deposit Limited: ' + deposit_amount);
+                $('#amount_1').val(deposit_amount);
+                $(".deposit_total_balance").text(deposit_amount - $('#amount_1').val() - 0);
+                return false;
+            }
+
+            // If member card amount is 0 cannot save
+            var amount_1 = $('#amount_val_1').val();
+            var amount_2 = $('#amount_val_2').val();
+            var paid_by_1 = $('#paid_by_val_1').val();
+            var gift_card_no = $('#paying_gift_card_no_val_1').val();
+
+            if (paid_by_1 == 'gift_card') {
+                if (amount_1 > 0) {
+                    bootbox.alert('This Member Card (' + gift_card_no + ') balance is out of money !!!');
+                    return false;
+                }
+            }
 
 			var arr_push=[];
 			$('.sprice').each(function (i) {
@@ -6800,7 +6814,8 @@ var lang = {unexpected_value: '<?=lang('unexpected_value');?>', select_above: '<
 			});
 			var pname = $('.rname').val();
 
-			if(chks == true){
+
+            if(chks == true){
 				bootbox.confirm('Product <strong>' + pname + '</strong> its <i>Price</i> is less than or equal to <i>Cost</i>, <br>So do you want to sell it?', function (res) {
 					if (res == true) {
 						$('#pos_note').val(__getItem('posnote'));
