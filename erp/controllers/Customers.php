@@ -94,6 +94,7 @@ class Customers extends MY_Controller
 
         $this->form_validation->set_rules('email', lang("email_address"), 'is_unique[companies.email]');
         $this->form_validation->set_rules('code', lang("plate_number"), 'required|is_unique[companies.code]');
+        $this->form_validation->set_rules('group_area', lang("group_area"), 'required');
 
         if ($this->form_validation->run('companies/add') == true) {
             $cg = $this->site->getCustomerGroupByID($this->input->post('customer_group'));

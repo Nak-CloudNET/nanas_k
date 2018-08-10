@@ -1291,7 +1291,7 @@ class Sales_model extends CI_Model
 			   FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, 
 			   sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, 
 			   companies.invoice_footer as invoice_footer, group_areas.areas_group, 
-			   tax_rates.name as vat, payment_term.description as payment_term, sales.due_date")
+			   tax_rates.name as vat, payment_term.description as payment_term, sales.due_date, gift_cards.card_no")
 			 ->join('companies', 'sales.biller_id = companies.id', 'left')
 			 ->join('quotes', 'sales.quote_id = quotes.id', 'left')
 			 ->join('payments', 'payments.sale_id = sales.id', 'left')
@@ -1299,7 +1299,38 @@ class Sales_model extends CI_Model
 			 ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
 			 ->join('users', 'sales.saleman_by = users.id', 'left')
 			 ->join('tax_rates', 'sales.order_tax_id = tax_rates.id', 'left')
-			 ->join('payment_term', 'sales.payment_term = payment_term.id', 'left');
+            ->join('payment_term', 'sales.payment_term = payment_term.id', 'left')
+            ->join('gift_cards', 'sales.customer_id = gift_cards.customer_id', 'left');
+
+        if ($wh) {
+            $this->db->where_in('erp_sales.warehouse_id', $wh);
+        }
+        $q = $this->db->get_where('sales', array('sales.id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function getInvoicesByID($id = null, $wh = null)
+    {
+        $this->db
+            ->select("sales.*, companies.name,companies.company,companies.logo,companies.cf4,companies.phone, companies.email,
+			  users.username as saleman,
+			  (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
+			  FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
+			   (erp_sales.paid - (SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) 
+			   FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id)) as real_paid, 
+			   sale_order.reference_no as so_no, erp_companies.address, erp_sales.sale_status, 
+			   companies.invoice_footer as invoice_footer, group_areas.areas_group, 
+			   sales.due_date, com.plate_number, gift_cards.card_no, gift_cards.balance as card_balance")
+            ->join('companies', 'sales.biller_id = companies.id', 'left')
+            ->join('companies as com', 'sales.customer_id = com.id', 'left')
+            ->join('payments', 'payments.sale_id = sales.id', 'left')
+            ->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
+            ->join('sale_order', 'sale_order.id = sales.so_id', 'left')
+            ->join('users', 'sales.saleman_by = users.id', 'left')
+            ->join('gift_cards', 'sales.customer_id = gift_cards.customer_id', 'left');
 
 			 if($wh){
 			 	$this->db->where_in('erp_sales.warehouse_id',$wh);
@@ -1310,6 +1341,7 @@ class Sales_model extends CI_Model
         }
         return FALSE;
     }
+
     public function getArInvoiceByID($id=null,$wh=null)
     {
         $this->db
@@ -7271,5 +7303,41 @@ public function getRielCurrency(){
 
         return false;
     }
+
+    public function getAllPackagesByCusID($customer_id = NULL)
+    {
+        $this->db
+            ->select("products.id as package_id, packages.sale_id, products.name_kh as package_size, products.name as package_name, packages.quantity, packages.use_quantity")
+            ->from("gift_cards")
+            ->join('packages', 'gift_cards.id = packages.card_id', 'left')
+            ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
+            ->join('products', 'combo_items.product_id = products.id', 'left')
+            ->where('gift_cards.customer_id', $customer_id)
+            ->group_by('products.id')
+            ->order_by('packages.id', 'asc');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    /* public function getPackagesByGiftCardID($package_id, $sale_id)
+     {
+         $this->db
+             ->select("products.name as package_item_name, packages.quantity as qty, packages.use_quantity as qty_used, (erp_packages.quantity - erp_packages.use_quantity) as qty_balance")
+             ->from("packages")
+             ->join('products', 'packages.product_id = products.id', 'left')
+             ->where('packages.combo_id', $package_id)
+             ->where('packages.sale_id', $sale_id)
+             ->group_by('products.id');
+
+         $q = $this->db->get();
+         if ($q->num_rows() > 0) {
+             return $q->result();
+         }
+         return FALSE;
+     }*/
 
 }

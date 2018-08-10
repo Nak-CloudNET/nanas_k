@@ -52,7 +52,7 @@
 						foreach ($group_areas as $group_area) {
 							$ga_group[$group_area->areas_g_code] = $group_area->areas_group;
 						}
-						echo form_dropdown('group_area', $ga_group, '', 'class="form-control tip select" id="group_area" style="width:100%;" placeholder="' . lang("select") . ' ' . lang("group_area") . '" ');
+                        echo form_dropdown('group_area', $ga_group, '', 'class="form-control tip select" id="group_area" style="width:100%;" required="required" placeholder="' . lang("select") . ' ' . lang("group_area") . '" ');
 						?>
 					</div>
 				</div>
@@ -126,12 +126,12 @@
                     <div class="form-group">
                         <?= lang("address", "address"); ?>
                         <!--<span style="float:right;"><button class="btn btn-sm btn-primary add_more">Add More</button></span>-->
-                        <?php echo form_input('address', '', 'class="form-control" id="address" data-bv-notempty="true"'); ?>
+                        <?php echo form_input('address', '', 'class="form-control" id="address"'); ?>
                     </div>
                     <div id="address_show">
 						<div class="form-group">
                             <?= lang("series", "series"); ?>
-							<?php echo form_input('address1', '', 'class="form-control" id="address1" '); ?>
+                            <?php echo form_input('address1', '', 'class="form-control" id="address1" data-bv-notempty="true" '); ?>
 						</div>
                         <div class="form-group">
                             <?= lang("price", "price"); ?>
@@ -190,11 +190,11 @@
                     </div>
                     <div class="form-group">
                         <?= lang("brand", "brand"); ?>
-                        <?php echo form_input('address2', '', 'class="form-control" id="address2" '); ?>
+                        <?php echo form_input('address2', '', 'class="form-control" id="address2" data-bv-notempty="true" '); ?>
                     </div>
                     <div class="form-group">
                         <?= lang("color", "color"); ?>
-                        <?php echo form_input('address4', '', 'class="form-control" id="address4" '); ?>
+                        <?php echo form_input('address4', '', 'class="form-control" id="address4" data-bv-notempty="true" '); ?>
                     </div>
                 </div>
             </div>

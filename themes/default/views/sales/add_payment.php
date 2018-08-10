@@ -67,6 +67,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <?= lang("paying_by", "paid_by_1"); ?>
@@ -79,13 +80,14 @@
                                         <option value="Cheque"><?= lang("cheque"); ?></option>
                                         <option value="other"><?= lang("other"); ?></option>
                                     </select>
+                                    <input type="hidden" value="<?= $inv->card_no ?>" id="card_no">
                                 </div>
                             </div>
 							<div class="col-sm-6" id="bank_acc">
 								<div class="form-group">
 									<?= lang("bank_account", "bank_account_1"); ?>
 									<?php
-                                        $bank = array('0' => '-- Select Bank Account --');
+                                    //$bank = array('0' => '-- Select Bank Account --');
                                         if ($Owner || $Admin) {
         									foreach($bankAccounts as $bankAcc) {
         										$bank[$bankAcc->accountcode] = $bankAcc->accountcode . ' | '. $bankAcc->accountname;
@@ -495,9 +497,10 @@
             }
             if (p_val == 'gift_card') {
                 $('.gc').show();
-				$('#payment_ref').show();
-				$('#bank_acc').show();
+                $('#payment_ref').show();
+                $('#bank_acc').show();
                 $('#gift_card_no').focus();
+                $('#gift_card_no').val($('#card_no').val());
             } else {
                 $('.gc').hide();
 				$('#payment_ref').show();

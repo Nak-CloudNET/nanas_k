@@ -4415,7 +4415,7 @@ class Sales extends MY_Controller
 			$invoice_view = $this->Settings->invoice_view;
 			if($invoice_view == 0){
                 redirect("sales");
-                //redirect("sales/print_st_invoice/" . $s->row()->id);
+                //redirect("sales/package_invoice/" . $s->row()->id);
 			}
 			else if($invoice_view == 1){
 				redirect("sales/invoice/".$s->row()->id);
@@ -9801,6 +9801,7 @@ class Sales extends MY_Controller
                 'sale_id' => $sale_id,
                 'reference_no' => $payment_reference,
                 'amount' => $paid_amount,
+                'pos_paid' => $paid_amount,
 				'pos_paid_other' => $other_amount[0],
 				'discount' => $discount,
                 'paid_by' => $paid_by,
@@ -9885,7 +9886,8 @@ class Sales extends MY_Controller
 			}
 
             $this->session->set_flashdata('message', lang("payment_added"));
-            redirect($_SERVER["HTTP_REFERER"]);
+            redirect('sales/package_invoice/' . $sale_id);
+            //redirect($_SERVER["HTTP_REFERER"]);
         } else {
 
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
@@ -17324,6 +17326,41 @@ class Sales extends MY_Controller
 		}
 		echo json_encode(2);
 	}
+
+    function package_invoice($id = NULL, $modal = NULL)
+    {
+        $this->erp->checkPermissions('add', true, 'sales');
+
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+        $this->load->model('pos_model');
+        $this->data['setting'] = $this->site->get_setting();
+        $this->data['pos'] = $this->pos_model->getSetting();
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+
+        $inv = $this->sales_model->getInvoicesByID($id);
+        $this->data['customer'] = $this->site->getCompanyByID($inv->customer_id);
+        $this->data['payments'] = $this->sales_model->getPaymentsForSale($id);
+        $this->data['biller'] = $this->site->getCompanyByID($inv->biller_id);
+        $this->data['user'] = $this->site->getUser($inv->created_by);
+        $this->data['warehouse'] = $this->site->getWarehouseByID($inv->warehouse_id);
+        $this->data['inv'] = $inv;
+        $this->data['gift_cards'] = $this->sales_model->getAllPackagesByCusID($inv->customer_id);
+
+        $records = $this->sales_model->getAllInvoiceItems($id);
+        foreach ($records as $record) {
+            $product_option = $record->option_id;
+            if ($product_option != Null && $product_option != "" && $product_option != 0) {
+                $item_quantity = $record->quantity;
+                $option_details = $this->sales_model->getProductOptionByID($product_option);
+            }
+        }
+
+        $this->data['rows'] = $records;
+        $this->data['sid'] = $id;
+        $this->load->view($this->theme . 'sales/package_invoice', $this->data);
+    }
     
 	function invoice_devery($id)
     {    
