@@ -6112,17 +6112,33 @@ class Sales_model extends CI_Model
 	}
 	##################################
 
-	public function pos_sale($id=null, $wh = null){
+    public function pos_sale($id = null, $wh = null)
+    {
         $this->db->select($this->db->dbprefix('sales').".id as id, 
 			".$this->db->dbprefix('sales').".date,
 			".$this->db->dbprefix('payments').".date as pdate,
-			".$this->db->dbprefix('sales').".reference_no, biller.company, sales.customer, sales.sale_status , sales.grand_total, COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,	COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit, COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount, (".$this->db->dbprefix('sales').".grand_total - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, sales.payment_status")
+			" . $this->db->dbprefix('sales') . ".reference_no,
+			sales.customer,
+			erp_sales.plate_number,
+            gift_cards.card_no,
+			biller.company,
+			sales.sale_status,
+			sales.grand_total,
+			COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
+			COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)),
+			erp_payments.amount,
+			IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid,
+			COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as deposit,
+			COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) as discount,
+			(" . $this->db->dbprefix('sales') . ".grand_total - COALESCE((SELECT SUM(erp_return_sales.grand_total) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) - COALESCE((SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0) - COALESCE((SELECT SUM(erp_payments.discount) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id), 0)) as balance, sales.payment_status")
             ->from('sales')
 			->join('payments', 'payments.sale_id=sales.id', 'left')
 			->join('erp_return_sales', 'erp_return_sales.sale_id = sales.id', 'left')
 			->join('companies', 'companies.id=sales.customer_id', 'left')
 			->join('companies as erp_biller', 'biller.id = sales.biller_id', 'inner')
+            ->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left')
 			->where('erp_sales.id',$id);
+
 			if($wh){
 				$this->db->where_in('erp_sales.warehouse_id',$wh);
 			}
@@ -6132,6 +6148,7 @@ class Sales_model extends CI_Model
 		}
 		return false;
     }
+
 	public function getCurrency(){
 		$default_currency = $this->site->get_setting()->default_currency;
 		$this->db->select("erp_currencies.*"); 
@@ -7168,7 +7185,60 @@ public function getRielCurrency(){
             ->join('sale_items', 'sales.id = sale_items.sale_id', 'left')
             ->join('payments', 'gift_card_logs.sale_id = payments.sale_id', 'left')
             ->where('gift_cards.card_no', $card_no)
-            ->group_by('gift_card_logs.id');
+            ->group_by(array('sale_items.product_code', 'gift_card_logs.id'))
+            ->order_by('gift_card_logs.id', 'asc');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getCustomerHistoryByID($card_id)
+    {
+        $this->db
+            ->select("
+                    gift_card_logs.date,
+                    gift_cards.card_no,
+                    payments.reference_no as payment_ref,
+                    sales.reference_no as sale_ref,
+                    gift_card_logs.amount,
+                    sale_items.product_name,
+                    packages.expiry as expiry_date,
+                    gift_card_logs.transaction_type,
+                    IF(erp_payments.reference_no != '', erp_products.name_kh, '') as package_size,
+                    pack.combo_id as package_id,
+                    gift_card_logs.sale_id
+		
+                    ", false)
+            ->join('gift_cards', 'gift_card_logs.gift_card_id = gift_cards.id', 'left')
+            ->join('packages', 'gift_cards.id = packages.card_id', 'left')
+            ->join('sales', 'gift_card_logs.sale_id = sales.id', 'left')
+            ->join('sale_items', 'sales.id = sale_items.sale_id', 'left')
+            ->join('payments', 'sales.id = payments.sale_id', 'left')
+            ->join('products', 'sale_items.product_id = products.id', 'left')
+            ->join('packages as pack', 'products.id = pack.combo_id', 'left')
+            ->where('gift_card_logs.gift_card_id', $card_id)
+            ->group_by(array('gift_card_logs.id', 'sale_items.product_id'));
+
+        $q = $this->db->get('gift_card_logs');
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getAllPackageItemsData($package_id, $sale_id)
+    {
+        $this->db
+            ->select("products.name as package_item_name, packages.quantity as qty, packages.use_quantity as qty_used, (erp_packages.quantity - erp_packages.use_quantity) as qty_balance")
+            ->from("packages")
+            ->join('products', 'packages.product_id = products.id', 'left')
+            ->where('packages.combo_id', $package_id)
+            ->where('packages.sale_id', $sale_id)
+            ->group_by('products.id')
+            ->order_by('packages.id', 'desc');
 
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
@@ -7186,6 +7256,26 @@ public function getRielCurrency(){
             ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
             ->join('products', 'combo_items.product_id = products.id', 'left')
             ->where('gift_cards.card_no', $card_no)
+            ->group_by('products.id')
+            ->order_by('packages.id', 'asc');
+
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        }
+        return FALSE;
+    }
+
+    public function getAllPackagesByCardNoNSaleID($card_no, $sale_id)
+    {
+        $this->db
+            ->select("products.id as package_id, packages.sale_id, products.name_kh as package_size, products.name as package_name")
+            ->from("gift_cards")
+            ->join('packages', 'gift_cards.id = packages.card_id', 'left')
+            ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
+            ->join('products', 'combo_items.product_id = products.id', 'left')
+            ->where('gift_cards.card_no', $card_no)
+            ->where('packages.sale_id', $sale_id)
             ->group_by('products.id')
             ->order_by('packages.id', 'asc');
 

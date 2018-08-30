@@ -427,10 +427,10 @@ class Pos_model extends CI_Model
         }
         return FALSE;
     }
-	
-	public function getQuantityUsePackage($customer_id, $card_id, $product_id)
+
+    public function getQuantityUsePackage($customer_id, $card_id, $product_id, $sale_id)
     {
-        $q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'card_id' => $card_id, 'product_id' => $product_id), 1);
+        $q = $this->db->get_where('packages', array('customer_id' => $customer_id, 'card_id' => $card_id, 'product_id' => $product_id, 'sale_id' => $sale_id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -443,7 +443,8 @@ class Pos_model extends CI_Model
         if ($data['sale_status'] == 'completed') {
             $cost = $this->site->costing($items);
         }
-
+        $package_sid = $data['package_sid'];
+        unset($data['package_sid']);
         $coupon_code = $items[0]['coupon_code'];
 
         foreach($items as $g){
@@ -521,8 +522,8 @@ class Pos_model extends CI_Model
 				if($item['package_id'] > 0){
 					foreach ($payments as $payment) {
 						if($payment['paid_by'] == 'gift_card'){
-							$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;						
-							$item_package = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id']);
+							$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
+                            $item_package = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id'], $package_sid);
 							$update_use_qty = $item['quantity_balance'] + $item_package->use_quantity;
 							$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $item['package_id'], 'customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
 						}
@@ -2242,7 +2243,7 @@ class Pos_model extends CI_Model
             ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
             ->join('products', 'combo_items.product_id = products.id', 'left')
             ->where('gift_cards.customer_id', $customer_id)
-            ->group_by('products.id')
+            ->group_by('packages.sale_id')
             ->order_by('packages.id', 'asc');
 
         $q = $this->db->get();

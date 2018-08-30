@@ -125,26 +125,41 @@
                             </td>
                         </tr>
                     <?php }
-                    foreach ($gift_cards as $gift_card) {
-                        $packages = $this->companies_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
 
-                        ?>
-                        <tr>
-                            <td>
-                                <strong><u><?= $gift_card->package_size . ' (' . substr($gift_card->package_name, -1) . ')' ?></u></strong>
-                            </td>
-                            <td>
-                                <?php foreach ($packages as $package) { ?>
-                                    <p style="margin: 0"><?= $package->package_item_name ?></p>
-                                    <span style="padding-left: 20px; font-weight: bold">
-                                        Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
-                                        Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?> |
-                                        Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
-                                    </span>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
+                    foreach ($gift_cards as $gift_card) {
+                        $qty = 0;
+                        $qty_used = 0;
+                        $packages = $this->pos_model->getPackagesByGiftCardID($gift_card->package_id, $gift_card->sale_id);
+                        foreach ($packages as $package) {
+                            $qty += $package->qty;
+                            $qty_used += $package->qty_used;
+                        }
+
+                        if ($qty != $qty_used) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <strong><u><?= $gift_card->package_size . ' (' . substr($gift_card->package_name, -1) . ')' ?></u></strong>
+                                </td>
+                                <td>
+                                    <?php foreach ($packages as $package) { ?>
+                                        <p style="margin: 0"><?= $package->package_item_name ?></p>
+                                        <span style="padding-left: 20px; font-weight: bold">
+                                            <?php if ($package->qty == '500') { ?>
+                                                Unlimited
+                                            <?php } else { ?>
+                                                Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
+                                                Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?> |
+                                                Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                                            <?php } ?>
+                                        </span>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php }
+                    }
+
+                    ?>
 
                     </tbody>
 

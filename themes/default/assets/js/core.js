@@ -1382,6 +1382,12 @@ $(document).ready(function() {
         $('#myModal').modal('show');
         //window.location.href = site.base_url + 'sales/view/' + $(this).parent('.invoice_link').attr('id');
     });
+
+    $('body').on('click', '.view_customer_history td:not(:first-child, :nth-child(18), :last-child)', function () {
+        $('#myModal').modal({remote: site.base_url + 'sales/view_customer_history/' + $(this).parent('.view_customer_history').attr('id')});
+        $('#myModal').modal('show');
+        //window.location.href = site.base_url + 'sales/view/' + $(this).parent('.invoice_link').attr('id');
+    });
 	
 	$('body').on('click', '.register_link td:not(:first-child :last-child)', function() {
         $('#myModal').modal({remote: site.base_url + 'pos/close_register_popup/' + $(this).parent('.register_link').attr('id')});

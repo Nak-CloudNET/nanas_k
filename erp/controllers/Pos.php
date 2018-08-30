@@ -737,7 +737,8 @@ class Pos extends MY_Controller
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
                 'queue' 			=> $query,
-                'plate_number' 		=> $sus_plate_number
+                'plate_number' => $sus_plate_number,
+                'package_sid' => $this->input->post('package_sid')
             );
            
 			if($_POST['paid_by'][0] == 'depreciation'){

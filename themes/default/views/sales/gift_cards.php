@@ -28,6 +28,11 @@ if ($this->input->post('plate_number')) {
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
+            'fnRowCallback': function (nRow, aData, iDisplayIndex) {
+                nRow.id = aData[0];
+                // nRow.className = "view_customer_history";
+                return nRow;
+            },
             "aoColumns": [{
                 "bSortable": false,
                 "mRender": checkbox
@@ -38,6 +43,7 @@ if ($this->input->post('plate_number')) {
                 <?php if($Settings->member_card_expiry) { ?>
                 {"mRender": fsd},
                 <?php } ?>
+                {"bVisible": false},
                 {"bSortable": false}]
         });
 
@@ -52,6 +58,11 @@ if ($this->input->post('plate_number')) {
         });
     });
 </script>
+<style>
+    .view_customer_history {
+        cursor: pointer;
+    }
+</style>
 <?= form_open('sales/gift_card_actions', 'id="action-form"') ?>
 <div class="box">
     <div class="box-header">
@@ -184,6 +195,7 @@ if ($this->input->post('plate_number')) {
                             <?php if($Settings->member_card_expiry) { ?>
                                 <th><?php echo $this->lang->line("expiry"); ?></th>
                             <?php } ?>
+                            <th><?php echo $this->lang->line("customer_id"); ?></th>
                             <th style="min-width:110px !important; width: 100px !important;"><?php echo $this->lang->line("actions"); ?></th>
                         </tr>
                         </thead>

@@ -643,10 +643,12 @@ class Sales extends MY_Controller
             $this->datatables
 				->select("sales.id, 
 							sales.date as date,
-							erp_quotes.reference_no as q_no, 
-							sale_order.reference_no as so_no, 
-							sales.reference_no as sale_no, 
-							sales.biller, 
+                            erp_quotes.reference_no as q_no,
+                            sale_order.reference_no as so_no, 
+                            companies.name as customer,
+                            erp_sales.plate_number,
+                            CONCAT_WS('_', erp_gift_cards.card_no, erp_sales.customer_id) as card_no,
+                            sales.biller,
 							group_areas.areas_group, 
 							companies.name as customer, 
 							users.username AS saleman, 
@@ -665,6 +667,7 @@ class Sales extends MY_Controller
 				->join('payments', 'payments.sale_id = sales.id', 'left')
 				->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
 				->join('erp_quotes', 'erp_quotes.id = sales.quote_id', 'left')
+                ->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left')
                 ->where_in('sales.biller_id', $biller_id);
 
                 if (count($warehouse_ids) > 1) {
@@ -690,9 +693,18 @@ class Sales extends MY_Controller
             
         } else {
 			$this->datatables
-				->select("sales.id, sales.date as date,erp_quotes.reference_no as q_no, sale_order.reference_no as so_no, 
-							sales.reference_no as sale_no, sales.biller, group_areas.areas_group, companies.name as customer, 
-							users.username AS saleman, sales.sale_status, COALESCE(erp_sales.grand_total,0) as amount,
+                ->select("sales.id,
+                            sales.date as date,
+                            erp_quotes.reference_no as q_no,
+                            sale_order.reference_no as so_no, 
+                            companies.name as customer,
+                            erp_sales.plate_number,
+                            CONCAT_WS('_', erp_gift_cards.card_no, erp_sales.customer_id) as card_no,
+                            sales.biller,
+                            group_areas.areas_group,
+							users.username AS saleman,
+                            sales.sale_status,
+                            COALESCE(erp_sales.grand_total,0) as amount,
 							COALESCE((SELECT SUM(erp_return_sales.paid) FROM erp_return_sales WHERE erp_return_sales.sale_id = erp_sales.id), 0) as return_sale,
 							COALESCE( (SELECT SUM(IF((erp_payments.paid_by != 'deposit' AND ISNULL(erp_payments.return_id)), erp_payments.amount, IF(NOT ISNULL(erp_payments.return_id), ((-1)*erp_payments.amount), 0))) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id),0) as paid, 
 							(SELECT SUM(IF(erp_payments.paid_by = 'deposit', erp_payments.amount, 0)) FROM erp_payments WHERE erp_payments.sale_id = erp_sales.id  ) as deposit,
@@ -705,7 +717,8 @@ class Sales extends MY_Controller
 				->join('payments', 'payments.sale_id = sales.id', 'left')
 				->join('group_areas', 'group_areas.areas_g_code = sales.group_areas_id', 'left')
 				->join('quotes', 'quotes.id = sales.quote_id', 'left')
-				->join('companies', 'companies.id = sales.customer_id', 'left');
+                ->join('companies', 'companies.id = sales.customer_id', 'left')
+                ->join('gift_cards', 'companies.id = gift_cards.customer_id', 'left');
 			
             if (isset($_REQUEST['a'])) {
                 $alert_ids = explode('-', $_GET['a']);
@@ -8019,16 +8032,18 @@ class Sales extends MY_Controller
                     $this->excel->getActiveSheet()->SetCellValue('A2', lang('date'));
                     $this->excel->getActiveSheet()->SetCellValue('B2', lang('last_payments_date'));
                     $this->excel->getActiveSheet()->SetCellValue('C2', lang('reference_no'));
-                    $this->excel->getActiveSheet()->SetCellValue('D2', lang('biller'));
-                    $this->excel->getActiveSheet()->SetCellValue('E2', lang('customer'));
-                    $this->excel->getActiveSheet()->SetCellValue('F2', lang('sale_status'));
-                    $this->excel->getActiveSheet()->SetCellValue('G2', lang('grand_total'));
-                    $this->excel->getActiveSheet()->SetCellValue('H2', lang('return'));
-                    $this->excel->getActiveSheet()->SetCellValue('I2', lang('paid'));
-                    $this->excel->getActiveSheet()->SetCellValue('J2', lang('deposit'));
-                    $this->excel->getActiveSheet()->SetCellValue('K2', lang('discount'));
-                    $this->excel->getActiveSheet()->SetCellValue('L2', lang('balance'));
-                    $this->excel->getActiveSheet()->SetCellValue('M2', lang('payment_status'));
+                        $this->excel->getActiveSheet()->SetCellValue('D2', lang('customer'));
+                        $this->excel->getActiveSheet()->SetCellValue('E2', lang('plate_number'));
+                        $this->excel->getActiveSheet()->SetCellValue('F2', lang('card_no'));
+                        $this->excel->getActiveSheet()->SetCellValue('G2', lang('biller'));
+                        $this->excel->getActiveSheet()->SetCellValue('H2', lang('sale_status'));
+                        $this->excel->getActiveSheet()->SetCellValue('I2', lang('grand_total'));
+                        $this->excel->getActiveSheet()->SetCellValue('J2', lang('return'));
+                        $this->excel->getActiveSheet()->SetCellValue('K2', lang('paid'));
+                        $this->excel->getActiveSheet()->SetCellValue('L2', lang('deposit'));
+                        $this->excel->getActiveSheet()->SetCellValue('M2', lang('discount'));
+                        $this->excel->getActiveSheet()->SetCellValue('N2', lang('balance'));
+                        $this->excel->getActiveSheet()->SetCellValue('O2', lang('payment_status'));
 
                         $row = 3;
                     $sum_grand = $balance = $sum_banlance = $sum_paid = $sum_return_sale =$sum_deposit=$sum_discount =$sum_balance= 0;
@@ -8043,23 +8058,28 @@ class Sales extends MY_Controller
                         $this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->erp->hrld($sale->date));
                         $this->excel->getActiveSheet()->SetCellValue('B' . $row, $this->erp->hrld($sale->pdate));
                         $this->excel->getActiveSheet()->SetCellValue('C' . $row, $sale->reference_no." ");
-                        $this->excel->getActiveSheet()->SetCellValue('D' . $row, $sale->company);
-                        $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sale->customer);
-                        $this->excel->getActiveSheet()->SetCellValue('F' . $row, $sale->sale_status);
-                        $this->excel->getActiveSheet()->SetCellValue('G' . $row, $this->erp->formatMoney($sale->grand_total));
-                        $this->excel->getActiveSheet()->SetCellValue('H' . $row, $this->erp->formatMoney($sale->return_sale));
-                        $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatMoney($sale->paid));
-                        $this->excel->getActiveSheet()->SetCellValue('J' . $row, $this->erp->formatMoney($sale->deposit));
-                        $this->excel->getActiveSheet()->SetCellValue('K' . $row, $this->erp->formatMoney($sale->discount));
-                        $this->excel->getActiveSheet()->SetCellValue('L' . $row, $this->erp->formatMoney($sale->balance));
-                        $this->excel->getActiveSheet()->SetCellValue('M' . $row, $sale->payment_status);
+                        $this->excel->getActiveSheet()->SetCellValue('D' . $row, $sale->customer);
+                        $this->excel->getActiveSheet()->SetCellValue('E' . $row, $sale->plate_number);
+                        $this->excel->getActiveSheet()->SetCellValue('F' . $row, $sale->card_no . " ");
+                        $this->excel->getActiveSheet()->SetCellValue('G' . $row, $sale->company);
+                        $this->excel->getActiveSheet()->SetCellValue('H' . $row, $sale->sale_status);
+                        $this->excel->getActiveSheet()->SetCellValue('I' . $row, $this->erp->formatMoney($sale->grand_total));
+                        $this->excel->getActiveSheet()->SetCellValue('J' . $row, $this->erp->formatMoney($sale->return_sale));
+                        $this->excel->getActiveSheet()->SetCellValue('K' . $row, $this->erp->formatMoney($sale->paid));
+                        $this->excel->getActiveSheet()->SetCellValue('L' . $row, $this->erp->formatMoney($sale->deposit));
+                        $this->excel->getActiveSheet()->SetCellValue('M' . $row, $this->erp->formatMoney($sale->discount));
+                        $this->excel->getActiveSheet()->SetCellValue('N' . $row, $this->erp->formatMoney($sale->balance));
+                        $this->excel->getActiveSheet()->SetCellValue('O' . $row, $sale->payment_status);
+                        $this->excel->getActiveSheet()->getStyle('I' . $row . ':N' . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
                         $new_row = $row+1;
-						$this->excel->getActiveSheet()->SetCellValue('G' . $new_row, $this->erp->formatMoney($sum_grand));
-						$this->excel->getActiveSheet()->SetCellValue('H' . $new_row, $this->erp->formatMoney($sum_return_sale));
-						$this->excel->getActiveSheet()->SetCellValue('I' . $new_row, $this->erp->formatMoney($sum_paid));
-						$this->excel->getActiveSheet()->SetCellValue('J' . $new_row, $this->erp->formatMoney($sum_deposit));
-						$this->excel->getActiveSheet()->SetCellValue('K' . $new_row, $this->erp->formatMoney($sum_discount));
-						$this->excel->getActiveSheet()->SetCellValue('L' . $new_row, $this->erp->formatMoney($sum_balance));
+                        $this->excel->getActiveSheet()->SetCellValue('I' . $new_row, $this->erp->formatMoney($sum_grand));
+                        $this->excel->getActiveSheet()->SetCellValue('J' . $new_row, $this->erp->formatMoney($sum_return_sale));
+                        $this->excel->getActiveSheet()->SetCellValue('K' . $new_row, $this->erp->formatMoney($sum_paid));
+                        $this->excel->getActiveSheet()->SetCellValue('L' . $new_row, $this->erp->formatMoney($sum_deposit));
+                        $this->excel->getActiveSheet()->SetCellValue('M' . $new_row, $this->erp->formatMoney($sum_discount));
+                        $this->excel->getActiveSheet()->SetCellValue('N' . $new_row, $this->erp->formatMoney($sum_balance));
+                        $this->excel->getActiveSheet()->getStyle('I' . $new_row . ':N' . $new_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                         $row++;
                     }
                 }else{
@@ -8067,7 +8087,7 @@ class Sales extends MY_Controller
                     $this->load->library('excel');
                     $this->excel->setActiveSheetIndex(0);
                     $this->excel->getActiveSheet()->setTitle(lang('sales'));
-                    $this->excel->getActiveSheet()->mergeCells('A1:M1');
+                        $this->excel->getActiveSheet()->mergeCells('A1:O1');
                     $this->excel->getActiveSheet()->SetCellValue('A1', lang('List POS'));
 					$this->excel->getActiveSheet()->getStyle("A1")->getFont()->setBold(true)
                                 ->setSize(15);
@@ -8143,16 +8163,16 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-						$this->excel->getActiveSheet()->getStyle('A2:M2')->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-						$this->excel->getActiveSheet()->getStyle('A'.$row.':M'.$row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+                        $this->excel->getActiveSheet()->getStyle('A2:O2')->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+                        $this->excel->getActiveSheet()->getStyle('A' . $row . ':O' . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 						$rw = 3;
 						foreach ($_POST['val'] as $id) {
-							$this->excel->getActiveSheet()->getStyle('A' . $rw . ':M' . $rw)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+                            $this->excel->getActiveSheet()->getStyle('A' . $rw . ':O' . $rw)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 							$rw++;
                         }
-                        $this->excel->getActiveSheet()->getStyle('A2:M2')->applyFromArray($styleArray);
+                        $this->excel->getActiveSheet()->getStyle('A2:O2')->applyFromArray($styleArray);
                         $this->excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $this->excel->getActiveSheet()->getStyle('A2:M2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $this->excel->getActiveSheet()->getStyle('A2:O2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
                         $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
@@ -8182,14 +8202,10 @@ class Sales extends MY_Controller
                                 'bold'  => true
                             )
                         );
-                        $this->excel->getActiveSheet()->getStyle('A1:M1')->applyFromArray($styleArray);
-                        $this->excel->getActiveSheet()->getStyle('A1:M1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $this->excel->getActiveSheet()->getStyle('A2:M2')->applyFromArray($styleArray);
-                        $this->excel->getActiveSheet()->getStyle('A2:M2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
-                        $this->excel->getActiveSheet()->getStyle('G' . $new_row.'')->getFont()->setBold(true);
-                        $this->excel->getActiveSheet()->getStyle('H' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
-                        $this->excel->getActiveSheet()->getStyle('H' . $new_row.'')->getFont()->setBold(true);
+                        $this->excel->getActiveSheet()->getStyle('A1:O1')->applyFromArray($styleArray);
+                        $this->excel->getActiveSheet()->getStyle('A1:O1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $this->excel->getActiveSheet()->getStyle('A2:O2')->applyFromArray($styleArray);
+                        $this->excel->getActiveSheet()->getStyle('A2:O2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                         $this->excel->getActiveSheet()->getStyle('I' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('I' . $new_row.'')->getFont()->setBold(true);
 						$this->excel->getActiveSheet()->getStyle('J' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
@@ -8198,6 +8214,10 @@ class Sales extends MY_Controller
                         $this->excel->getActiveSheet()->getStyle('K' . $new_row.'')->getFont()->setBold(true);
 						$this->excel->getActiveSheet()->getStyle('L' . $new_row.'')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
                         $this->excel->getActiveSheet()->getStyle('L' . $new_row.'')->getFont()->setBold(true);
+                        $this->excel->getActiveSheet()->getStyle('M' . $new_row . '')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
+                        $this->excel->getActiveSheet()->getStyle('M' . $new_row . '')->getFont()->setBold(true);
+                        $this->excel->getActiveSheet()->getStyle('N' . $new_row . '')->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border:: BORDER_THIN);
+                        $this->excel->getActiveSheet()->getStyle('N' . $new_row . '')->getFont()->setBold(true);
 
                         $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel5');
                         return $objWriter->save('php://output');
@@ -13119,14 +13139,14 @@ class Sales extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select($this->db->dbprefix('gift_cards') . ".id as id,
+            ->select("gift_cards.id as id,
                                 card_no,
                                 value,
                                 balance,
                                 CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name) as created_by,
                                 companies.name,
                                 CONCAT_WS('<br>',plate_number,plate_number_2,plate_number_3,plate_number_4,plate_number_5) as plate_number,
-                                expiry", FALSE)
+                                expiry, gift_cards.customer_id", FALSE)
             ->join('users', 'users.id=gift_cards.created_by', 'left')
             ->join('companies', 'companies.id=gift_cards.customer_id', 'left')
             ->from("gift_cards")
@@ -13313,11 +13333,11 @@ class Sales extends MY_Controller
         if(isset($_POST['start'])){
             $start = $_POST['start'];
         }
-		if(isset($_POST['end'])){
+        if (isset($_POST['end'])) {
             $end = $_POST['end'];
         }
-		
-		if (!$start) {
+
+        if (!$start) {
             $start = $this->db->escape(date('Y-m') . '-1');
             $start_date = date('Y-m') . '-1';
         } else {
@@ -13329,20 +13349,62 @@ class Sales extends MY_Controller
         } else {
             $end = $this->db->escape(urldecode($end_date));
         }
-		
-		if(isset($_GET['d']) != ""){
-			$date = $_GET['d'];
+
+        if (isset($_GET['d']) != "") {
+            $date = $_GET['d'];
             $this->data['date'] = $date;
-		}
+        }
 
         $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-		
-		$this->data['start'] = urldecode($start_date);
+
+        $this->data['start'] = urldecode($start_date);
         $this->data['end'] = urldecode($end_date);
-		$this->data['card_no'] = $no;
-		$this->data['page_title'] =lang('gift_card');
+        $this->data['card_no'] = $no;
+        $this->data['page_title'] = lang('gift_card');
         $this->data['gift_cards'] = $this->sales_model->getGiftCardLogHistoryByNo($no);
-        $this->data['gcards'] = $this->sales_model->getAllPackagesByCardNo($no);
+
+        $this->load->view($this->theme . 'sales/view_gift_card_history', $this->data);
+    }
+
+    function view_customer_history($id = NULL, $start = NULL, $end = NULL)
+    {
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+        $start_date = '';
+        $end_date = '';
+        if (isset($_POST['start'])) {
+            $start = $_POST['start'];
+        }
+        if (isset($_POST['end'])) {
+            $end = $_POST['end'];
+        }
+
+        if (!$start) {
+            $start = $this->db->escape(date('Y-m') . '-1');
+            $start_date = date('Y-m') . '-1';
+        } else {
+            $start = $this->db->escape(urldecode($start_date));
+        }
+        if (!$end) {
+            $end = $this->db->escape(date('Y-m-d H:i'));
+            $end_date = date('Y-m-d H:i');
+        } else {
+            $end = $this->db->escape(urldecode($end_date));
+        }
+
+        if (isset($_GET['d']) != "") {
+            $date = $_GET['d'];
+            $this->data['date'] = $date;
+        }
+
+        $data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+
+        $this->data['start'] = urldecode($start_date);
+        $this->data['end'] = urldecode($end_date);
+        $this->data['card_no'] = $no;
+        $this->data['page_title'] = lang('gift_card');
+        $this->data['gift_cards'] = $this->sales_model->getCustomerHistoryByID($id);
 
         $this->load->view($this->theme . 'sales/view_gift_card_history', $this->data);
     }
@@ -19904,7 +19966,7 @@ function invoice_concrete_angkor($id=null)
 
     function add_amount_gift_card($id)
     {
-        $this->erp->checkPermissions();
+        $this->erp->checkPermissions('add_gift_card', null, 'sales');
         $this->form_validation->set_rules('card_no', lang("card_no"), 'required');
         $this->form_validation->set_rules('value', lang("value"), 'required');
 

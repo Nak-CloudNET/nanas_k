@@ -35,7 +35,31 @@
                             <td><?= $gift_card->sale_ref ?></td>
                             <td class="text-center"><?= $this->erp->formatMoney($gift_card->amount) ?></td>
                             <td>
+                                <!-- <span style="font-size: 16px"><strong><u><?= $gift_card->package_size ? $gift_card->package_size : $gift_card->product_name; ?></u></strong></span> -->
                                 <?php
+                                /*$package_items = $this->sales_model->getAllPackageItemsData($gift_card->package_id, $gift_card->sale_id);
+                                if ($gift_card->payment_ref && $gift_card->amount > 0) {
+                                    foreach ($package_items as $package_item) { ?>
+                                        <dl style="margin-left: 10px; margin-bottom: 0px">
+                                                <dt style="font-size: 14px">
+                                                    <strong><?= ucfirst($package_item->package_item_name) ?></strong>
+                                                </dt>
+                                                    <dd style="padding-left: 20px;">
+                                                        <span style="font-weight: bold">
+                                                        (
+                                                        Qty = <?= $this->erp->formatQuantity($package_item->qty); ?> |
+                                                        Qty used = <?= $this->erp->formatQuantity($package_item->qty_used); ?>
+                                                            |
+                                                        Qty balance = <?= $this->erp->formatQuantity($package_item->qty_balance); ?>
+                                                            )
+                                                    </span>
+                                                    </dd>
+                                            </dl>
+                                            <?php
+                                    }
+                                }*/
+
+                                $gcards = $this->sales_model->getAllPackagesByCardNoNSaleID($gift_card->card_no, $gift_card->sale_id);
 
                                 if ($gift_card->payment_ref && $gift_card->amount > 0) {
                                     foreach ($gcards as $gcard) {
@@ -43,20 +67,22 @@
                                         ?>
                                         <dl style="margin-left: 10px; margin-bottom: 10px">
                                             <dt style="font-size: 16px">
-                                                <strong><u><?= $gcard->package_size . ' (' . substr($gcard->package_name, -1) . ')' ?></u></strong>
+                                                <strong><u><?= ucfirst($gcard->package_size) . ' (' . substr($gcard->package_name, -1) . ')' ?></u></strong>
                                             </dt>
-                                            <!-- <strong><u><?= $gcard->package_name ?></u></strong></dt> -->
                                             <?php foreach ($packages as $package) { ?>
                                                 <dd style="padding-left: 20px;" value="<?= $package->id ?>">
                                                     <?= $package->package_item_name ?><br/>
                                                     <span style="font-weight: bold">
-                                                    (
-                                                    Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
-                                                    Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?>
-                                                        |
-                                                    Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
-                                                        )
-                                                </span>
+                                                        <?php if ($package->qty == '500') { ?>
+                                                            Unlimited
+                                                        <?php } else { ?>
+                                                            (
+                                                            Qty = <?= $this->erp->formatQuantity($package->qty); ?> |
+                                                            Qty used = <?= $this->erp->formatQuantity($package->qty_used); ?> |
+                                                            Qty balance = <?= $this->erp->formatQuantity($package->qty_balance); ?>
+                                                            )
+                                                        <?php } ?>
+                                                    </span>
                                                 </dd>
                                             <?php } ?>
                                         </dl>

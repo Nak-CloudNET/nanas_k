@@ -98,7 +98,7 @@
             "aoColumns": [
 				{"bSortable": false, "mRender": checkbox}, 
 				{"mRender"  : fld},
-				null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null,
 				{"mRender"  : row_status},
 				{"mRender"  : currencyFormat},
 				{"mRender"  : currencyFormat},
@@ -115,33 +115,34 @@
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
                 var gtotal = 0, tdeposit = 0, paid = 0, balance = 0, status = ' ',gpaid=0,dis = 0,return_s = 0;
                 for (var i = 0; i < aaData.length; i++) {
-					status      = aaData[aiDisplay[i]][8];
-					gtotal      += parseFloat(aaData[aiDisplay[i]][10]);
-					return_s    += parseFloat(aaData[aiDisplay[i]][11]);
-					gpaid       += parseFloat(aaData[aiDisplay[i]][12]);
-					tdeposit    += parseFloat(aaData[aiDisplay[i]][13]);
-					dis         += parseFloat(aaData[aiDisplay[i]][14]);
-					balance     += parseFloat(aaData[aiDisplay[i]][15]);
+                    status = aaData[aiDisplay[i]][9];
+                    gtotal += parseFloat(aaData[aiDisplay[i]][11]);
+                    return_s += parseFloat(aaData[aiDisplay[i]][12]);
+                    gpaid += parseFloat(aaData[aiDisplay[i]][13]);
+                    tdeposit += parseFloat(aaData[aiDisplay[i]][14]);
+                    dis += parseFloat(aaData[aiDisplay[i]][15]);
+                    balance += parseFloat(aaData[aiDisplay[i]][16]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-				nCells[10].innerHTML = currencyFormat(parseFloat(gtotal));
-                nCells[11].innerHTML = currencyFormat(parseFloat(return_s));
-				nCells[12].innerHTML = currencyFormat(parseFloat(gpaid));
-                nCells[13].innerHTML = currencyFormat(parseFloat(tdeposit));
-				nCells[14].innerHTML = currencyFormat(parseFloat(dis));
-                nCells[15].innerHTML = currencyFormat(parseFloat(balance));
+                nCells[11].innerHTML = currencyFormat(parseFloat(gtotal));
+                nCells[12].innerHTML = currencyFormat(parseFloat(return_s));
+                nCells[13].innerHTML = currencyFormat(parseFloat(gpaid));
+                nCells[14].innerHTML = currencyFormat(parseFloat(tdeposit));
+                nCells[15].innerHTML = currencyFormat(parseFloat(dis));
+                nCells[16].innerHTML = currencyFormat(parseFloat(balance));
             }
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 1, filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]", filter_type: "text", data: []},
 			 {column_number: 2, filter_default_label: "[<?=lang('quote_no');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('so_no');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('sale_no');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
-            {column_number: 6, filter_default_label: "[<?=lang('group_area');?>]", filter_type: "text", data: []},
-			{column_number: 7, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
-			{column_number: 8, filter_default_label: "[<?=lang('saleman');?>]", filter_type: "text", data: []},
-            {column_number: 9, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text", data: []},
-            {column_number: 16, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
+            {column_number: 4, filter_default_label: "[<?=lang('customer');?>]", filter_type: "text", data: []},
+            {column_number: 5, filter_default_label: "[<?=lang('plate_number');?>]", filter_type: "text", data: []},
+            {column_number: 6, filter_default_label: "[<?=lang('card_no');?>]", filter_type: "text", data: []},
+            {column_number: 7, filter_default_label: "[<?=lang('biller');?>]", filter_type: "text", data: []},
+            {column_number: 8, filter_default_label: "[<?=lang('group_area');?>]", filter_type: "text", data: []},
+            {column_number: 9, filter_default_label: "[<?=lang('saleman');?>]", filter_type: "text", data: []},
+            {column_number: 10, filter_default_label: "[<?=lang('sale_status');?>]", filter_type: "text", data: []},
+            {column_number: 17, filter_default_label: "[<?=lang('payment_status');?>]", filter_type: "text", data: []},
         ], "footer");
 		
         if (__getItem('remove_slls')) {
@@ -698,10 +699,11 @@
                             <th><?php echo $this->lang->line("date"); ?></th>
 							<th><?php echo $this->lang->line("quote_no"); ?></th>
                             <th><?php echo $this->lang->line("so_no"); ?></th>
-                            <th><?php echo $this->lang->line("sale_ref"); ?></th>
-                            <th><?php echo $this->lang->line("biller"); ?></th>
-							<th><?php echo $this->lang->line("group_area"); ?></th>
                             <th><?php echo $this->lang->line("customer"); ?></th>
+                            <th><?php echo $this->lang->line("plate_number"); ?></th>
+                            <th><?php echo $this->lang->line("card_no"); ?></th>
+                            <th><?php echo $this->lang->line("biller"); ?></th>
+                            <th><?php echo $this->lang->line("group_area"); ?></th>
 							<th><?php echo $this->lang->line("saleman"); ?></th>
                             <th><?php echo $this->lang->line("sale_status"); ?></th>
                             <th><?php echo $this->lang->line("amount"); ?></th>
@@ -736,8 +738,9 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
 							<th></th>
-							<th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
