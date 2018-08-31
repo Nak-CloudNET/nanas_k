@@ -1329,7 +1329,6 @@ function loadItems() {
 		}
 
 		positems = JSON.parse(__getItem('positems'));
-
         var n = 1;
         $.each(positems, function (i, e) {
 			var item 			= this;
@@ -1373,11 +1372,12 @@ function loadItems() {
 			piece 			    = item.row.piece,
 			wpiece 			    = item.row.wpiece,
 			w_piece 			= item.row.w_piece;
+            items_package = item.items_package;
 
-            if (item.items_package == false) {
+            if (items_package == false || items_package == 'undefined' || !items_package) {
                 item_package_sid = 0;
             } else {
-                item_package_sid = item.items_package[0].sale_id;
+                item_package_sid = items_package[0].sale_id;
             }
 
 			var unit_price 		= item.row.real_unit_price;
