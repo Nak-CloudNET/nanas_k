@@ -798,13 +798,12 @@ class Companies_model extends CI_Model
     public function getAllPackagesByCusID($customer_id = NULL)
     {
         $this->db
-            ->select("products.id as package_id, packages.sale_id, products.name_kh as package_size, products.name as package_name")
+            ->select("products.id as package_id, packages.sale_id, products.name_kh as package_size, products.name as package_name, packages.quantity, packages.use_quantity")
             ->from("gift_cards")
             ->join('packages', 'gift_cards.id = packages.card_id', 'left')
-            ->join('combo_items', 'packages.combo_id = combo_items.product_id', 'left')
-            ->join('products', 'combo_items.product_id = products.id', 'left')
+            ->join('products', 'packages.combo_id = products.id', 'left')
             ->where('gift_cards.customer_id', $customer_id)
-            ->group_by('products.id')
+            ->group_by('packages.sale_id')
             ->order_by('packages.id', 'asc');
 
         $q = $this->db->get();
