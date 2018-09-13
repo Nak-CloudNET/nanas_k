@@ -91,7 +91,11 @@
 
                                 foreach ($combo_items as $combo_item) {
                                     if ($gift_card->product_code == $combo_item->item_code) {
-                                        echo '<p>'.$gift_card->product_name.'</p>';
+                                        if ($gift_card->same_item >= 2) {
+                                            echo '<p>'.$gift_card->product_name.' <span class="badge">'. $gift_card->same_item .'</span></p>';
+                                        } else {
+                                            echo '<p>'.$gift_card->product_name.'</p>';
+                                        }
                                     }
                                 }
                                 ?>
