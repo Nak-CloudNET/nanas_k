@@ -3907,7 +3907,6 @@ class Sales extends MY_Controller
         }
         
         if ($this->form_validation->run() == true) {
-
             $quantity 	= "quantity";
             $product 	= "product";
             $unit_cost 	= "unit_cost";

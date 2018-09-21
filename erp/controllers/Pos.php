@@ -399,6 +399,7 @@ class Pos extends MY_Controller
 
     function index($sid = null, $sale_order_id=null, $combine_table = null)
     {
+
 		$this->erp->checkPermissions('index');
         if (!$this->pos_settings->default_biller || !$this->pos_settings->default_customer || !$this->pos_settings->default_category) {
             $this->session->set_flashdata('warning', lang('please_update_settings'));
@@ -426,7 +427,6 @@ class Pos extends MY_Controller
         //$this->form_validation->set_rules('reference_nob', lang("reference_no"), 'required|is_unique[sales.reference_no]');
 		
         if ($this->form_validation->run() == true){
-
             $quantity 			= "quantity";
             $product 			= "product";
             $unit_cost 			= "unit_cost";
@@ -441,10 +441,10 @@ class Pos extends MY_Controller
             $delivery_by 		= $this->input->post('delivery_by_1');
             $total_items 		= $this->input->post('total_items');
             $sale_status        = $this->input->post('sale_status');
-            $bank_account = $this->input->post('bank_account');
-            $plate_number = $this->input->post('plate_number');
-            $sus_date = $this->input->post('sus_date');
-            $sus_plate_number = $this->input->post('sus_plate_number');
+            $bank_account       = $this->input->post('bank_account');
+            $plate_number       = $this->input->post('plate_number');
+            $sus_date           = $this->input->post('sus_date');
+            $sus_plate_number   = $this->input->post('sus_plate_number');
 
             $payment_status 	= 'due';
             $payment_term 		= 0;
@@ -458,7 +458,7 @@ class Pos extends MY_Controller
 			$suspend_room 		= $this->input->post('suspend_room');
 			$combine_table_id 	= $this->input->post('combine_table_id');
 			$reference 			= $this->input->post('reference_nob');
-            $document = $this->input->post('document_1');
+            $document           = $this->input->post('document_1');
 
             if ($this->session->userdata('biller_id')) {
                 $default_biller = JSON_decode($this->session->userdata('biller_id'));
@@ -499,8 +499,8 @@ class Pos extends MY_Controller
                 $item_discount 	= isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : NULL;
 				$g_total_txt 	= $_POST['grand_total'][$r];
 				$item_price_id 	= $_POST['price_id'][$r];
-                $package_id = $_POST['package_id'][$r];
-                $coupon_code = $_POST['coupon_code'][$r];
+                $package_id     = $_POST['package_id'][$r];
+                $coupon_code    = $_POST['coupon_code'][$r];
 				
                 if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
                     $product_details 	= $item_type != 'manual' ? $this->pos_model->getProductByCode($item_code) : NULL;
@@ -610,12 +610,12 @@ class Pos extends MY_Controller
 						'expiry' 			=> $expdate,
 						'expiry_id' 		=> $expire_date_id,
 						'price_id' 			=> $item_price_id,
-                        'package_id' => $package_id,
-                        'coupon_code' => $coupon_code
-                    );					
-                    $total += $subtotal;
-					$g_total_txt1 += $subtotal;
-					$total_discount+=$product_discount;
+                        'package_id'        => $package_id,
+                        'coupon_code'       => $coupon_code
+                    );
+                    $total          += $subtotal;
+					$g_total_txt1   += $subtotal;
+					$total_discount += $product_discount;
                 }
 				
             }
@@ -697,7 +697,9 @@ class Pos extends MY_Controller
             } else {
                 $query = $i;
             }
-             			
+            $arr=$this->input->post('package_sid');
+            $max_id=array_keys($arr, max($arr));
+            $package_sid = $arr[$max_id[0]];
             $data = array(
                 'date'              => $date,
                 'reference_no'      => $reference,
@@ -737,8 +739,8 @@ class Pos extends MY_Controller
 				'type'              => $this->input->post('sale_type'),
 				'type_id'           => $this->input->post('sale_type_id'),
                 'queue' 			=> $query,
-                'plate_number' => $sus_plate_number,
-                'package_sid' => $this->input->post('package_sid')
+                'plate_number'      => $sus_plate_number,
+                'package_sid'       => $package_sid
             );
            
 			if($_POST['paid_by'][0] == 'depreciation'){
