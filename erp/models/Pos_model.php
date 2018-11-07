@@ -520,12 +520,16 @@ class Pos_model extends CI_Model
                     }
                 }
 				if($item['package_id'] > 0){
+                    
 					foreach ($payments as $payment) {
-						if($payment['paid_by'] == 'gift_card'){
-							$card_id = $this->site->getGiftCardByNO($payment['cc_no'])->id;
-                            $item_package = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id'], $package_sid);
-							$update_use_qty = $item['quantity_balance'] + $item_package->use_quantity;
-							$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $item['package_id'], 'customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+						if($payment['paid_by'] == 'gift_card')
+                        {
+                            //$this->erp->print_arrays($item['quantity']);
+							//$card_id           = $this->site->getGiftCardByNO($payment['cc_no'])->id;
+                            //$item_package      = $this->getQuantityUsePackage($data['customer_id'], $card_id, $item['product_id'], $package_sid);
+							//$update_use_qty    = $item['quantity_balance'] + $item_package->use_quantity;
+							//$this->db->update('packages', array('use_quantity' => $update_use_qty), array('id' => $item['package_id'], 'customer_id' => $data['customer_id'], 'product_id' => $item['product_id'], 'card_id' => $card_id));
+                            $this->db->query('update erp_packages set use_quantity=use_quantity+'.$item["quantity"].' where id='.$item['package_id']);
 						}
 					}
 				}
@@ -2268,6 +2272,35 @@ class Pos_model extends CI_Model
             return $q->result();
         }
         return FALSE;
+    }
+    public function checkBalanceMemberCard($products=NULL)
+    {
+        
+        foreach ($products as $product) 
+        {
+            $this->db
+            ->select('*')
+            ->from('erp_packages')
+            ->where('id',$product['package_id']);
+            $q=$this->db->get();
+            if($q->num_rows())
+            {
+                $q=$q->row();
+                $card_balance=$q->quantity-$q->use_quantity;
+                $qty_use = 0;
+                foreach ($products as $use_qty) {
+                    if($use_qty['package_id']==$product['package_id'])
+                    {
+                        $qty_use+=$use_qty['quantity'];
+                    }
+                }
+                if($card_balance < $qty_use)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

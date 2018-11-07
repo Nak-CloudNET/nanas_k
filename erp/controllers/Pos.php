@@ -480,7 +480,8 @@ class Pos extends MY_Controller
             $amout_paid         = 0;
             
             $i = isset($_POST['product_code']) ? sizeof($_POST['product_code']) : 0;
-            for ($r = 0; $r < $i; $r++){
+            for ($r = 0; $r < $i; $r++)
+            {
                 $item_id   		= $_POST['product_id'][$r];
                 $digital_id   	= $_POST['digital_id'][$r];
                 $item_type 		= $_POST['product_type'][$r];
@@ -619,7 +620,11 @@ class Pos extends MY_Controller
                 }
 				
             }
-            
+            if($this->pos_model->checkBalanceMemberCard($products))
+            {
+                $this->session->set_flashdata('error', 'Quantity in this membercard is not enough!');
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
             if (empty($products)) {
                 //$this->form_validation->set_rules('product', lang("order_items"), 'required');
             } else {
@@ -809,9 +814,12 @@ class Pos extends MY_Controller
                         'pos_paid_other_rate' 	=> $cur_rate->rate,
                         'bank_account' 			=> $bank_account[$r]
                     );
-                    
+                    if($payment[$r]['paid_by']=='gift_card'){
+                        $card_id = $this->site->getGiftCardByNO($payment[$r]['cc_no']);
+                        //$this->erp->print_arrays($card_id);
+                    }
                 }
-
+                //$this->erp->print_arrays($payment);
                 if($kh_paid == true){
 					if (!empty($pp)) {
 						$paid = array_sum($pp);
