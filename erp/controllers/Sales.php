@@ -9774,12 +9774,12 @@ class Sales extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
+
         $this->form_validation->set_rules('reference_no', lang("reference_no"), 'trim|required|is_unique[payments.reference_no]');
         $this->form_validation->set_rules('amount-paid', lang("amount"), 'required');
         $this->form_validation->set_rules('paid_by', lang("paid_by"), 'required');
         $this->form_validation->set_rules('userfile', lang("attachment"), 'xss_clean');
         if ($this->form_validation->run() == true) {
-			
             if ($this->Owner || $this->Admin) {
                 $date = $this->erp->fld(trim($this->input->post('date')));
             } else {
@@ -9839,8 +9839,12 @@ class Sales extends MY_Controller
 				'bank_account' => $this->input->post('bank_account')
 
             );
-			
-
+            $gc = $this->site->getGiftCardbyNO($payment['cc_no']);
+            if($gc->balance<$paid_amount)
+            {
+                $this->session->set_flashdata('error', 'The card has not enought balance');
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
                 $config['upload_path'] = $this->upload_path;
