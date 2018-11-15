@@ -1045,6 +1045,11 @@ class Pos_model extends CI_Model
         user2.username AS customer_name,
         erp_gift_cards.balance as reminded_value,
         erp_companies.award_points,
+        erp_companies.plate_number,
+        erp_companies.plate_number_2,
+        erp_companies.plate_number_3,
+        erp_companies.plate_number_4,
+        erp_companies.plate_number_5,
         erp_gift_cards.card_no,
         erp_coupon.code as coupon
         ');
