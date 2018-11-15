@@ -156,28 +156,28 @@ if ($modal) {
             <div class="row" id="cinfo">
                 <div class="col-sm-6 col-xs-6">
                     <div class="row" style="font-weight:bold !important;">
-                        <div class="col-sm-6 col-xs-6" style="width: 35%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 34%; padding-right: 0px">
                             <?= lang('plate_no') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 66%; padding-left: 0px">
                             : <?= $inv->plate_number ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%">
+                        <div class="col-sm-6 col-xs-6" style="width: 34%; padding-right: 0px">
                             <?= lang('customer') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 66%; padding-left: 0px">
                             : <?= $inv->customer; ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 34%; padding-right: 0px">
                             <?= lang('member') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 66%; padding-left: 0px">
                             : <?= $inv->card_no; ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 34%; padding-right: 0px">
                             <?= lang('r_value') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%;">
+                        <div class="col-sm-6 col-xs-6" style="width: 66%; padding-left: 0px">
                             : <?= $this->erp->formatMoney($inv->card_balance) ?>
                         </div>
                     </div>
@@ -185,16 +185,16 @@ if ($modal) {
 
                 <div class="col-sm-6 col-xs-6">
                     <div class="row" style="font-weight:bold !important;">
-                        <div class="col-sm-6 col-xs-6" style="width: 35%">
+                        <div class="col-sm-6 col-xs-6" style="width: 35%;padding-right: 1px">
                             <?= lang('date') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%">
+                        <div class="col-sm-6 col-xs-6" style="width: 65%;padding-left: 1px">
                             : <?= $this->erp->hrld($inv->date); ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 0">
+                        <div class="col-sm-6 col-xs-6" style="width: 35%; padding-right: 1px">
                             <?= lang('cashier') ?>
                         </div>
-                        <div class="col-sm-6 col-xs-6" style="width: 65%">
+                        <div class="col-sm-6 col-xs-6" style="width: 65%;padding-left: 1px">
                             : <?= $inv->saleman; ?>
                         </div>
                         
